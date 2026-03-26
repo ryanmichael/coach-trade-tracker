@@ -1,7 +1,21 @@
 // db.ts — Prisma v7 client singleton with pg adapter
 
 import dns from "dns";
-// Force IPv4 resolution — Railway cannot reach Supabase over IPv6
+import net from "net";
+
+// Monkey-patch net.connect to force IPv4 — Railway cannot reach Supabase over IPv6.
+// dns.setDefaultResultOrder("ipv4first") and NODE_OPTIONS flag don't work reliably
+// on Railway's container, so we intercept at the socket level.
+const originalConnect = net.connect;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(net as any).connect = function (...args: any[]) {
+  const opts = args[0];
+  if (typeof opts === "object" && opts !== null && opts.host && !net.isIP(opts.host)) {
+    opts.family = 4;
+  }
+  return originalConnect.apply(this, args);
+};
+
 dns.setDefaultResultOrder("ipv4first");
 
 import { Pool } from "pg";
