@@ -8,6 +8,7 @@ import { prisma } from "@/lib/db";
  * Used for model calibration and future UI confidence indicators.
  */
 export async function GET() {
+  try {
   // All validated snapshots with actual ROI data
   const validated = await prisma.optionsSnapshot.findMany({
     where: {
@@ -113,4 +114,11 @@ export async function GET() {
     },
     roiPairs,
   });
+  } catch (err) {
+    console.error("[Options accuracy] Error:", err);
+    return NextResponse.json(
+      { error: "Failed to load accuracy data", detail: String(err) },
+      { status: 500 }
+    );
+  }
 }
