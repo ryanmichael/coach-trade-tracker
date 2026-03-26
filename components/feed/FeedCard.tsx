@@ -1,0 +1,2 @@
+// TODO: implement FeedCard
+export {};

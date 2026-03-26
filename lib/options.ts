@@ -1,0 +1,912 @@
+// Options Finder — Phase 1: Intrinsic Value ROI Ranking
+// Types, calculations, filtering, enrichment
+
+// ── Types ──────────────────────────────────────────────────────────────────────
+
+export interface TradeInput {
+  ticker: string;
+  direction: "LONG" | "SHORT";
+  currentPrice: number;
+  priceTargetHigh: number;
+  projectedDate: string; // ISO date
+  stopLoss: number;
+  coachNote?: string;
+  hasCoachRec: boolean;
+}
+
+export interface CustomTradeInput extends TradeInput {
+  hasCoachRec: false;
+}
+
+/** Raw contract from Polygon.io snapshot */
+export interface RawContract {
+  details: {
+    contract_type: "call" | "put";
+    exercise_style: string;
+    expiration_date: string;
+    shares_per_contract: number;
+    strike_price: number;
+    ticker: string;
+  };
+  day: {
+    change: number;
+    change_percent: number;
+    close: number;
+    high: number;
+    low: number;
+    open: number;
+    previous_close: number;
+    volume: number;
+    vwap: number;
+  } | null;
+  greeks?: {
+    delta: number;
+    gamma: number;
+    theta: number;
+    vega: number;
+  } | null;
+  implied_volatility?: number | null;
+  last_quote: {
+    ask: number;
+    ask_size: number;
+    bid: number;
+    bid_size: number;
+    midpoint: number;
+  } | null;
+  open_interest: number;
+  break_even_price?: number;
+  underlying_asset?: {
+    price: number;
+    ticker: string;
+  } | null;
+}
+
+/** Enriched contract with computed fields */
+export interface EnrichedContract {
+  id: string;
+  strike: number;
+  expiry: string;
+  ask: number;
+  bid: number;
+  openInterest: number;
+  contractType: "call" | "put";
+  // Phase 1 — Intrinsic
+  roi: number;       // intrinsic-only ROI (kept for comparison)
+  breakeven: number;
+  estValue: number;   // intrinsic value at target
+  spread: number;
+  dte: number;
+  moneyness: "ITM" | "ATM" | "OTM";
+  isSweetSpot: boolean;
+  // Phase 2 — Greeks + Composite
+  delta: number;
+  gamma: number;
+  theta: number;  // daily
+  iv: number;     // implied volatility (decimal, e.g. 0.35 = 35%)
+  compositeScore: number; // 0-1 weighted blend
+  // Phase 3 — Forward Pricing + Scenarios
+  forwardValue: number;   // BS-estimated option value at target (with time value)
+  forwardROI: number;     // ROI using forward value instead of intrinsic
+  scenarios: ScenarioResult[]; // 5-point scenario analysis
+}
+
+export type SortMode = "roi" | "premium" | "expiry" | "score";
+
+// ── Calculations ───────────────────────────────────────────────────────────────
+
+export function calcROI(
+  strike: number,
+  ask: number,
+  targetPrice: number,
+  contractType: "call" | "put"
+): number {
+  const intrinsic =
+    contractType === "call"
+      ? Math.max(0, targetPrice - strike)
+      : Math.max(0, strike - targetPrice);
+  return ((intrinsic - ask) / ask) * 100;
+}
+
+export function calcBreakeven(
+  strike: number,
+  ask: number,
+  contractType: "call" | "put"
+): number {
+  return contractType === "call" ? strike + ask : strike - ask;
+}
+
+export function calcEstValue(
+  strike: number,
+  targetPrice: number,
+  contractType: "call" | "put"
+): number {
+  return contractType === "call"
+    ? Math.max(0, targetPrice - strike)
+    : Math.max(0, strike - targetPrice);
+}
+
+export function spreadPct(bid: number, ask: number): number {
+  const mid = (bid + ask) / 2;
+  if (mid === 0) return 0;
+  return ((ask - bid) / mid) * 100;
+}
+
+export function moneynessLabel(
+  strike: number,
+  currentPrice: number,
+  contractType: "call" | "put"
+): "ITM" | "ATM" | "OTM" {
+  const diff = Math.abs(strike - currentPrice);
+  // ATM if within 0.5% of current price
+  if (diff / currentPrice < 0.005) return "ATM";
+  if (contractType === "call") {
+    return strike < currentPrice ? "ITM" : "OTM";
+  }
+  return strike > currentPrice ? "ITM" : "OTM";
+}
+
+export function daysUntil(dateStr: string): number {
+  const target = new Date(dateStr + "T00:00:00");
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+// ── Black-Scholes + Greeks ────────────────────────────────────────────────────
+
+/** Cumulative standard normal distribution (rational approximation) */
+function cdf(x: number): number {
+  const a1 = 0.254829592;
+  const a2 = -0.284496736;
+  const a3 = 1.421413741;
+  const a4 = -1.453152027;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
+
+  const sign = x < 0 ? -1 : 1;
+  const ax = Math.abs(x) / Math.SQRT2;
+  const t = 1.0 / (1.0 + p * ax);
+  const y =
+    1.0 -
+    ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-ax * ax);
+  return 0.5 * (1.0 + sign * y);
+}
+
+/** Standard normal probability density function */
+function pdf(x: number): number {
+  return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+}
+
+const RISK_FREE_RATE = 0.045; // ~4.5% US T-bill rate
+
+export function blackScholesCall(
+  S: number, K: number, T: number, r: number, sigma: number
+): number {
+  if (T <= 0) return Math.max(0, S - K);
+  if (sigma <= 0) return Math.max(0, S - K * Math.exp(-r * T));
+  const d1 = (Math.log(S / K) + (r + (sigma * sigma) / 2) * T) / (sigma * Math.sqrt(T));
+  const d2 = d1 - sigma * Math.sqrt(T);
+  return S * cdf(d1) - K * Math.exp(-r * T) * cdf(d2);
+}
+
+export function blackScholesPut(
+  S: number, K: number, T: number, r: number, sigma: number
+): number {
+  if (T <= 0) return Math.max(0, K - S);
+  if (sigma <= 0) return Math.max(0, K * Math.exp(-r * T) - S);
+  const d1 = (Math.log(S / K) + (r + (sigma * sigma) / 2) * T) / (sigma * Math.sqrt(T));
+  const d2 = d1 - sigma * Math.sqrt(T);
+  return K * Math.exp(-r * T) * cdf(-d2) - S * cdf(-d1);
+}
+
+export function blackScholes(
+  S: number, K: number, T: number, r: number, sigma: number,
+  type: "call" | "put"
+): number {
+  return type === "call"
+    ? blackScholesCall(S, K, T, r, sigma)
+    : blackScholesPut(S, K, T, r, sigma);
+}
+
+/** Compute d1 for Greeks derivation */
+function bsD1(S: number, K: number, T: number, r: number, sigma: number): number {
+  return (Math.log(S / K) + (r + (sigma * sigma) / 2) * T) / (sigma * Math.sqrt(T));
+}
+
+export interface GreeksResult {
+  delta: number;
+  gamma: number;
+  theta: number; // daily (negative for long options)
+  iv: number;    // implied volatility used
+}
+
+/** Compute Greeks from BS model */
+export function computeGreeks(
+  S: number, K: number, T: number, sigma: number,
+  type: "call" | "put"
+): GreeksResult {
+  const r = RISK_FREE_RATE;
+  if (T <= 0 || sigma <= 0) {
+    // At expiry: delta is 1 or 0, no gamma/theta
+    const itm = type === "call" ? S > K : K > S;
+    return { delta: itm ? (type === "call" ? 1 : -1) : 0, gamma: 0, theta: 0, iv: sigma };
+  }
+
+  const sqrtT = Math.sqrt(T);
+  const d1 = bsD1(S, K, T, r, sigma);
+  const d2 = d1 - sigma * sqrtT;
+  const pdfD1 = pdf(d1);
+
+  // Delta
+  const delta = type === "call" ? cdf(d1) : cdf(d1) - 1;
+
+  // Gamma (same for calls and puts)
+  const gamma = pdfD1 / (S * sigma * sqrtT);
+
+  // Theta (annualized, then convert to daily)
+  const term1 = -(S * pdfD1 * sigma) / (2 * sqrtT);
+  let thetaAnnual: number;
+  if (type === "call") {
+    thetaAnnual = term1 - r * K * Math.exp(-r * T) * cdf(d2);
+  } else {
+    thetaAnnual = term1 + r * K * Math.exp(-r * T) * cdf(-d2);
+  }
+  const thetaDaily = thetaAnnual / 365;
+
+  return { delta, gamma, theta: thetaDaily, iv: sigma };
+}
+
+/**
+ * Estimate implied volatility from market price using Newton-Raphson.
+ * Falls back to a reasonable default if convergence fails.
+ */
+export function estimateIV(
+  marketPrice: number, S: number, K: number, T: number,
+  type: "call" | "put"
+): number {
+  if (T <= 0 || marketPrice <= 0) return 0.30; // default 30%
+
+  const r = RISK_FREE_RATE;
+  let sigma = 0.30; // initial guess
+
+  for (let i = 0; i < 50; i++) {
+    const price = blackScholes(S, K, T, r, sigma, type);
+    const diff = price - marketPrice;
+
+    if (Math.abs(diff) < 0.001) return sigma;
+
+    // Vega = S * sqrt(T) * pdf(d1)
+    const d1 = bsD1(S, K, T, r, sigma);
+    const vega = S * Math.sqrt(T) * pdf(d1);
+
+    if (vega < 0.0001) break; // avoid division by near-zero
+
+    sigma -= diff / vega;
+    sigma = Math.max(0.01, Math.min(sigma, 5.0)); // clamp to reasonable range
+  }
+
+  return sigma;
+}
+
+// ── Composite Scoring (Phase 2) ──────────────────────────────────────────────
+
+const SCORING_WEIGHTS = {
+  roi: 0.35,
+  delta: 0.20,
+  theta: 0.15,
+  liquidity: 0.15,
+  iv: 0.15,
+};
+
+/** ROI score: higher is better, capped at 500% to avoid lottery-ticket bias */
+function roiScore(roi: number): number {
+  if (roi <= 0) return 0;
+  return Math.min(roi / 500, 1.0);
+}
+
+/** Delta score: peak at 0.35 (ideal for directional bets), drops off */
+function deltaScore(absDelta: number): number {
+  const idealCenter = 0.35;
+  const distance = Math.abs(absDelta - idealCenter);
+  return Math.max(0, 1.0 - distance / 0.35);
+}
+
+/** Theta score: lower daily decay per dollar invested is better */
+function thetaScore(theta: number, askPrice: number): number {
+  if (askPrice <= 0) return 0;
+  const thetaPerDollar = Math.abs(theta) / askPrice;
+  return Math.max(0, 1.0 - thetaPerDollar / 0.05);
+}
+
+/** Liquidity score: tighter spread + higher OI */
+function liquidityScore(bid: number, ask: number, openInterest: number): number {
+  const mid = (bid + ask) / 2;
+  const spreadScore = mid > 0 ? Math.max(0, 1.0 - (ask - bid) / mid / 0.15) : 0;
+  const oiScore = Math.min(openInterest / 1000, 1.0);
+  return spreadScore * 0.6 + oiScore * 0.4;
+}
+
+/** IV score: lower IV relative to a baseline is cheaper (better for buyers) */
+function ivScore(iv: number): number {
+  // Without historical IV rank, score based on absolute IV level
+  // <20% = cheap, 20-40% = normal, >60% = expensive
+  if (iv <= 0.20) return 1.0;
+  if (iv >= 0.80) return 0.0;
+  return Math.max(0, 1.0 - (iv - 0.20) / 0.60);
+}
+
+export function computeCompositeScore(
+  roi: number, delta: number, theta: number, ask: number,
+  bid: number, openInterest: number, iv: number
+): number {
+  const w = SCORING_WEIGHTS;
+  return (
+    w.roi * roiScore(roi) +
+    w.delta * deltaScore(Math.abs(delta)) +
+    w.theta * thetaScore(theta, ask) +
+    w.liquidity * liquidityScore(bid, ask, openInterest) +
+    w.iv * ivScore(iv)
+  );
+}
+
+// ── Phase 3: Forward Pricing + Scenario Analysis ─────────────────────────────
+
+/**
+ * Estimate what an option will be worth at a future stock price with
+ * remaining time value. Uses BS with S=futureStockPrice, T=time remaining
+ * after the projected date until expiry.
+ *
+ * This is the core Phase 3 upgrade over Phase 1's intrinsic-only estimate:
+ * - Captures remaining time value (longer-dated options worth more)
+ * - Accounts for how far ITM the option is at target
+ * - Uses current IV to model the uncertainty premium
+ */
+export function estimateValueAtTarget(
+  futureStockPrice: number,
+  strike: number,
+  expiryDate: string,
+  projectedDate: string,
+  iv: number,
+  type: "call" | "put"
+): number {
+  // T = remaining time from projected date to expiration, in years
+  const expiryMs = new Date(expiryDate + "T00:00:00").getTime();
+  const projMs = new Date(projectedDate + "T00:00:00").getTime();
+  const remainingDays = (expiryMs - projMs) / (1000 * 60 * 60 * 24);
+  const T = remainingDays / 365;
+
+  if (T <= 0) {
+    // Option expires on or before projected date — intrinsic only
+    return type === "call"
+      ? Math.max(0, futureStockPrice - strike)
+      : Math.max(0, strike - futureStockPrice);
+  }
+
+  // BS with S = future stock price, T = remaining time after target hit
+  return blackScholes(futureStockPrice, strike, T, RISK_FREE_RATE, iv, type);
+}
+
+/** Forward ROI: (estimated future option value - current premium) / current premium */
+export function calcForwardROI(
+  strike: number,
+  ask: number,
+  targetPrice: number,
+  expiryDate: string,
+  projectedDate: string,
+  iv: number,
+  type: "call" | "put"
+): number {
+  const futureValue = estimateValueAtTarget(
+    targetPrice, strike, expiryDate, projectedDate, iv, type
+  );
+  if (ask <= 0) return 0;
+  return ((futureValue - ask) / ask) * 100;
+}
+
+/** A single scenario outcome for a contract */
+export interface ScenarioResult {
+  label: string;
+  stockPrice: number;
+  optionValue: number;
+  roi: number; // percentage
+}
+
+/**
+ * Run 5 price scenarios through BS forward-pricing to show the user
+ * what happens to their option at different stock outcomes.
+ */
+export function runScenarios(
+  currentPrice: number,
+  targetPrice: number,
+  strike: number,
+  ask: number,
+  expiryDate: string,
+  projectedDate: string,
+  iv: number,
+  type: "call" | "put"
+): ScenarioResult[] {
+  // For shorts, the "move" goes downward (target < current)
+  const move = targetPrice - currentPrice;
+
+  const scenarios = [
+    { label: "No move", price: currentPrice },
+    { label: "25%", price: currentPrice + move * 0.25 },
+    { label: "50%", price: currentPrice + move * 0.5 },
+    { label: "75%", price: currentPrice + move * 0.75 },
+    { label: "Target", price: targetPrice },
+  ];
+
+  return scenarios.map((s) => {
+    const optionValue = estimateValueAtTarget(
+      s.price, strike, expiryDate, projectedDate, iv, type
+    );
+    const roi = ask > 0 ? ((optionValue - ask) / ask) * 100 : 0;
+    return {
+      label: s.label,
+      stockPrice: Math.round(s.price * 100) / 100,
+      optionValue: Math.round(optionValue * 100) / 100,
+      roi: Math.round(roi * 10) / 10,
+    };
+  });
+}
+
+// ── Filtering ──────────────────────────────────────────────────────────────────
+
+export interface FilterConfig {
+  minOpenInterest: number;
+  maxSpreadPct: number;
+  minDtePastProjected: number;
+}
+
+export const DEFAULT_FILTERS: FilterConfig = {
+  minOpenInterest: 1, // Relaxed: using prev-close volume as OI proxy
+  maxSpreadPct: 20,
+  minDtePastProjected: 14,
+};
+
+export function filterContracts(
+  contracts: RawContract[],
+  trade: TradeInput,
+  filters: FilterConfig = DEFAULT_FILTERS
+): RawContract[] {
+  const expectedType = trade.direction === "LONG" ? "call" : "put";
+  const projectedDte = daysUntil(trade.projectedDate);
+  const minDte = projectedDte + filters.minDtePastProjected;
+
+  return contracts.filter((c) => {
+    // Must be correct contract type
+    if (c.details.contract_type !== expectedType) return false;
+
+    // Must have valid quote
+    if (!c.last_quote || c.last_quote.ask <= 0) return false;
+
+    // Expiry at least N days past projected date
+    const dte = daysUntil(c.details.expiration_date);
+    if (dte < minDte) return false;
+
+    // Open interest threshold
+    if (c.open_interest < filters.minOpenInterest) return false;
+
+    // Bid-ask spread
+    const spread = spreadPct(c.last_quote.bid, c.last_quote.ask);
+    if (spread > filters.maxSpreadPct) return false;
+
+    return true;
+  });
+}
+
+// ── Enrichment ─────────────────────────────────────────────────────────────────
+
+export function enrichContracts(
+  contracts: RawContract[],
+  trade: TradeInput
+): EnrichedContract[] {
+  const enriched = contracts.map((c): EnrichedContract => {
+    const strike = c.details.strike_price;
+    const ask = c.last_quote!.ask;
+    const bid = c.last_quote!.bid;
+    const mid = c.last_quote!.midpoint || (ask + bid) / 2;
+    const oi = c.open_interest;
+    const type = c.details.contract_type;
+    const dte = daysUntil(c.details.expiration_date);
+    const T = Math.max(dte / 365, 0.001); // time to expiry in years
+
+    // Phase 2: Estimate IV from market price, then compute Greeks
+    const iv = estimateIV(mid, trade.currentPrice, strike, T, type);
+    const greeks = computeGreeks(trade.currentPrice, strike, T, iv, type);
+
+    const roi = calcROI(strike, ask, trade.priceTargetHigh, type);
+
+    // Phase 3: Forward pricing — BS with time value at projected date
+    const fwdValue = estimateValueAtTarget(
+      trade.priceTargetHigh, strike, c.details.expiration_date,
+      trade.projectedDate, iv, type
+    );
+    const fwdROI = ask > 0 ? ((fwdValue - ask) / ask) * 100 : 0;
+    const scenarios = runScenarios(
+      trade.currentPrice, trade.priceTargetHigh, strike, ask,
+      c.details.expiration_date, trade.projectedDate, iv, type
+    );
+
+    // Phase 3: Score uses forward ROI (captures time value) instead of intrinsic
+    const score = computeCompositeScore(
+      fwdROI, greeks.delta, greeks.theta, ask, bid, oi, iv
+    );
+
+    return {
+      id: c.details.ticker,
+      strike,
+      expiry: c.details.expiration_date,
+      ask,
+      bid,
+      openInterest: oi,
+      contractType: type,
+      roi,
+      breakeven: calcBreakeven(strike, ask, type),
+      estValue: calcEstValue(strike, trade.priceTargetHigh, type),
+      spread: spreadPct(bid, ask),
+      dte,
+      moneyness: moneynessLabel(strike, trade.currentPrice, type),
+      isSweetSpot: false, // computed below
+      delta: greeks.delta,
+      gamma: greeks.gamma,
+      theta: greeks.theta,
+      iv,
+      compositeScore: score,
+      forwardValue: Math.round(fwdValue * 100) / 100,
+      forwardROI: Math.round(fwdROI * 10) / 10,
+      scenarios,
+    };
+  });
+
+  // Sort by composite score descending (Phase 2 default)
+  enriched.sort((a, b) => b.compositeScore - a.compositeScore);
+
+  // Detect sweet spot using composite score
+  markSweetSpot(enriched);
+
+  return enriched;
+}
+
+function markSweetSpot(contracts: EnrichedContract[]): void {
+  if (contracts.length === 0) return;
+
+  // Phase 2: Sweet spot = highest composite score with delta in ideal range
+  let bestIdx = -1;
+  let bestScore = -Infinity;
+
+  for (let i = 0; i < contracts.length; i++) {
+    const c = contracts[i];
+    const absDelta = Math.abs(c.delta);
+
+    // Must have positive ROI and reasonable delta
+    if (c.roi <= 0) continue;
+    if (absDelta < 0.15 || absDelta > 0.75) continue;
+    if (c.spread >= 15) continue;
+
+    if (c.compositeScore > bestScore) {
+      bestScore = c.compositeScore;
+      bestIdx = i;
+    }
+  }
+
+  if (bestIdx >= 0) {
+    contracts[bestIdx].isSweetSpot = true;
+  }
+}
+
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 !== 0
+    ? sorted[mid]
+    : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+// ── Sorting ────────────────────────────────────────────────────────────────────
+
+export function sortContracts(
+  contracts: EnrichedContract[],
+  sortBy: SortMode
+): EnrichedContract[] {
+  const sorted = [...contracts];
+  switch (sortBy) {
+    case "score":
+      sorted.sort((a, b) => b.compositeScore - a.compositeScore);
+      break;
+    case "roi":
+      sorted.sort((a, b) => b.roi - a.roi);
+      break;
+    case "premium":
+      sorted.sort((a, b) => a.ask - b.ask);
+      break;
+    case "expiry":
+      sorted.sort((a, b) => a.dte - b.dte);
+      break;
+  }
+  return sorted;
+}
+
+// ── Formatting helpers ─────────────────────────────────────────────────────────
+
+export function formatMoney(val: number): string {
+  return "$" + val.toFixed(2);
+}
+
+export function formatPct(val: number): string {
+  const sign = val >= 0 ? "+" : "";
+  return sign + val.toFixed(1) + "%";
+}
+
+export function formatDate(dateStr: string): string {
+  const parts = dateStr.split("-");
+  const months = [
+    "Jan","Feb","Mar","Apr","May","Jun",
+    "Jul","Aug","Sep","Oct","Nov","Dec",
+  ];
+  return months[parseInt(parts[1], 10) - 1] + " " + parseInt(parts[2], 10);
+}
+
+// ── Polygon API fetch helpers (server-side) ────────────────────────────────────
+
+const POLYGON_BASE = "https://api.polygon.io";
+
+/** Reference contract from /v3/reference/options/contracts */
+interface ContractRef {
+  ticker: string; // e.g. "O:SPY260515C00570000"
+  underlying_ticker: string;
+  contract_type: "call" | "put";
+  expiration_date: string;
+  strike_price: number;
+  exercise_style: string;
+  shares_per_contract: number;
+}
+
+/**
+ * Two-step fetch: contracts reference (available strikes) + prev-close prices.
+ * Works on Polygon free/starter plans that don't have snapshot access.
+ */
+export async function fetchOptionsChain(
+  ticker: string,
+  direction: "LONG" | "SHORT",
+  currentPrice: number,
+  projectedDate: string,
+  targetPrice?: number
+): Promise<RawContract[]> {
+  const apiKey = process.env.POLYGON_API_KEY;
+  if (!apiKey || apiKey === "your-polygon-key") return [];
+
+  const contractType = direction === "LONG" ? "call" : "put";
+
+  // Expiration window: projected date + 14d to + 90d
+  const projDate = new Date(projectedDate + "T00:00:00");
+  const minExpiry = new Date(projDate.getTime() + 14 * 86400000)
+    .toISOString()
+    .split("T")[0];
+  const maxExpiry = new Date(projDate.getTime() + 90 * 86400000)
+    .toISOString()
+    .split("T")[0];
+
+  // Strike window: from 10% below current to target + 5% (captures OTM sweet spot)
+  const effectiveTarget = targetPrice ?? currentPrice * (direction === "LONG" ? 1.15 : 0.85);
+  const strikeLow = Math.floor(Math.min(currentPrice, effectiveTarget) * 0.90);
+  const strikeHigh = Math.ceil(Math.max(currentPrice, effectiveTarget) * 1.05);
+
+  // Step 1: Get available contracts from reference endpoint
+  const refs = await fetchContractRefs(
+    ticker, contractType, strikeLow, strikeHigh, minExpiry, maxExpiry, apiKey
+  );
+
+  if (refs.length === 0) return [];
+
+  // Step 2: Narrow down to the most interesting contracts before pricing.
+  // Select across strike ranges and expiry dates for diverse Phase 2 scoring.
+  // Select diverse candidates across strikes and expiries
+  const pricingCandidates = selectPricingCandidates(refs, currentPrice, 15);
+
+  // Fetch all prices in parallel (paid Polygon plan supports high rate limits)
+  const contracts = await fetchContractPrices(pricingCandidates, apiKey, currentPrice);
+
+  return contracts;
+}
+
+async function fetchContractRefs(
+  ticker: string,
+  contractType: string,
+  strikeLow: number,
+  strikeHigh: number,
+  minExpiry: string,
+  maxExpiry: string,
+  apiKey: string
+): Promise<ContractRef[]> {
+  const url =
+    `${POLYGON_BASE}/v3/reference/options/contracts?` +
+    `underlying_ticker=${ticker.toUpperCase()}&` +
+    `contract_type=${contractType}&` +
+    `expiration_date.gte=${minExpiry}&` +
+    `expiration_date.lte=${maxExpiry}&` +
+    `strike_price.gte=${strikeLow}&` +
+    `strike_price.lte=${strikeHigh}&` +
+    `limit=250&` +
+    `apiKey=${apiKey}`;
+
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) {
+      console.warn(`[Options refs] ${res.status} for ${ticker}`);
+      return [];
+    }
+    const data = await res.json();
+    return (data.results ?? []) as ContractRef[];
+  } catch (err) {
+    console.warn("[Options refs] fetch error:", err);
+    return [];
+  }
+}
+
+/**
+ * Select diverse contracts across strike ranges and expiry dates.
+ * Spreads picks across near-ATM, slightly-OTM, and moderately-OTM strikes
+ * at multiple expiry dates to give the composite scorer a good variety.
+ */
+function selectPricingCandidates(
+  refs: ContractRef[],
+  currentPrice: number,
+  maxCount: number
+): ContractRef[] {
+  // Group by expiry, sorted chronologically
+  const byExpiry = new Map<string, ContractRef[]>();
+  for (const ref of refs) {
+    const group = byExpiry.get(ref.expiration_date) ?? [];
+    group.push(ref);
+    byExpiry.set(ref.expiration_date, group);
+  }
+
+  const expiryDates = [...byExpiry.keys()].sort();
+  // Pick up to 3 expiry dates (earliest, middle, latest) for variety
+  const selectedExpiries: string[] = [];
+  if (expiryDates.length <= 3) {
+    selectedExpiries.push(...expiryDates);
+  } else {
+    selectedExpiries.push(expiryDates[0]);
+    selectedExpiries.push(expiryDates[Math.floor(expiryDates.length / 2)]);
+    selectedExpiries.push(expiryDates[expiryDates.length - 1]);
+  }
+
+  const strikesPerExpiry = Math.max(3, Math.floor(maxCount / selectedExpiries.length));
+  const selected: ContractRef[] = [];
+
+  for (const expiry of selectedExpiries) {
+    const group = byExpiry.get(expiry) ?? [];
+
+    // Sort by strike price
+    const sorted = [...group].sort((a, b) => a.strike_price - b.strike_price);
+
+    // Pick strikes in 3 zones: near-ATM, slightly OTM, moderately OTM
+    const nearATM: ContractRef[] = [];
+    const slightlyOTM: ContractRef[] = [];
+    const modOTM: ContractRef[] = [];
+
+    for (const ref of sorted) {
+      const pctFromCurrent = (ref.strike_price - currentPrice) / currentPrice;
+      const absPct = Math.abs(pctFromCurrent);
+      if (absPct <= 0.03) nearATM.push(ref);
+      else if (absPct <= 0.08) slightlyOTM.push(ref);
+      else modOTM.push(ref);
+    }
+
+    // Distribute picks: ~40% near-ATM, ~35% slightly OTM, ~25% moderately OTM
+    const nearCount = Math.max(1, Math.round(strikesPerExpiry * 0.4));
+    const slightCount = Math.max(1, Math.round(strikesPerExpiry * 0.35));
+    const modCount = Math.max(1, strikesPerExpiry - nearCount - slightCount);
+
+    selected.push(...nearATM.slice(0, nearCount));
+    selected.push(...slightlyOTM.slice(0, slightCount));
+    selected.push(...modOTM.slice(0, modCount));
+  }
+
+  // Dedupe by ticker
+  const seen = new Set<string>();
+  const deduped = selected.filter((ref) => {
+    if (seen.has(ref.ticker)) return false;
+    seen.add(ref.ticker);
+    return true;
+  });
+
+  return deduped.slice(0, maxCount);
+}
+
+async function fetchContractPrices(
+  refs: ContractRef[],
+  apiKey: string,
+  currentPrice: number
+): Promise<RawContract[]> {
+  // Fetch all in parallel (paid Polygon plan)
+  const results: RawContract[] = [];
+
+  {
+    const batchResults = await Promise.all(
+      refs.map(async (ref): Promise<RawContract | null> => {
+        try {
+          const res = await fetch(
+            `${POLYGON_BASE}/v2/aggs/ticker/${ref.ticker}/prev?apiKey=${apiKey}`,
+            { cache: "no-store" }
+          );
+          if (!res.ok) {
+            if (res.status === 429) console.warn(`[Options] Rate limited fetching ${ref.ticker}`);
+            return null;
+          }
+          const data = await res.json();
+          const bar = data.results?.[0];
+
+          let close: number;
+          let volume: number;
+
+          if (bar) {
+            close = bar.c as number;
+            volume = (bar.v as number) ?? 0;
+          } else {
+            // No prev-close bar — estimate price via Black-Scholes
+            const dte = daysUntil(ref.expiration_date);
+            const T = Math.max(dte / 365, 0.001);
+            const defaultIV = 0.35; // reasonable fallback IV
+            close = blackScholes(
+              currentPrice, ref.strike_price, T, RISK_FREE_RATE, defaultIV,
+              ref.contract_type
+            );
+            if (close < 0.01) close = 0.01;
+            volume = 0;
+          }
+
+          // Derive approximate bid/ask from close: tighter spread for liquid contracts
+          const estimatedSpread = close * (volume > 100 ? 0.03 : 0.08);
+          const bid = Math.max(0.01, close - estimatedSpread / 2);
+          const ask = close + estimatedSpread / 2;
+
+          return {
+            details: {
+              contract_type: ref.contract_type,
+              exercise_style: ref.exercise_style,
+              expiration_date: ref.expiration_date,
+              shares_per_contract: ref.shares_per_contract,
+              strike_price: ref.strike_price,
+              ticker: ref.ticker,
+            },
+            day: {
+              change: 0,
+              change_percent: 0,
+              close,
+              high: (bar.h as number) ?? close,
+              low: (bar.l as number) ?? close,
+              open: (bar.o as number) ?? close,
+              previous_close: close,
+              volume,
+              vwap: (bar.vw as number) ?? close,
+            },
+            greeks: null,
+            implied_volatility: null,
+            last_quote: {
+              ask: Math.round(ask * 100) / 100,
+              ask_size: 0,
+              bid: Math.round(bid * 100) / 100,
+              bid_size: 0,
+              midpoint: close,
+            },
+            open_interest: Math.max(volume, 1), // Use volume as OI proxy; floor to 1 so filters don't reject contracts with 0 prev-day volume
+            break_even_price: undefined,
+            underlying_asset: null,
+          };
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    for (const r of batchResults) {
+      if (r) results.push(r);
+    }
+  }
+
+  return results;
+}

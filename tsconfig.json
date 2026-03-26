@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@repo/db": ["../../packages/db/src/index.ts"],
+      "@repo/agents": ["../../packages/agents/src/index.ts"]
     }
   },
   "include": [
