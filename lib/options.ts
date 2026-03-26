@@ -732,13 +732,13 @@ async function fetchContractRefs(
     `apiKey=${apiKey}`;
 
   try {
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) {
-      console.warn(`[Options refs] ${res.status} for ${ticker}`);
+    const { ok, data } = await fetchPolygonCached(url);
+    if (!ok) {
+      console.warn(`[Options refs] failed for ${ticker}`);
       return [];
     }
-    const data = await res.json();
-    return (data.results ?? []) as ContractRef[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return ((data as any).results ?? []) as ContractRef[];
   } catch (err) {
     console.warn("[Options refs] fetch error:", err);
     return [];
@@ -817,96 +817,118 @@ function selectPricingCandidates(
   return deduped.slice(0, maxCount);
 }
 
+/** In-memory cache for Polygon API responses (TTL-based) */
+const polygonCache = new Map<string, { data: unknown; expiry: number }>();
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+async function fetchPolygonCached(url: string): Promise<{ ok: boolean; data: unknown }> {
+  const cached = polygonCache.get(url);
+  if (cached && cached.expiry > Date.now()) {
+    return { ok: true, data: cached.data };
+  }
+
+  // Retry on 429 with exponential backoff
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await fetch(url, { cache: "no-store" });
+    if (res.status === 429) {
+      const delay = 12000 * (attempt + 1); // 12s, 24s, 36s
+      console.warn(`[Options] Rate limited, waiting ${delay / 1000}s (attempt ${attempt + 1}/3)`);
+      await new Promise((r) => setTimeout(r, delay));
+      continue;
+    }
+    if (!res.ok) return { ok: false, data: null };
+    const data = await res.json();
+    polygonCache.set(url, { data, expiry: Date.now() + CACHE_TTL_MS });
+    return { ok: true, data };
+  }
+  return { ok: false, data: null };
+}
+
 async function fetchContractPrices(
   refs: ContractRef[],
   apiKey: string,
   currentPrice: number
 ): Promise<RawContract[]> {
-  // Fetch all in parallel (paid Polygon plan)
   const results: RawContract[] = [];
 
-  {
-    const batchResults = await Promise.all(
-      refs.map(async (ref): Promise<RawContract | null> => {
-        try {
-          const res = await fetch(
-            `${POLYGON_BASE}/v2/aggs/ticker/${ref.ticker}/prev?apiKey=${apiKey}`,
-            { cache: "no-store" }
-          );
-          if (!res.ok) {
-            if (res.status === 429) console.warn(`[Options] Rate limited fetching ${ref.ticker}`);
-            return null;
-          }
-          const data = await res.json();
-          const bar = data.results?.[0];
-
-          let close: number;
-          let volume: number;
-
-          if (bar) {
-            close = bar.c as number;
-            volume = (bar.v as number) ?? 0;
-          } else {
-            // No prev-close bar — estimate price via Black-Scholes
-            const dte = daysUntil(ref.expiration_date);
-            const T = Math.max(dte / 365, 0.001);
-            const defaultIV = 0.35; // reasonable fallback IV
-            close = blackScholes(
-              currentPrice, ref.strike_price, T, RISK_FREE_RATE, defaultIV,
-              ref.contract_type
-            );
-            if (close < 0.01) close = 0.01;
-            volume = 0;
-          }
-
-          // Derive approximate bid/ask from close: tighter spread for liquid contracts
-          const estimatedSpread = close * (volume > 100 ? 0.03 : 0.08);
-          const bid = Math.max(0.01, close - estimatedSpread / 2);
-          const ask = close + estimatedSpread / 2;
-
-          return {
-            details: {
-              contract_type: ref.contract_type,
-              exercise_style: ref.exercise_style,
-              expiration_date: ref.expiration_date,
-              shares_per_contract: ref.shares_per_contract,
-              strike_price: ref.strike_price,
-              ticker: ref.ticker,
-            },
-            day: {
-              change: 0,
-              change_percent: 0,
-              close,
-              high: bar ? (bar.h as number) ?? close : close,
-              low: bar ? (bar.l as number) ?? close : close,
-              open: bar ? (bar.o as number) ?? close : close,
-              previous_close: close,
-              volume,
-              vwap: bar ? (bar.vw as number) ?? close : close,
-            },
-            greeks: null,
-            implied_volatility: null,
-            last_quote: {
-              ask: Math.round(ask * 100) / 100,
-              ask_size: 0,
-              bid: Math.round(bid * 100) / 100,
-              bid_size: 0,
-              midpoint: close,
-            },
-            open_interest: Math.max(volume, 1), // Use volume as OI proxy; floor to 1 so filters don't reject contracts with 0 prev-day volume
-            break_even_price: undefined,
-            underlying_asset: null,
-          };
-        } catch {
-          return null;
-        }
-      })
-    );
-
-    for (const r of batchResults) {
-      if (r) results.push(r);
-    }
+  // Fetch sequentially to avoid Polygon rate limits on free plan
+  for (const ref of refs) {
+    const result = await fetchSingleContractPrice(ref, apiKey, currentPrice);
+    if (result) results.push(result);
   }
 
   return results;
+}
+
+async function fetchSingleContractPrice(
+  ref: ContractRef,
+  apiKey: string,
+  currentPrice: number
+): Promise<RawContract | null> {
+  try {
+    const { ok, data } = await fetchPolygonCached(
+      `${POLYGON_BASE}/v2/aggs/ticker/${ref.ticker}/prev?apiKey=${apiKey}`
+    );
+    if (!ok) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const bar = (data as any).results?.[0];
+
+    let close: number;
+    let volume: number;
+
+    if (bar) {
+      close = bar.c as number;
+      volume = (bar.v as number) ?? 0;
+    } else {
+      const dte = daysUntil(ref.expiration_date);
+      const T = Math.max(dte / 365, 0.001);
+      const defaultIV = 0.35;
+      close = blackScholes(
+        currentPrice, ref.strike_price, T, RISK_FREE_RATE, defaultIV,
+        ref.contract_type
+      );
+      if (close < 0.01) close = 0.01;
+      volume = 0;
+    }
+
+    const estimatedSpread = close * (volume > 100 ? 0.03 : 0.08);
+    const bid = Math.max(0.01, close - estimatedSpread / 2);
+    const ask = close + estimatedSpread / 2;
+
+    return {
+      details: {
+        contract_type: ref.contract_type,
+        exercise_style: ref.exercise_style,
+        expiration_date: ref.expiration_date,
+        shares_per_contract: ref.shares_per_contract,
+        strike_price: ref.strike_price,
+        ticker: ref.ticker,
+      },
+      day: {
+        change: 0,
+        change_percent: 0,
+        close,
+        high: bar ? (bar.h as number) ?? close : close,
+        low: bar ? (bar.l as number) ?? close : close,
+        open: bar ? (bar.o as number) ?? close : close,
+        previous_close: close,
+        volume,
+        vwap: bar ? (bar.vw as number) ?? close : close,
+      },
+      greeks: null,
+      implied_volatility: null,
+      last_quote: {
+        ask: Math.round(ask * 100) / 100,
+        ask_size: 0,
+        bid: Math.round(bid * 100) / 100,
+        bid_size: 0,
+        midpoint: close,
+      },
+      open_interest: Math.max(volume, 1),
+      break_even_price: undefined,
+      underlying_asset: null,
+    };
+  } catch {
+    return null;
+  }
 }
