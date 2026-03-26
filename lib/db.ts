@@ -1,5 +1,9 @@
 // db.ts — Prisma v7 client singleton with pg adapter
 
+import dns from "dns";
+// Force IPv4 resolution — Railway cannot reach Supabase over IPv6
+dns.setDefaultResultOrder("ipv4first");
+
 import { PrismaClient } from "@/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 
