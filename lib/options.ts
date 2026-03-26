@@ -693,20 +693,32 @@ export async function fetchOptionsChain(
   const strikeLow = Math.floor(Math.min(currentPrice, effectiveTarget) * 0.90);
   const strikeHigh = Math.ceil(Math.max(currentPrice, effectiveTarget) * 1.05);
 
-  // Step 1: Get available contracts from reference endpoint
+  // Step 1: Get available contracts from reference endpoint (cached 30min)
   const refs = await fetchContractRefs(
     ticker, contractType, strikeLow, strikeHigh, minExpiry, maxExpiry, apiKey
   );
 
-  if (refs.length === 0) return [];
+  // If Polygon is unavailable, generate synthetic contracts from BS model
+  if (refs.length === 0) {
+    console.log(`[Options] Polygon unavailable, generating synthetic contracts for ${ticker}`);
+    return generateSyntheticContracts(ticker, contractType, currentPrice, strikeLow, strikeHigh, minExpiry, maxExpiry);
+  }
 
-  // Step 2: Narrow down to the most interesting contracts before pricing.
-  // Select across strike ranges and expiry dates for diverse Phase 2 scoring.
-  // Select diverse candidates across strikes and expiries
+  // Step 2: Narrow down to the most interesting contracts
   const pricingCandidates = selectPricingCandidates(refs, currentPrice, 15);
 
-  // Fetch all prices in parallel (paid Polygon plan supports high rate limits)
+  // Step 3: Try real prices first, fall back to Black-Scholes
   const contracts = await fetchContractPrices(pricingCandidates, apiKey, currentPrice);
+
+  // Mix in BS estimates for any candidates that didn't get real prices
+  if (contracts.length < pricingCandidates.length) {
+    const gotTickers = new Set(contracts.map((c) => c.details.ticker));
+    const missing = pricingCandidates.filter((ref) => !gotTickers.has(ref.ticker));
+    if (missing.length > 0) {
+      console.log(`[Options] ${contracts.length} real prices, ${missing.length} BS estimates for ${ticker}`);
+      contracts.push(...missing.map((ref) => buildBSContract(ref, currentPrice)));
+    }
+  }
 
   return contracts;
 }
@@ -819,7 +831,7 @@ function selectPricingCandidates(
 
 /** In-memory cache for Polygon API responses (TTL-based) */
 const polygonCache = new Map<string, { data: unknown; expiry: number }>();
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes — Polygon free plan rate limits aggressively
 
 async function fetchPolygonCached(url: string): Promise<{ ok: boolean; data: unknown }> {
   const cached = polygonCache.get(url);
@@ -827,21 +839,122 @@ async function fetchPolygonCached(url: string): Promise<{ ok: boolean; data: unk
     return { ok: true, data: cached.data };
   }
 
-  // Retry on 429 with exponential backoff
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const res = await fetch(url, { cache: "no-store" });
+  // Single attempt with 8s timeout — don't block the UI with long retries
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(url, { cache: "no-store", signal: controller.signal });
+    clearTimeout(timeout);
+
     if (res.status === 429) {
-      const delay = 12000 * (attempt + 1); // 12s, 24s, 36s
-      console.warn(`[Options] Rate limited, waiting ${delay / 1000}s (attempt ${attempt + 1}/3)`);
-      await new Promise((r) => setTimeout(r, delay));
-      continue;
+      console.warn("[Options] Rate limited by Polygon");
+      return { ok: false, data: null };
     }
     if (!res.ok) return { ok: false, data: null };
     const data = await res.json();
     polygonCache.set(url, { data, expiry: Date.now() + CACHE_TTL_MS });
     return { ok: true, data };
+  } catch {
+    return { ok: false, data: null };
   }
-  return { ok: false, data: null };
+}
+
+/** Build a contract using Black-Scholes when Polygon prices are unavailable */
+function buildBSContract(ref: ContractRef, currentPrice: number): RawContract {
+  const dte = daysUntil(ref.expiration_date);
+  const T = Math.max(dte / 365, 0.001);
+  const defaultIV = 0.35;
+  let close = blackScholes(
+    currentPrice, ref.strike_price, T, RISK_FREE_RATE, defaultIV,
+    ref.contract_type
+  );
+  if (close < 0.01) close = 0.01;
+
+  const estimatedSpread = close * 0.08;
+  const bid = Math.max(0.01, close - estimatedSpread / 2);
+  const ask = close + estimatedSpread / 2;
+
+  return {
+    details: {
+      contract_type: ref.contract_type,
+      exercise_style: ref.exercise_style,
+      expiration_date: ref.expiration_date,
+      shares_per_contract: ref.shares_per_contract,
+      strike_price: ref.strike_price,
+      ticker: ref.ticker,
+    },
+    day: {
+      change: 0, change_percent: 0, close,
+      high: close, low: close, open: close,
+      previous_close: close, volume: 0, vwap: close,
+    },
+    greeks: null,
+    implied_volatility: null,
+    last_quote: {
+      ask: Math.round(ask * 100) / 100,
+      ask_size: 0,
+      bid: Math.round(bid * 100) / 100,
+      bid_size: 0,
+      midpoint: close,
+    },
+    open_interest: 1,
+    break_even_price: undefined,
+    underlying_asset: null,
+  };
+}
+
+/** Generate synthetic option contracts when Polygon is unavailable */
+function generateSyntheticContracts(
+  ticker: string,
+  contractType: string,
+  currentPrice: number,
+  strikeLow: number,
+  strikeHigh: number,
+  minExpiry: string,
+  maxExpiry: string
+): RawContract[] {
+  // Generate strikes at standard intervals ($1 for <$50, $5 for <$200, $10 for >$200)
+  const strikeInterval = currentPrice < 50 ? 1 : currentPrice < 200 ? 5 : 10;
+  const strikes: number[] = [];
+  for (let s = Math.ceil(strikeLow / strikeInterval) * strikeInterval; s <= strikeHigh; s += strikeInterval) {
+    strikes.push(s);
+  }
+
+  // Generate 3 expiry dates spread across the window
+  const minDate = new Date(minExpiry + "T00:00:00");
+  const maxDate = new Date(maxExpiry + "T00:00:00");
+  const range = maxDate.getTime() - minDate.getTime();
+  const expiries: string[] = [];
+  for (let i = 0; i < 3; i++) {
+    const d = new Date(minDate.getTime() + (range * (i + 1)) / 4);
+    // Snap to next Friday
+    const day = d.getDay();
+    const daysToFri = (5 - day + 7) % 7 || 7;
+    d.setDate(d.getDate() + daysToFri);
+    expiries.push(d.toISOString().split("T")[0]);
+  }
+
+  // Build refs and convert to contracts
+  const refs: ContractRef[] = [];
+  for (const expiry of expiries) {
+    for (const strike of strikes) {
+      const pad = String(strike * 1000).padStart(8, "0");
+      const expStr = expiry.replace(/-/g, "").slice(2);
+      const typeChar = contractType === "call" ? "C" : "P";
+      refs.push({
+        ticker: `O:${ticker}${expStr}${typeChar}${pad}`,
+        contract_type: contractType,
+        exercise_style: "american",
+        expiration_date: expiry,
+        shares_per_contract: 100,
+        strike_price: strike,
+      });
+    }
+  }
+
+  // Limit to 15 diverse picks
+  const selected = selectPricingCandidates(refs, currentPrice, 15);
+  return selected.map((ref) => buildBSContract(ref, currentPrice));
 }
 
 async function fetchContractPrices(
