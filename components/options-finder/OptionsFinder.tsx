@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useOptionsFinderStore } from "@/stores/options-finder";
 import { sortContracts } from "@/lib/options";
 import type { TradeInput, CustomTradeInput } from "@/lib/options";
@@ -13,7 +13,10 @@ import { ContractCard } from "@/components/options-finder/ContractCard";
 import { SummaryFooter } from "@/components/options-finder/SummaryFooter";
 import { EmptyState } from "@/components/options-finder/EmptyState";
 import { MethodologyNote } from "@/components/options-finder/MethodologyNote";
+import { AccuracyDashboard } from "@/components/options-finder/AccuracyDashboard";
 import { ShimmerLoader } from "@/components/primitives/ShimmerLoader";
+
+type Tab = "finder" | "accuracy";
 
 export function OptionsFinder() {
   const store = useOptionsFinderStore();
@@ -38,6 +41,7 @@ export function OptionsFinder() {
     hydrateFromStorage,
   } = store;
 
+  const [activeTab, setActiveTab] = useState<Tab>("finder");
   const fetchIdRef = useRef(0);
 
   // Hydrate custom tickers from localStorage after mount (avoids SSR mismatch)
@@ -213,9 +217,47 @@ export function OptionsFinder() {
         margin: "0 auto",
       }}
     >
-      <PageHeader status={isLoading ? "Loading..." : undefined} />
+      <PageHeader status={isLoading && activeTab === "finder" ? "Loading..." : undefined} />
 
-      <TickerSelector
+      {/* Tab bar */}
+      <div
+        style={{
+          display: "flex",
+          gap: 0,
+          marginBottom: 20,
+          borderBottom: "1px solid var(--border-default)",
+        }}
+      >
+        {(["finder", "accuracy"] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            style={{
+              background: "none",
+              border: "none",
+              borderBottom: activeTab === tab
+                ? "2px solid var(--accent-primary)"
+                : "2px solid transparent",
+              padding: "8px 16px",
+              fontSize: 12,
+              fontWeight: 500,
+              fontFamily: "var(--font-dm-sans), system-ui, sans-serif",
+              color: activeTab === tab
+                ? "var(--accent-primary)"
+                : "var(--text-tertiary)",
+              cursor: "pointer",
+              transition: "color 120ms, border-color 120ms",
+              letterSpacing: "0.02em",
+            }}
+          >
+            {tab === "finder" ? "Options Finder" : "Accuracy"}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "accuracy" && <AccuracyDashboard />}
+
+      {activeTab === "finder" && <><TickerSelector
         selected={selectedTicker}
         coachTickers={coachTickers}
         coachTrades={coachTrades}
@@ -358,6 +400,7 @@ export function OptionsFinder() {
       )}
 
       <MethodologyNote />
+      </>}
     </div>
   );
 }
