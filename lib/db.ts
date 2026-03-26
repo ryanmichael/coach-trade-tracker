@@ -24,6 +24,7 @@ function createPrismaClient(): PrismaClientInstance {
   // Parse the connection string to extract components
   const url = new URL(connectionString);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pool = new Pool({
     host: url.hostname,
     port: parseInt(url.port || "5432", 10),
@@ -31,14 +32,14 @@ function createPrismaClient(): PrismaClientInstance {
     password: decodeURIComponent(url.password),
     database: url.pathname.slice(1), // remove leading /
     ssl: { rejectUnauthorized: false },
-    // Force IPv4 resolution at the socket level
+    // Force IPv4 resolution — Railway cannot reach Supabase over IPv6
     lookup: (hostname: string, _options: unknown, callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void) => {
       dns.resolve4(hostname).then(
         (addresses) => callback(null, addresses[0], 4),
         (err) => callback(err as NodeJS.ErrnoException, "", 0)
       );
     },
-  });
+  } as any);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const adapter = new PrismaPg(pool as any);
