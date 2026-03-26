@@ -1,23 +1,11 @@
 // db.ts — Prisma v7 client singleton with pg adapter
+//
+// Railway cannot reach Supabase over IPv6 (ENETUNREACH).
+// Instead of patching DNS/net (bundler strips it), we parse the
+// connection string and pass host/port/user/password/database
+// directly to pg.Pool with an explicit IPv4 lookup function.
 
-import dns from "dns";
-import net from "net";
-
-// Monkey-patch net.connect to force IPv4 — Railway cannot reach Supabase over IPv6.
-// dns.setDefaultResultOrder("ipv4first") and NODE_OPTIONS flag don't work reliably
-// on Railway's container, so we intercept at the socket level.
-const originalConnect = net.connect;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(net as any).connect = function (...args: any[]) {
-  const opts = args[0];
-  if (typeof opts === "object" && opts !== null && opts.host && !net.isIP(opts.host)) {
-    opts.family = 4;
-  }
-  return originalConnect.apply(this, args);
-};
-
-dns.setDefaultResultOrder("ipv4first");
-
+import dns from "dns/promises";
 import { Pool } from "pg";
 import { PrismaClient } from "@/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -33,9 +21,23 @@ function createPrismaClient(): PrismaClientInstance {
     process.env.DATABASE_URL ??
     "postgresql://postgres:password@localhost:5432/coach_trade_tracker";
 
+  // Parse the connection string to extract components
+  const url = new URL(connectionString);
+
   const pool = new Pool({
-    connectionString,
+    host: url.hostname,
+    port: parseInt(url.port || "5432", 10),
+    user: decodeURIComponent(url.username),
+    password: decodeURIComponent(url.password),
+    database: url.pathname.slice(1), // remove leading /
     ssl: { rejectUnauthorized: false },
+    // Force IPv4 resolution at the socket level
+    lookup: (hostname: string, _options: unknown, callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void) => {
+      dns.resolve4(hostname).then(
+        (addresses) => callback(null, addresses[0], 4),
+        (err) => callback(err as NodeJS.ErrnoException, "", 0)
+      );
+    },
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
