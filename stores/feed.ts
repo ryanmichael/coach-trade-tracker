@@ -1,6 +1,6 @@
 "use client";
 import { create } from "zustand";
-import type { ChartData } from "@repo/agents";
+import type { ChartData } from "@/lib/agents/chart-visualization/types";
 import type { MockPost } from "@/lib/mock-data";
 
 // Raw shape returned by GET /api/feed

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCoachVisionPrompt } from "@repo/agents";
+import { getCoachVisionPrompt } from "@/lib/agents";
 import { prisma } from "@/lib/db";
 
 export async function GET() {

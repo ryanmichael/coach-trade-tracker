@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { THESIS_TOPICS } from "@repo/agents";
-import type { ThesisTopic } from "@repo/agents";
+import { THESIS_TOPICS } from "@/lib/agents/coach-intelligence/thesis-processor";
+import type { ThesisTopic } from "@/lib/agents/coach-intelligence/thesis-processor";
 import { ActionPanel } from "@/components/layout/ActionPanel";
 import { CollapsibleSection } from "@/components/quick-paste/CollapsibleSection";
 

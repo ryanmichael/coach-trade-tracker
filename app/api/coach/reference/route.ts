@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { processReferenceDocument } from "@repo/agents";
+import { processReferenceDocument } from "@/lib/agents";
 import { prisma } from "@/lib/db";
 
 // Allow up to 5 minutes for the 4-pass Claude extraction

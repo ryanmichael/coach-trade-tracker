@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { seedCoachIntelligence } from "@repo/agents";
+import { seedCoachIntelligence } from "@/lib/agents";
 import { prisma } from "@/lib/db";
 
 export async function POST() {

@@ -1,6 +1,6 @@
 // Feed post type + utilities — used by feed store and right-panel components
 
-import type { ChartData } from "@repo/agents";
+import type { ChartData } from "@/lib/agents/chart-visualization/types";
 
 export type PostDirection = "long" | "short" | "watch";
 

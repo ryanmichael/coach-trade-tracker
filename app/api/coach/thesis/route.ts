@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { processThesisEntry, processThesisEntryFromPdf, THESIS_TOPICS } from "@repo/agents";
+import { processThesisEntry, processThesisEntryFromPdf, THESIS_TOPICS } from "@/lib/agents";
 import { prisma } from "@/lib/db";
 
 export async function GET() {

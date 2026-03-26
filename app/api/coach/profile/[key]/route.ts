@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateProfile } from "@repo/agents";
+import { updateProfile } from "@/lib/agents";
 import { prisma } from "@/lib/db";
 
 export async function DELETE(

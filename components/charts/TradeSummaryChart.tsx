@@ -9,7 +9,7 @@
  * Replaces the chart placeholder in PrimaryPostCard.
  */
 
-import type { ChartData } from "@repo/agents";
+import type { ChartData } from "@/lib/agents/chart-visualization/types";
 import type { OHLCBar } from "@/lib/polygon";
 import { ChartLevelLine } from "./ChartLevelLine";
 import { TimeWindowOverlay } from "./TimeWindowOverlay";

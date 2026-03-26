@@ -1,6 +1,6 @@
 "use client";
 import { create } from "zustand";
-import type { ChartData } from "@repo/agents";
+import type { ChartData } from "@/lib/agents/chart-visualization/types";
 
 export interface AnalysisResult {
   ticker: string | null;

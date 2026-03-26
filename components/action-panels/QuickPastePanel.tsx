@@ -46,7 +46,7 @@ interface ImageApiPriceLevel {
   label: string | null;
 }
 
-import type { ChartData } from "@repo/agents";
+import type { ChartData } from "@/lib/agents/chart-visualization/types";
 
 interface ImageApiResponse {
   ticker: string | null;

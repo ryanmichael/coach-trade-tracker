@@ -10,7 +10,7 @@ import {
   extractChartGeometry,
   buildChartData,
   type ChartData,
-} from "@repo/agents";
+} from "@/lib/agents";
 import { prisma } from "@/lib/db";
 import { fetchAggregates, type OHLCBar } from "@/lib/polygon";
 

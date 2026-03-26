@@ -7,7 +7,7 @@ import { ReportPanel } from "@/components/action-panels/ReportPanel";
 import { TradeSummaryChart } from "@/components/charts/TradeSummaryChart";
 import { usePriceHistory } from "@/hooks/usePriceHistory";
 import { formatRelativeTime, type MockPost } from "@/lib/mock-data";
-import type { ChartData } from "@repo/agents";
+import type { ChartData } from "@/lib/agents/chart-visualization/types";
 
 interface PrimaryPostCardProps {
   post: MockPost;

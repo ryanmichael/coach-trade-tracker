@@ -1,7 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
-import { buildParseContext, buildSeriesContext } from "@/lib/agents";
-import { prisma } from "@/lib/db";
-import type { ParsedTradeData } from "@/lib/parser/types";
+/**
+ * Claude Text Fallback — calls Claude Sonnet for structured trade extraction
+ * when the regex pipeline returns confidence < 0.7.
+ *
+ * Uses buildParseContext() for Coach-aware parsing and buildSeriesContext()
+ * for ticker-specific inheritance.
+ */
+
+import type { PrismaClient } from "@/generated/prisma";
+import { buildParseContext, buildSeriesContext } from "../coach-intelligence/context-builder";
+
+export interface FallbackTradeData {
+  ticker: string;
+  direction: "long" | "short";
+  priceTargetLow: number | null;
+  priceTargetHigh: number | null;
+  priceTargetPercent: number | null;
+  priceConfirmation: number | null;
+  projectedDate: string | null;
+  stopLoss: number | null;
+  supportLevel: number | null;
+  resistanceLevel: number | null;
+  confidence: number;
+  sourceType: "text";
+  rawExtract: string;
+}
 
 const EXTRACTION_PROMPT = `You are a trading post parser. Extract structured trade data from this coach's post.
 
@@ -26,29 +48,36 @@ Return ONLY valid JSON with this exact schema — no markdown, no explanation:
 
 If no trade data is found, return {"trades": []}.`;
 
-export async function POST(req: NextRequest) {
-  try {
-    const { content, ticker } = await req.json();
+export class ClaudeFallback {
+  private db: PrismaClient | null;
+  private apiKey: string | null;
 
-    if (!content || typeof content !== "string") {
-      return NextResponse.json({ error: "content is required" }, { status: 400 });
+  constructor(db?: PrismaClient, apiKey?: string) {
+    this.db = db ?? null;
+    this.apiKey = apiKey ?? process.env.ANTHROPIC_API_KEY ?? null;
+  }
+
+  /**
+   * Parse post content using Claude Sonnet with Coach context.
+   * Returns structured trade data with higher confidence than regex alone.
+   */
+  async parse(content: string, ticker?: string): Promise<FallbackTradeData[]> {
+    if (!this.apiKey || this.apiKey.startsWith("your-")) {
+      return [];
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json({ trades: [], note: "ANTHROPIC_API_KEY not configured" });
-    }
-
-    // Load Coach decoder ring + optional prior series context in parallel
+    // Load Coach context — gracefully degrade if DB unavailable
     let coachContext = "";
     let seriesContext = "";
-    try {
-      [coachContext, seriesContext] = await Promise.all([
-        buildParseContext(prisma),
-        ticker ? buildSeriesContext(prisma, ticker) : Promise.resolve(""),
-      ]);
-    } catch {
-      // KB not seeded yet — proceed without context
+    if (this.db) {
+      try {
+        [coachContext, seriesContext] = await Promise.all([
+          buildParseContext(this.db),
+          ticker ? buildSeriesContext(this.db, ticker) : Promise.resolve(""),
+        ]);
+      } catch {
+        // KB not seeded — proceed without context
+      }
     }
 
     const contextBlocks = [coachContext, seriesContext].filter(Boolean).join("\n\n");
@@ -56,25 +85,18 @@ export async function POST(req: NextRequest) {
       ? `${contextBlocks}\n\n${EXTRACTION_PROMPT}`
       : EXTRACTION_PROMPT;
 
-    const start = Date.now();
-
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
+        "x-api-key": this.apiKey,
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
         max_tokens: 1024,
         system: systemPrompt,
-        messages: [
-          {
-            role: "user",
-            content: `Post to parse:\n\n"${content}"`,
-          },
-        ],
+        messages: [{ role: "user", content: `Post to parse:\n\n"${content}"` }],
       }),
     });
 
@@ -82,16 +104,16 @@ export async function POST(req: NextRequest) {
       throw new Error(`Anthropic API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as { content?: Array<{ text?: string }> };
     const rawText: string = data.content?.[0]?.text ?? "{}";
 
     const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("No JSON found in response");
+    if (!jsonMatch) return [];
 
     const parsed = JSON.parse(jsonMatch[0]);
     const rawTrades: Record<string, unknown>[] = parsed.trades ?? [];
 
-    const trades: ParsedTradeData[] = rawTrades.map((t) => ({
+    return rawTrades.map((t) => ({
       ticker: String(t.ticker ?? ""),
       direction: (t.direction as "long" | "short") ?? "long",
       priceTargetLow: typeof t.priceTargetLow === "number" ? t.priceTargetLow : null,
@@ -103,13 +125,8 @@ export async function POST(req: NextRequest) {
       supportLevel: null,
       resistanceLevel: null,
       confidence: typeof t.confidence === "number" ? t.confidence : 0.5,
-      sourceType: "text",
+      sourceType: "text" as const,
       rawExtract: String(t.rawExtract ?? content.slice(0, 100)),
     }));
-
-    return NextResponse.json({ trades, processingTimeMs: Date.now() - start });
-  } catch (err) {
-    console.error("Refine parse error:", err);
-    return NextResponse.json({ error: "Refine parse failed" }, { status: 500 });
   }
 }
