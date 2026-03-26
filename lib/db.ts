@@ -4,6 +4,7 @@ import dns from "dns";
 // Force IPv4 resolution — Railway cannot reach Supabase over IPv6
 dns.setDefaultResultOrder("ipv4first");
 
+import { Pool } from "pg";
 import { PrismaClient } from "@/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 
@@ -18,7 +19,13 @@ function createPrismaClient(): PrismaClientInstance {
     process.env.DATABASE_URL ??
     "postgresql://postgres:password@localhost:5432/coach_trade_tracker";
 
-  const adapter = new PrismaPg({ connectionString });
+  const pool = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const adapter = new PrismaPg(pool as any);
 
   return new PrismaClient({
     adapter,
