@@ -44,50 +44,58 @@ export async function GET(req: NextRequest) {
     hasCoachRec: false,
   };
 
-  // Fetch from Polygon
-  const rawContracts = await fetchOptionsChain(
-    ticker,
-    direction,
-    currentPrice,
-    projectedDate,
-    targetPrice
-  );
+  try {
+    // Fetch from Polygon
+    const rawContracts = await fetchOptionsChain(
+      ticker,
+      direction,
+      currentPrice,
+      projectedDate,
+      targetPrice
+    );
 
-  // Filter
-  const filtered = filterContracts(rawContracts, trade, DEFAULT_FILTERS);
+    // Filter
+    const filtered = filterContracts(rawContracts, trade, DEFAULT_FILTERS);
 
-  // Enrich + rank
-  const enriched = enrichContracts(filtered, trade);
+    // Enrich + rank
+    const enriched = enrichContracts(filtered, trade);
 
-  // Return top 15
-  const top = enriched.slice(0, 15);
+    // Return top 15
+    const top = enriched.slice(0, 15);
 
-  console.log(`[Options chain] ${ticker} ${direction}: refs→${rawContracts.length} filtered→${filtered.length} enriched→${enriched.length}`);
+    console.log(`[Options chain] ${ticker} ${direction}: refs→${rawContracts.length} filtered→${filtered.length} enriched→${enriched.length}`);
 
-  // Snapshot top 3 for prediction tracking (fire-and-forget)
-  if (top.length > 0) {
-    snapshotPredictions(top.slice(0, 3), ticker, direction, currentPrice, targetPrice, projectedDate).catch(
-      (err) => console.warn("[Options snapshot] Failed to save:", err)
+    // Snapshot top 3 for prediction tracking (fire-and-forget)
+    if (top.length > 0) {
+      snapshotPredictions(top.slice(0, 3), ticker, direction, currentPrice, targetPrice, projectedDate).catch(
+        (err) => console.warn("[Options snapshot] Failed to save:", err)
+      );
+    }
+
+    return NextResponse.json(
+      {
+        contracts: top,
+        totalRaw: rawContracts.length,
+        totalFiltered: filtered.length,
+        filters: {
+          contractType: direction === "LONG" ? "call" : "put",
+          minOI: DEFAULT_FILTERS.minOpenInterest,
+          maxSpread: DEFAULT_FILTERS.maxSpreadPct + "%",
+          minDtePastProjected: DEFAULT_FILTERS.minDtePastProjected + "d",
+        },
+        fetchedAt: new Date().toISOString(),
+      },
+      {
+        headers: { "Cache-Control": "no-store, max-age=0" },
+      }
+    );
+  } catch (err) {
+    console.error("[Options chain] Error:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch options chain", detail: String(err) },
+      { status: 500 }
     );
   }
-
-  return NextResponse.json(
-    {
-      contracts: top,
-      totalRaw: rawContracts.length,
-      totalFiltered: filtered.length,
-      filters: {
-        contractType: direction === "LONG" ? "call" : "put",
-        minOI: DEFAULT_FILTERS.minOpenInterest,
-        maxSpread: DEFAULT_FILTERS.maxSpreadPct + "%",
-        minDtePastProjected: DEFAULT_FILTERS.minDtePastProjected + "d",
-      },
-      fetchedAt: new Date().toISOString(),
-    },
-    {
-      headers: { "Cache-Control": "no-store, max-age=0" },
-    }
-  );
 }
 
 /** Save top contracts as prediction snapshots for later validation */
