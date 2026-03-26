@@ -31,13 +31,17 @@ export async function GET() {
     },
   });
 
+  const totalPredictions = await prisma.optionsSnapshot.count();
+  const pendingValidation = await prisma.optionsSnapshot.count({
+    where: { validatedAt: null },
+  });
+
   if (validated.length === 0) {
     return NextResponse.json({
       message: "No validated predictions yet",
-      totalPredictions: await prisma.optionsSnapshot.count(),
-      pendingValidation: await prisma.optionsSnapshot.count({
-        where: { validatedAt: null },
-      }),
+      totalValidated: 0,
+      totalPredictions,
+      pendingValidation,
     });
   }
 
@@ -85,10 +89,8 @@ export async function GET() {
 
   return NextResponse.json({
     totalValidated: validated.length,
-    totalPredictions: await prisma.optionsSnapshot.count(),
-    pendingValidation: await prisma.optionsSnapshot.count({
-      where: { validatedAt: null },
-    }),
+    totalPredictions,
+    pendingValidation,
     accuracy: {
       avgPredictionError: Math.round(avgError * 10) / 10,
       medianPredictionError: Math.round(medianError * 10) / 10,
