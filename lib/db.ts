@@ -1,11 +1,6 @@
 // db.ts — Prisma v7 client singleton with pg adapter
-// In Prisma v7, the generated "client" engine type requires a driver adapter.
-// @prisma/adapter-pg is used backed by a pg connection pool.
-//
-// We import PrismaClient from @repo/db (workspace package transpiled by Next.js).
-// The adapter is passed to the constructor so the client engine initializes correctly.
 
-import { PrismaClient } from "@repo/db";
+import { PrismaClient } from "@/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 type PrismaClientInstance = InstanceType<typeof PrismaClient>;
