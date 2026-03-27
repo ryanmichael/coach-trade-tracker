@@ -7,6 +7,7 @@ import { formatMoney, formatDate, daysUntil } from "@/lib/options";
 const TIME_RANGES = [
   { key: "1w", label: "1W", days: 7 },
   { key: "2w", label: "2W", days: 14 },
+  { key: "3w", label: "3W", days: 21 },
   { key: "1m", label: "1M", days: 30 },
   { key: "2m", label: "2M", days: 60 },
   { key: "3m", label: "3M", days: 90 },
@@ -338,7 +339,7 @@ export function TradeContextBar({
           <Metric
             label="Projected"
             value={dateLabel}
-            sub={daysLeft > 0 ? `${daysLeft}d away` : undefined}
+            inline={daysLeft > 0 ? `(${daysLeft}D)` : undefined}
           />
 
           {editable && (
@@ -384,12 +385,14 @@ function Metric({
   label,
   value,
   sub,
+  inline,
   accent,
   negative,
 }: {
   label: string;
   value: string;
   sub?: string;
+  inline?: string;
   accent?: boolean;
   negative?: boolean;
 }) {
@@ -419,6 +422,11 @@ function Metric({
         }}
       >
         {value}
+        {inline && (
+          <span style={{ fontSize: 10, fontWeight: 400, color: "var(--text-tertiary)", marginLeft: 4 }}>
+            {inline}
+          </span>
+        )}
       </span>
       {sub && (
         <span style={{ fontSize: 10, color: "var(--text-tertiary)" }}>{sub}</span>

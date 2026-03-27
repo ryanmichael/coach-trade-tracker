@@ -7,6 +7,7 @@ import { formatMoney, formatDate } from "@/lib/options";
 const TIME_RANGES = [
   { key: "1w", label: "1 Week", days: 7 },
   { key: "2w", label: "2 Weeks", days: 14 },
+  { key: "3w", label: "3 Weeks", days: 21 },
   { key: "1m", label: "1 Month", days: 30 },
   { key: "2m", label: "2 Months", days: 60 },
   { key: "3m", label: "3 Months", days: 90 },
