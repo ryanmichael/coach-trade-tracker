@@ -7,7 +7,6 @@ import type { TradeInput, CustomTradeInput } from "@/lib/options";
 
 import { PageHeader } from "@/components/options-finder/PageHeader";
 import { TickerSelector } from "@/components/options-finder/TickerSelector";
-import { TradeContextBar } from "@/components/options-finder/TradeContextBar";
 import { FilterBar } from "@/components/options-finder/FilterBar";
 import { ContractCard } from "@/components/options-finder/ContractCard";
 import { SummaryFooter } from "@/components/options-finder/SummaryFooter";
@@ -266,15 +265,10 @@ export function OptionsFinder() {
         onSelect={setSelectedTicker}
         onAddCustom={addCustomTicker}
         onRemoveCustom={removeCustomTicker}
+        currentTrade={currentTrade}
+        isCoachRec={isCoachRec}
+        onUpdateDraft={!isCoachRec ? updateCustomDraft : undefined}
       />
-
-      {currentTrade && (
-        <TradeContextBar
-          trade={currentTrade}
-          editable={!isCoachRec}
-          onUpdate={!isCoachRec ? updateCustomDraft : undefined}
-        />
-      )}
 
       {error && (
         <div

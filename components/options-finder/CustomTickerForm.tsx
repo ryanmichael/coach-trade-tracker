@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RefreshCwIcon } from "lucide-react";
 import type { CustomTradeInput } from "@/lib/options";
 import { formatMoney, formatDate } from "@/lib/options";
 
@@ -74,6 +75,24 @@ export function CustomTickerForm({
       if (!draft.projectedDate) {
         handleChange("projectedDate", "");
       }
+    }
+  }
+
+  const [fetchingPrice, setFetchingPrice] = useState(false);
+
+  async function handleRefreshPrice() {
+    if (!ticker || fetchingPrice) return;
+    setFetchingPrice(true);
+    try {
+      const res = await fetch(`/api/prices/${encodeURIComponent(ticker)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.price) handleChange("currentPrice", data.price);
+      }
+    } catch {
+      // silently fail — user can retry
+    } finally {
+      setFetchingPrice(false);
     }
   }
 
@@ -282,7 +301,21 @@ export function CustomTickerForm({
       >
         {/* Current Price */}
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <label style={labelStyle}>Current Price</label>
+          <label style={{ ...labelStyle, display: "flex", alignItems: "center", gap: 5 }}>
+            Current Price
+            <RefreshCwIcon
+              size={12}
+              strokeWidth={2.5}
+              style={{
+                color: fetchingPrice ? "var(--text-tertiary)" : "var(--accent-primary)",
+                cursor: fetchingPrice ? "default" : "pointer",
+                animation: fetchingPrice ? "spin 3s ease-in-out infinite" : "none",
+                transition: "color 0.12s ease",
+                flexShrink: 0,
+              }}
+              onClick={handleRefreshPrice}
+            />
+          </label>
           <input
             type="number"
             step="0.01"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RefreshCwIcon } from "lucide-react";
 import type { TradeInput, CustomTradeInput } from "@/lib/options";
 import { formatMoney, formatDate, daysUntil } from "@/lib/options";
 
@@ -58,6 +59,23 @@ export function TradeContextBar({
   // Custom tickers start in edit mode if not ready, otherwise read mode
   const [editing, setEditing] = useState(editable && !isReady);
   const [selectedRange, setSelectedRange] = useState<RangeKey | null>(null);
+  const [fetchingPrice, setFetchingPrice] = useState(false);
+
+  async function handleRefreshPrice() {
+    if (!trade.ticker || fetchingPrice) return;
+    setFetchingPrice(true);
+    try {
+      const res = await fetch(`/api/prices/${encodeURIComponent(trade.ticker)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.price) handleChange("currentPrice", data.price);
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setFetchingPrice(false);
+    }
+  }
 
   const dirColor =
     trade.direction === "LONG"
@@ -169,7 +187,21 @@ export function TradeContextBar({
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <label style={labelStyle}>Current Price</label>
+            <label style={{ ...labelStyle, display: "flex", alignItems: "center", gap: 5 }}>
+              Current Price
+              <RefreshCwIcon
+                size={12}
+                strokeWidth={2.5}
+                style={{
+                  color: fetchingPrice ? "var(--text-tertiary)" : "var(--accent-primary)",
+                  cursor: fetchingPrice ? "default" : "pointer",
+                  animation: fetchingPrice ? "spin 3s ease-in-out infinite" : "none",
+                  transition: "color 0.12s ease",
+                  flexShrink: 0,
+                }}
+                onClick={handleRefreshPrice}
+              />
+            </label>
             <input
               type="number"
               step="0.01"

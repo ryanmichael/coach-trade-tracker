@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { EnrichedContract } from "@/lib/options";
 import { formatMoney, formatPct, formatDate } from "@/lib/options";
 import { ScenarioBar } from "@/components/options-finder/ScenarioBar";
@@ -331,16 +332,69 @@ export function ContractCard({ contract: c, rank, maxOI }: ContractCardProps) {
         </div>
       </div>
 
-      {/* Score + OI bar row */}
+      {/* Score (segmented) + OI row */}
+      <ScoreBar
+        score={scoreWidth}
+        breakdown={c.scoreBreakdown}
+        isBest={isBest}
+        openInterest={c.openInterest}
+        maxOI={maxOI}
+      />
+
+      {/* Scenario analysis */}
+      <ScenarioBar scenarios={c.scenarios} ask={c.ask} />
+    </div>
+  );
+}
+
+// ── Score Bar: segmented factor breakdown ────────────────────────────────────
+
+const SCORE_FACTORS = [
+  { key: "roi", label: "ROI", weight: 35 },
+  { key: "delta", label: "Delta", weight: 20 },
+  { key: "theta", label: "Theta", weight: 15 },
+  { key: "liquidity", label: "Liquidity", weight: 15 },
+  { key: "iv", label: "IV", weight: 15 },
+] as const;
+
+function factorColor(value: number): string {
+  if (value >= 0.7) return "var(--semantic-positive)";
+  if (value >= 0.4) return "var(--semantic-warning)";
+  return "var(--semantic-negative)";
+}
+
+function factorBg(value: number): string {
+  if (value >= 0.7) return "rgba(63,207,142,0.15)";
+  if (value >= 0.4) return "rgba(240,184,95,0.12)";
+  return "rgba(240,110,110,0.10)";
+}
+
+function ScoreBar({
+  score,
+  breakdown,
+  isBest,
+  openInterest,
+  maxOI,
+}: {
+  score: number;
+  breakdown: { roi: number; delta: number; theta: number; liquidity: number; iv: number };
+  isBest: boolean;
+  openInterest: number;
+  maxOI: number;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div style={{ marginTop: 12 }}>
+      {/* Top row: score number + factor segments + OI */}
       <div
         style={{
-          marginTop: 12,
           display: "flex",
           alignItems: "center",
           gap: 12,
         }}
       >
-        {/* Composite score bar */}
+        {/* Score label + segmented bar */}
         <div
           style={{
             display: "flex",
@@ -348,51 +402,61 @@ export function ContractCard({ contract: c, rank, maxOI }: ContractCardProps) {
             gap: 6,
             flex: 1,
           }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
         >
-          <span
-            style={{
-              fontSize: 10,
-              color: "var(--text-tertiary)",
-              flexShrink: 0,
-              width: 34,
-            }}
-          >
-            Score
-          </span>
-          <div
-            style={{
-              flex: 1,
-              height: 3,
-              background: "var(--bg-surface-hover)",
-              borderRadius: 2,
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                height: "100%",
-                width: scoreWidth + "%",
-                background: isBest
-                  ? "rgba(63,207,142,0.50)"
-                  : "rgba(124,124,255,0.40)",
-                borderRadius: 2,
-                transition: "width 0.4s ease",
-              }}
-            />
-          </div>
           <span
             style={{
               fontFamily: "var(--font-dm-mono), monospace",
               fontSize: 10,
-              fontWeight: 500,
+              fontWeight: 600,
               color: isBest ? "var(--semantic-positive)" : "var(--accent-primary)",
               flexShrink: 0,
               width: 28,
-              textAlign: "right",
             }}
           >
-            {scoreWidth}
+            {score}
           </span>
+
+          {/* Segmented bar — each segment proportional to its weight */}
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              gap: 1,
+              height: 4,
+              borderRadius: 2,
+              overflow: "hidden",
+            }}
+          >
+            {SCORE_FACTORS.map((f) => {
+              const val = breakdown[f.key];
+              return (
+                <div
+                  key={f.key}
+                  style={{
+                    flex: f.weight,
+                    height: "100%",
+                    background: "var(--bg-surface-hover)",
+                    borderRadius: 1,
+                    overflow: "hidden",
+                    position: "relative",
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "100%",
+                      width: `${Math.round(val * 100)}%`,
+                      background: factorColor(val),
+                      opacity: 0.55,
+                      borderRadius: 1,
+                      transition: "width 0.4s ease",
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* OI */}
@@ -426,9 +490,7 @@ export function ContractCard({ contract: c, rank, maxOI }: ContractCardProps) {
             <div
               style={{
                 height: "100%",
-                width:
-                  Math.min(100, (c.openInterest / Math.max(maxOI, 1)) * 100) +
-                  "%",
+                width: Math.min(100, (openInterest / Math.max(maxOI, 1)) * 100) + "%",
                 background: "rgba(124,124,255,0.20)",
                 borderRadius: 2,
                 transition: "width 0.4s ease",
@@ -443,13 +505,65 @@ export function ContractCard({ contract: c, rank, maxOI }: ContractCardProps) {
               flexShrink: 0,
             }}
           >
-            {c.openInterest.toLocaleString()}
+            {openInterest.toLocaleString()}
           </span>
         </div>
       </div>
 
-      {/* Scenario analysis */}
-      <ScenarioBar scenarios={c.scenarios} ask={c.ask} />
+      {/* Expanded factor breakdown on hover */}
+      {hovered && (
+        <div
+          style={{
+            display: "flex",
+            gap: 4,
+            marginTop: 6,
+            paddingTop: 6,
+            borderTop: "1px solid var(--border-subtle)",
+          }}
+        >
+          {SCORE_FACTORS.map((f) => {
+            const val = breakdown[f.key];
+            const pct = Math.round(val * 100);
+            return (
+              <div
+                key={f.key}
+                style={{
+                  flex: f.weight,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 2,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 8,
+                    fontWeight: 500,
+                    color: "var(--text-tertiary)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  {f.label}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-dm-mono), monospace",
+                    fontSize: 10,
+                    fontWeight: 600,
+                    color: factorColor(val),
+                    background: factorBg(val),
+                    padding: "1px 5px",
+                    borderRadius: 3,
+                  }}
+                >
+                  {pct}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

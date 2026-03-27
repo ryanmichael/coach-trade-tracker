@@ -716,3 +716,9 @@
   background: rgba(124,124,255,0.05);
 }
 .qp-dropzone.active { background: var(--accent-muted); }
+
+@keyframes spin {
+  0% { transform: rotate(0deg); opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { transform: rotate(360deg); opacity: 0.5; }
+}

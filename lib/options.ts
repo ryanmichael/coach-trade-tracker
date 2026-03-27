@@ -84,6 +84,7 @@ export interface EnrichedContract {
   theta: number;  // daily
   iv: number;     // implied volatility (decimal, e.g. 0.35 = 35%)
   compositeScore: number; // 0-1 weighted blend
+  scoreBreakdown: { roi: number; delta: number; theta: number; liquidity: number; iv: number }; // individual 0-1 scores
   // Phase 3 — Forward Pricing + Scenarios
   forwardValue: number;   // BS-estimated option value at target (with time value)
   forwardROI: number;     // ROI using forward value instead of intrinsic
@@ -553,6 +554,13 @@ export function enrichContracts(
       theta: greeks.theta,
       iv,
       compositeScore: score,
+      scoreBreakdown: {
+        roi: roiScore(fwdROI),
+        delta: deltaScore(Math.abs(greeks.delta)),
+        theta: thetaScore(greeks.theta, ask),
+        liquidity: liquidityScore(bid, ask, oi),
+        iv: ivScore(iv),
+      },
       forwardValue: Math.round(fwdValue * 100) / 100,
       forwardROI: Math.round(fwdROI * 10) / 10,
       scenarios,
