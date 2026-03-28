@@ -3,6 +3,8 @@
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
+export type RiskTolerance = "high" | "medium" | "low";
+
 export interface TradeInput {
   ticker: string;
   direction: "LONG" | "SHORT";
@@ -12,6 +14,7 @@ export interface TradeInput {
   stopLoss: number;
   coachNote?: string;
   hasCoachRec: boolean;
+  riskTolerance?: RiskTolerance;
 }
 
 export interface CustomTradeInput extends TradeInput {
@@ -291,23 +294,79 @@ export function estimateIV(
 
 // ── Composite Scoring (Phase 2) ──────────────────────────────────────────────
 
-const SCORING_WEIGHTS = {
-  roi: 0.35,
-  delta: 0.20,
-  theta: 0.15,
-  liquidity: 0.15,
-  iv: 0.15,
-};
+// ── Unified Risk Configuration ────────────────────────────────────────────────
+// Single source of truth for all risk-dependent behavior across:
+//   1. Polygon fetch (strike/expiry windows)
+//   2. Filtering (OI, spread, DTE thresholds)
+//   3. Scoring (weights, ROI scaling, delta center)
+//   4. Candidate selection (ATM vs OTM distribution)
+//
+// When tuning risk behavior, edit ONLY this object.
 
-/** ROI score: higher is better, capped at 500% to avoid lottery-ticket bias */
-function roiScore(roi: number): number {
-  if (roi <= 0) return 0;
-  return Math.min(roi / 500, 1.0);
+interface RiskConfig {
+  // Fetch: how wide to cast the Polygon API net
+  fetch: {
+    expiryOffsetDays: number;   // min expiry = projectedDate + N days
+    strikePadLow: number;       // multiply lower bound (0.80 = 20% below)
+    strikePadHigh: number;      // multiply upper bound (1.15 = 15% above)
+    candidateCount: number;     // max contracts to price
+  };
+  // Candidate selection: distribution across strike zones
+  candidates: {
+    nearATMPct: number;         // % of picks near ATM (≤3% from current)
+    slightlyOTMPct: number;     // % of picks slightly OTM (3-8% from current)
+    // remainder goes to moderately OTM (>8% from current)
+  };
+  // Filtering: post-fetch thresholds
+  filters: FilterConfig;
+  // Scoring: composite weight distribution
+  weights: { roi: number; delta: number; theta: number; liquidity: number; iv: number };
 }
 
-/** Delta score: peak at 0.35 (ideal for directional bets), drops off */
-function deltaScore(absDelta: number): number {
-  const idealCenter = 0.35;
+export const RISK_CONFIG: Record<RiskTolerance, RiskConfig> = {
+  high: {
+    fetch: { expiryOffsetDays: 0, strikePadLow: 0.80, strikePadHigh: 1.15, candidateCount: 25 },
+    candidates: { nearATMPct: 0.15, slightlyOTMPct: 0.30 },
+    filters: { minOpenInterest: 0, maxSpreadPct: 50, minDtePastProjected: 0 },
+    weights: { roi: 0.75, delta: 0.05, theta: 0.05, liquidity: 0.05, iv: 0.10 },
+  },
+  medium: {
+    fetch: { expiryOffsetDays: 14, strikePadLow: 0.90, strikePadHigh: 1.05, candidateCount: 15 },
+    candidates: { nearATMPct: 0.40, slightlyOTMPct: 0.35 },
+    filters: { minOpenInterest: 1, maxSpreadPct: 20, minDtePastProjected: 14 },
+    weights: { roi: 0.35, delta: 0.20, theta: 0.15, liquidity: 0.15, iv: 0.15 },
+  },
+  low: {
+    fetch: { expiryOffsetDays: 21, strikePadLow: 0.95, strikePadHigh: 1.03, candidateCount: 15 },
+    candidates: { nearATMPct: 0.55, slightlyOTMPct: 0.30 },
+    filters: { minOpenInterest: 10, maxSpreadPct: 10, minDtePastProjected: 21 },
+    weights: { roi: 0.20, delta: 0.30, theta: 0.15, liquidity: 0.20, iv: 0.15 },
+  },
+};
+
+/** ROI score: cap scales with risk tolerance so high-risk surfaces lottery tickets */
+function roiScore(roi: number, risk: RiskTolerance = "medium"): number {
+  if (roi <= 0) return 0;
+  // High risk: log scale so 17,000% clearly beats 500%, but doesn't go infinite
+  // Medium: linear cap at 500%
+  // Low: linear cap at 200% (conservative — diminishing returns past 200%)
+  if (risk === "high") {
+    // log10(500) ≈ 2.7, log10(17000) ≈ 4.23 — gives clear separation
+    return Math.min(Math.log10(roi + 1) / Math.log10(50001), 1.0);
+  }
+  const cap = risk === "low" ? 200 : 500;
+  return Math.min(roi / cap, 1.0);
+}
+
+/** Delta score: ideal center shifts with risk tolerance */
+function deltaScore(absDelta: number, risk: RiskTolerance = "medium"): number {
+  if (risk === "high") {
+    // High risk: no penalty for low delta — all deltas are fine, slight
+    // preference for lower (more leverage). Score never drops below 0.5.
+    return Math.max(0.5, 1.0 - absDelta * 0.5);
+  }
+  // Low risk: favor ITM (higher delta ~0.55), Medium: balanced at 0.35
+  const idealCenter = risk === "low" ? 0.55 : 0.35;
   const distance = Math.abs(absDelta - idealCenter);
   return Math.max(0, 1.0 - distance / 0.35);
 }
@@ -338,12 +397,13 @@ function ivScore(iv: number): number {
 
 export function computeCompositeScore(
   roi: number, delta: number, theta: number, ask: number,
-  bid: number, openInterest: number, iv: number
+  bid: number, openInterest: number, iv: number,
+  riskTolerance: RiskTolerance = "medium"
 ): number {
-  const w = SCORING_WEIGHTS;
+  const w = RISK_CONFIG[riskTolerance].weights;
   return (
-    w.roi * roiScore(roi) +
-    w.delta * deltaScore(Math.abs(delta)) +
+    w.roi * roiScore(roi, riskTolerance) +
+    w.delta * deltaScore(Math.abs(delta), riskTolerance) +
     w.theta * thetaScore(theta, ask) +
     w.liquidity * liquidityScore(bid, ask, openInterest) +
     w.iv * ivScore(iv)
@@ -468,11 +528,13 @@ export const DEFAULT_FILTERS: FilterConfig = {
 export function filterContracts(
   contracts: RawContract[],
   trade: TradeInput,
-  filters: FilterConfig = DEFAULT_FILTERS
+  filters: FilterConfig = DEFAULT_FILTERS,
+  riskTolerance: RiskTolerance = "medium"
 ): RawContract[] {
+  const effectiveFilters = RISK_CONFIG[riskTolerance].filters;
   const expectedType = trade.direction === "LONG" ? "call" : "put";
   const projectedDte = daysUntil(trade.projectedDate);
-  const minDte = projectedDte + filters.minDtePastProjected;
+  const minDte = projectedDte + effectiveFilters.minDtePastProjected;
 
   return contracts.filter((c) => {
     // Must be correct contract type
@@ -486,11 +548,11 @@ export function filterContracts(
     if (dte < minDte) return false;
 
     // Open interest threshold
-    if (c.open_interest < filters.minOpenInterest) return false;
+    if (c.open_interest < effectiveFilters.minOpenInterest) return false;
 
     // Bid-ask spread
     const spread = spreadPct(c.last_quote.bid, c.last_quote.ask);
-    if (spread > filters.maxSpreadPct) return false;
+    if (spread > effectiveFilters.maxSpreadPct) return false;
 
     return true;
   });
@@ -500,7 +562,8 @@ export function filterContracts(
 
 export function enrichContracts(
   contracts: RawContract[],
-  trade: TradeInput
+  trade: TradeInput,
+  riskTolerance: RiskTolerance = "medium"
 ): EnrichedContract[] {
   const enriched = contracts.map((c): EnrichedContract => {
     const strike = c.details.strike_price;
@@ -531,7 +594,7 @@ export function enrichContracts(
 
     // Phase 3: Score uses forward ROI (captures time value) instead of intrinsic
     const score = computeCompositeScore(
-      fwdROI, greeks.delta, greeks.theta, ask, bid, oi, iv
+      fwdROI, greeks.delta, greeks.theta, ask, bid, oi, iv, riskTolerance
     );
 
     return {
@@ -555,8 +618,8 @@ export function enrichContracts(
       iv,
       compositeScore: score,
       scoreBreakdown: {
-        roi: roiScore(fwdROI),
-        delta: deltaScore(Math.abs(greeks.delta)),
+        roi: roiScore(fwdROI, riskTolerance),
+        delta: deltaScore(Math.abs(greeks.delta), riskTolerance),
         theta: thetaScore(greeks.theta, ask),
         liquidity: liquidityScore(bid, ask, oi),
         iv: ivScore(iv),
@@ -571,15 +634,18 @@ export function enrichContracts(
   enriched.sort((a, b) => b.compositeScore - a.compositeScore);
 
   // Detect sweet spot using composite score
-  markSweetSpot(enriched);
+  markSweetSpot(enriched, riskTolerance);
 
   return enriched;
 }
 
-function markSweetSpot(contracts: EnrichedContract[]): void {
+function markSweetSpot(contracts: EnrichedContract[], riskTolerance: RiskTolerance = "medium"): void {
   if (contracts.length === 0) return;
 
-  // Phase 2: Sweet spot = highest composite score with delta in ideal range
+  // Delta range shifts with risk tolerance
+  const minDelta = riskTolerance === "high" ? 0.05 : riskTolerance === "low" ? 0.30 : 0.15;
+  const maxDelta = riskTolerance === "high" ? 0.50 : riskTolerance === "low" ? 0.90 : 0.75;
+
   let bestIdx = -1;
   let bestScore = -Infinity;
 
@@ -587,9 +653,8 @@ function markSweetSpot(contracts: EnrichedContract[]): void {
     const c = contracts[i];
     const absDelta = Math.abs(c.delta);
 
-    // Must have positive ROI and reasonable delta
     if (c.roi <= 0) continue;
-    if (absDelta < 0.15 || absDelta > 0.75) continue;
+    if (absDelta < minDelta || absDelta > maxDelta) continue;
     if (c.spread >= 15) continue;
 
     if (c.compositeScore > bestScore) {
@@ -680,26 +745,29 @@ export async function fetchOptionsChain(
   direction: "LONG" | "SHORT",
   currentPrice: number,
   projectedDate: string,
-  targetPrice?: number
+  targetPrice?: number,
+  riskTolerance: RiskTolerance = "medium"
 ): Promise<RawContract[]> {
   const apiKey = process.env.POLYGON_API_KEY;
   if (!apiKey || apiKey === "your-polygon-key") return [];
 
   const contractType = direction === "LONG" ? "call" : "put";
 
-  // Expiration window: projected date + 14d to + 90d
+  const rc = RISK_CONFIG[riskTolerance].fetch;
+
+  // Expiration window: risk-aware offset from projected date
   const projDate = new Date(projectedDate + "T00:00:00");
-  const minExpiry = new Date(projDate.getTime() + 14 * 86400000)
+  const minExpiry = new Date(projDate.getTime() + rc.expiryOffsetDays * 86400000)
     .toISOString()
     .split("T")[0];
   const maxExpiry = new Date(projDate.getTime() + 90 * 86400000)
     .toISOString()
     .split("T")[0];
 
-  // Strike window: from 10% below current to target + 5% (captures OTM sweet spot)
+  // Strike window: risk-aware range around current price
   const effectiveTarget = targetPrice ?? currentPrice * (direction === "LONG" ? 1.15 : 0.85);
-  const strikeLow = Math.floor(Math.min(currentPrice, effectiveTarget) * 0.90);
-  const strikeHigh = Math.ceil(Math.max(currentPrice, effectiveTarget) * 1.05);
+  const strikeLow = Math.floor(Math.min(currentPrice, effectiveTarget) * rc.strikePadLow);
+  const strikeHigh = Math.ceil(Math.max(currentPrice, effectiveTarget) * rc.strikePadHigh);
 
   // Step 1: Get available contracts from reference endpoint (cached 30min)
   const refs = await fetchContractRefs(
@@ -713,7 +781,7 @@ export async function fetchOptionsChain(
   }
 
   // Step 2: Narrow down to the most interesting contracts
-  const pricingCandidates = selectPricingCandidates(refs, currentPrice, 15);
+  const pricingCandidates = selectPricingCandidates(refs, currentPrice, rc.candidateCount, riskTolerance);
 
   // Step 3: Try real prices first, fall back to Black-Scholes
   const contracts = await fetchContractPrices(pricingCandidates, apiKey, currentPrice);
@@ -773,7 +841,8 @@ async function fetchContractRefs(
 function selectPricingCandidates(
   refs: ContractRef[],
   currentPrice: number,
-  maxCount: number
+  maxCount: number,
+  riskTolerance: RiskTolerance = "medium"
 ): ContractRef[] {
   // Group by expiry, sorted chronologically
   const byExpiry = new Map<string, ContractRef[]>();
@@ -816,9 +885,10 @@ function selectPricingCandidates(
       else modOTM.push(ref);
     }
 
-    // Distribute picks: ~40% near-ATM, ~35% slightly OTM, ~25% moderately OTM
-    const nearCount = Math.max(1, Math.round(strikesPerExpiry * 0.4));
-    const slightCount = Math.max(1, Math.round(strikesPerExpiry * 0.35));
+    // Distribute picks based on risk tolerance (from unified RISK_CONFIG)
+    const { nearATMPct, slightlyOTMPct } = RISK_CONFIG[riskTolerance].candidates;
+    const nearCount = Math.max(1, Math.round(strikesPerExpiry * nearATMPct));
+    const slightCount = Math.max(1, Math.round(strikesPerExpiry * slightlyOTMPct));
     const modCount = Math.max(1, strikesPerExpiry - nearCount - slightCount);
 
     selected.push(...nearATM.slice(0, nearCount));

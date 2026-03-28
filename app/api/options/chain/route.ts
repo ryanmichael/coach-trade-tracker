@@ -7,6 +7,7 @@ import {
   DEFAULT_FILTERS,
   type TradeInput,
   type EnrichedContract,
+  type RiskTolerance,
 } from "@/lib/options";
 
 // GET /api/options/chain?ticker=SPY&direction=LONG&currentPrice=561.42&targetPrice=582&projectedDate=2026-04-18
@@ -19,6 +20,8 @@ export async function GET(req: NextRequest) {
   const targetPrice = parseFloat(params.get("targetPrice") ?? "");
   const projectedDate = params.get("projectedDate") ?? "";
   const stopLoss = parseFloat(params.get("stopLoss") ?? "0");
+  const riskParam = params.get("riskTolerance") as RiskTolerance | null;
+  const riskTolerance: RiskTolerance = (riskParam === "high" || riskParam === "low") ? riskParam : "medium";
 
   if (!ticker || !direction || !currentPrice || !targetPrice || !projectedDate) {
     return NextResponse.json(
@@ -45,20 +48,21 @@ export async function GET(req: NextRequest) {
   };
 
   try {
-    // Fetch from Polygon
+    // Fetch from Polygon (risk-aware: high risk widens strike/expiry window)
     const rawContracts = await fetchOptionsChain(
       ticker,
       direction,
       currentPrice,
       projectedDate,
-      targetPrice
+      targetPrice,
+      riskTolerance
     );
 
-    // Filter
-    const filtered = filterContracts(rawContracts, trade, DEFAULT_FILTERS);
+    // Filter (risk-aware: high risk relaxes filters, low risk tightens them)
+    const filtered = filterContracts(rawContracts, trade, DEFAULT_FILTERS, riskTolerance);
 
     // Enrich + rank
-    const enriched = enrichContracts(filtered, trade);
+    const enriched = enrichContracts(filtered, trade, riskTolerance);
 
     // Return top 15
     const top = enriched.slice(0, 15);

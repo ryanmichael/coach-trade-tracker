@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import { RefreshCwIcon } from "lucide-react";
-import type { TradeInput, CustomTradeInput } from "@/lib/options";
+import type { TradeInput, CustomTradeInput, RiskTolerance } from "@/lib/options";
 import { formatMoney, formatDate, daysUntil } from "@/lib/options";
+
+const RISK_LEVELS: { key: RiskTolerance; label: string; color: string }[] = [
+  { key: "high", label: "Hi", color: "var(--semantic-negative)" },
+  { key: "medium", label: "Md", color: "var(--semantic-warning)" },
+  { key: "low", label: "Lw", color: "var(--semantic-positive)" },
+];
 
 const TIME_RANGES = [
   { key: "1w", label: "1W", days: 7 },
@@ -53,6 +59,7 @@ interface TickerSelectorProps {
   currentTrade?: TradeInput | CustomTradeInput | null;
   isCoachRec?: boolean;
   onUpdateDraft?: (draft: CustomTradeInput) => void;
+  onRiskChange?: (ticker: string, risk: RiskTolerance) => void;
 }
 
 export function TickerSelector({
@@ -67,6 +74,7 @@ export function TickerSelector({
   currentTrade,
   isCoachRec,
   onUpdateDraft,
+  onRiskChange,
 }: TickerSelectorProps) {
   const [inputValue, setInputValue] = useState("");
 
@@ -358,6 +366,7 @@ export function TickerSelector({
           trade={currentTrade}
           editable={!isCoachRec}
           onUpdate={onUpdateDraft}
+          onRiskChange={onRiskChange}
         />
       )}
     </div>
@@ -370,10 +379,12 @@ function TradeContext({
   trade,
   editable,
   onUpdate,
+  onRiskChange,
 }: {
   trade: TradeInput | CustomTradeInput;
   editable?: boolean;
   onUpdate?: (draft: CustomTradeInput) => void;
+  onRiskChange?: (ticker: string, risk: RiskTolerance) => void;
 }) {
   const isReady =
     trade.currentPrice > 0 &&
@@ -688,6 +699,50 @@ function TradeContext({
           value={dateLabel}
           inline={daysLeft > 0 ? `(${daysLeft}D)` : undefined}
         />
+
+        {/* Risk toggle — always available (coach recs + custom) */}
+        {onRiskChange && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <span style={{ fontSize: 10, fontWeight: 500, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              Risk
+            </span>
+            <div style={{ display: "flex", gap: 2 }}>
+              {RISK_LEVELS.map((r) => {
+                const isActive = (trade.riskTolerance ?? "medium") === r.key;
+                return (
+                  <button
+                    key={r.key}
+                    onClick={() => {
+                      onRiskChange(trade.ticker, r.key);
+                      if (onUpdate) {
+                        handleChange("riskTolerance", r.key);
+                      }
+                    }}
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 500,
+                      color: isActive ? r.color : "var(--text-tertiary)",
+                      background: isActive
+                        ? `color-mix(in srgb, ${r.color} 12%, transparent)`
+                        : "transparent",
+                      border: `1px solid ${
+                        isActive
+                          ? `color-mix(in srgb, ${r.color} 27%, transparent)`
+                          : "var(--border-default)"
+                      }`,
+                      borderRadius: 5,
+                      padding: "4px 7px",
+                      cursor: "pointer",
+                      transition: "all 0.12s ease",
+                    }}
+                  >
+                    {r.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {editable && (
           <button

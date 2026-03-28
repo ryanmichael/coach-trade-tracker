@@ -9,6 +9,8 @@ interface ContractCardProps {
   contract: EnrichedContract;
   rank: number;
   maxOI: number;
+  isEstimating?: boolean;
+  onEstimate?: () => void;
 }
 
 function DeltaBadge({ delta }: { delta: number }) {
@@ -54,7 +56,7 @@ function DeltaBadge({ delta }: { delta: number }) {
   );
 }
 
-export function ContractCard({ contract: c, rank, maxOI }: ContractCardProps) {
+export function ContractCard({ contract: c, rank, maxOI, isEstimating, onEstimate }: ContractCardProps) {
   const isBest = c.isSweetSpot;
   const borderColor = isBest
     ? "rgba(63,207,142,0.25)"
@@ -84,16 +86,22 @@ export function ContractCard({ contract: c, rank, maxOI }: ContractCardProps) {
   // Score bar width (0-100%)
   const scoreWidth = Math.round(c.compositeScore * 100);
 
+  const cardBorderColor = isEstimating
+    ? "rgba(124,124,255,0.40)"
+    : borderColor;
+  const cardRadius = isEstimating ? "12px 12px 0 0" : "12px";
+  const cardMarginBottom = isEstimating ? 0 : 10;
+
   return (
     <div
       style={{
         background: bgColor,
-        border: "1px solid " + borderColor,
-        borderRadius: 12,
+        border: "1px solid " + cardBorderColor,
+        borderRadius: cardRadius,
         padding: "18px 22px",
-        marginBottom: 10,
+        marginBottom: cardMarginBottom,
         position: "relative",
-        transition: "border-color 0.15s ease",
+        transition: "border-color 0.15s ease, border-radius 0.15s ease",
       }}
     >
       {/* Sweet Spot badge */}
@@ -341,8 +349,33 @@ export function ContractCard({ contract: c, rank, maxOI }: ContractCardProps) {
         maxOI={maxOI}
       />
 
-      {/* Scenario analysis */}
-      <ScenarioBar scenarios={c.scenarios} ask={c.ask} />
+      {/* Scenario analysis + Estimate button */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ flex: 1 }}>
+          <ScenarioBar scenarios={c.scenarios} ask={c.ask} />
+        </div>
+        {onEstimate && (
+          <button
+            onClick={onEstimate}
+            style={{
+              fontFamily: "var(--font-dm-sans), system-ui, sans-serif",
+              fontSize: 10,
+              fontWeight: 500,
+              color: isEstimating ? "var(--accent-primary)" : "var(--text-tertiary)",
+              background: isEstimating ? "var(--accent-muted)" : "transparent",
+              border: `1px solid ${isEstimating ? "rgba(124,124,255,0.27)" : "var(--border-default)"}`,
+              borderRadius: 6,
+              padding: "4px 10px",
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+              transition: "all 0.12s ease",
+            }}
+          >
+            {isEstimating ? "Estimating..." : "Estimate"}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

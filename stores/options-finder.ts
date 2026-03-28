@@ -4,6 +4,7 @@ import type {
   TradeInput,
   CustomTradeInput,
   SortMode,
+  RiskTolerance,
 } from "@/lib/options";
 
 interface OptionsFinderState {
@@ -17,6 +18,8 @@ interface OptionsFinderState {
 
   // Coach recs loaded from ParsedTrade records
   coachTrades: Record<string, TradeInput>;
+  // Risk tolerance overrides for coach recs (keyed by ticker)
+  coachRiskOverrides: Record<string, RiskTolerance>;
 
   // Contracts data
   contracts: EnrichedContract[];
@@ -33,6 +36,7 @@ interface OptionsFinderState {
   addCustomTicker: (ticker: string) => void;
   removeCustomTicker: (ticker: string) => void;
   updateCustomDraft: (draft: CustomTradeInput) => void;
+  setCoachRiskTolerance: (ticker: string, risk: RiskTolerance) => void;
 
   setContracts: (
     contracts: EnrichedContract[],
@@ -54,6 +58,7 @@ function makeDefaultDraft(ticker: string): CustomTradeInput {
     stopLoss: 0,
     coachNote: "",
     hasCoachRec: false,
+    riskTolerance: "medium",
   };
 }
 
@@ -102,6 +107,7 @@ export const useOptionsFinderStore = create<OptionsFinderState>((set, get) => ({
   customTickers: [],
   customDrafts: {},
   coachTrades: {},
+  coachRiskOverrides: {},
   contracts: [],
   isLoading: false,
   error: null,
@@ -179,6 +185,21 @@ export const useOptionsFinderStore = create<OptionsFinderState>((set, get) => ({
       const newDrafts = { ...s.customDrafts, [draft.ticker]: draft };
       savePersisted(s.customTickers, newDrafts);
       return { customDrafts: newDrafts };
+    });
+  },
+
+  setCoachRiskTolerance: (ticker, risk) => {
+    set((s) => {
+      const newOverrides = { ...s.coachRiskOverrides, [ticker]: risk };
+      // Also update the coachTrades object so currentTrade reflects the change
+      const trade = s.coachTrades[ticker];
+      if (trade) {
+        return {
+          coachRiskOverrides: newOverrides,
+          coachTrades: { ...s.coachTrades, [ticker]: { ...trade, riskTolerance: risk } },
+        };
+      }
+      return { coachRiskOverrides: newOverrides };
     });
   },
 

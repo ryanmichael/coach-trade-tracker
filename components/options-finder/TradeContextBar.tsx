@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import { RefreshCwIcon } from "lucide-react";
-import type { TradeInput, CustomTradeInput } from "@/lib/options";
+import type { TradeInput, CustomTradeInput, RiskTolerance } from "@/lib/options";
 import { formatMoney, formatDate, daysUntil } from "@/lib/options";
+
+const RISK_LEVELS: { key: RiskTolerance; label: string; color: string }[] = [
+  { key: "high", label: "Hi", color: "var(--semantic-negative)" },
+  { key: "medium", label: "Md", color: "var(--semantic-warning)" },
+  { key: "low", label: "Lw", color: "var(--semantic-positive)" },
+];
 
 const TIME_RANGES = [
   { key: "1w", label: "1W", days: 7 },
@@ -229,6 +235,41 @@ export function TradeContextBar({
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={labelStyle}>Risk</label>
+            <div style={{ display: "flex", gap: 3 }}>
+              {RISK_LEVELS.map((r) => {
+                const isActive = (trade.riskTolerance ?? "medium") === r.key;
+                return (
+                  <button
+                    key={r.key}
+                    onClick={() => handleChange("riskTolerance", r.key)}
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 500,
+                      color: isActive ? r.color : "var(--text-tertiary)",
+                      background: isActive
+                        ? `color-mix(in srgb, ${r.color} 12%, transparent)`
+                        : "transparent",
+                      border: `1px solid ${
+                        isActive
+                          ? `color-mix(in srgb, ${r.color} 27%, transparent)`
+                          : "var(--border-default)"
+                      }`,
+                      borderRadius: 6,
+                      padding: "6px 8px",
+                      cursor: "pointer",
+                      transition: "all 0.12s ease",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {r.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <label style={labelStyle}>Time Frame</label>
             <div style={{ display: "flex", gap: 3 }}>
               {TIME_RANGES.map((r) => {
@@ -368,6 +409,19 @@ export function TradeContextBar({
           {trade.stopLoss > 0 && (
             <Metric label="Stop" value={formatMoney(trade.stopLoss)} negative />
           )}
+          {(() => {
+            const rl = RISK_LEVELS.find((r) => r.key === (trade.riskTolerance ?? "medium"))!;
+            return (
+              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <span style={{ fontSize: 10, fontWeight: 500, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  Risk
+                </span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: rl.color, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                  {rl.label}
+                </span>
+              </div>
+            );
+          })()}
           <Metric
             label="Projected"
             value={dateLabel}

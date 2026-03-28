@@ -13,6 +13,7 @@ import { SummaryFooter } from "@/components/options-finder/SummaryFooter";
 import { EmptyState } from "@/components/options-finder/EmptyState";
 import { MethodologyNote } from "@/components/options-finder/MethodologyNote";
 import { AccuracyDashboard } from "@/components/options-finder/AccuracyDashboard";
+import { EstimatePanel } from "@/components/options-finder/EstimatePanel";
 import { ShimmerLoader } from "@/components/primitives/ShimmerLoader";
 
 type Tab = "finder" | "accuracy";
@@ -38,9 +39,11 @@ export function OptionsFinder() {
     setLoading,
     setError,
     hydrateFromStorage,
+    setCoachRiskTolerance,
   } = store;
 
   const [activeTab, setActiveTab] = useState<Tab>("finder");
+  const [estimatingId, setEstimatingId] = useState<string | null>(null);
   const fetchIdRef = useRef(0);
 
   // Hydrate custom tickers from localStorage after mount (avoids SSR mismatch)
@@ -126,6 +129,11 @@ export function OptionsFinder() {
         : customDrafts[selectedTicker] ?? null
       : null;
 
+  // Clear estimate panel when ticker changes
+  useEffect(() => {
+    setEstimatingId(null);
+  }, [selectedTicker]);
+
   // Fetch options chain when trade params change
   useEffect(() => {
     if (!currentTrade) {
@@ -159,6 +167,7 @@ export function OptionsFinder() {
       targetPrice: String(currentTrade.priceTargetHigh),
       projectedDate: currentTrade.projectedDate,
       stopLoss: String(currentTrade.stopLoss),
+      riskTolerance: currentTrade.riskTolerance ?? "medium",
     });
 
     fetch(`/api/options/chain?${params}`)
@@ -186,6 +195,7 @@ export function OptionsFinder() {
     currentTrade?.currentPrice,
     currentTrade?.priceTargetHigh,
     currentTrade?.projectedDate,
+    currentTrade?.riskTolerance,
   ]);
 
   const sorted = useMemo(
@@ -268,6 +278,7 @@ export function OptionsFinder() {
         currentTrade={currentTrade}
         isCoachRec={isCoachRec}
         onUpdateDraft={!isCoachRec ? updateCustomDraft : undefined}
+        onRiskChange={setCoachRiskTolerance}
       />
 
       {error && (
@@ -357,12 +368,26 @@ export function OptionsFinder() {
           />
 
           {sorted.map((contract, i) => (
-            <ContractCard
-              key={contract.id}
-              contract={contract}
-              rank={i + 1}
-              maxOI={maxOI}
-            />
+            <div key={contract.id}>
+              <ContractCard
+                contract={contract}
+                rank={i + 1}
+                maxOI={maxOI}
+                isEstimating={estimatingId === contract.id}
+                onEstimate={() =>
+                  setEstimatingId(
+                    estimatingId === contract.id ? null : contract.id
+                  )
+                }
+              />
+              {estimatingId === contract.id && currentTrade && (
+                <EstimatePanel
+                  contract={contract}
+                  trade={currentTrade}
+                  onClose={() => setEstimatingId(null)}
+                />
+              )}
+            </div>
           ))}
 
           <SummaryFooter contracts={sorted} />

@@ -2,8 +2,14 @@
 
 import { useState } from "react";
 import { RefreshCwIcon } from "lucide-react";
-import type { CustomTradeInput } from "@/lib/options";
+import type { CustomTradeInput, RiskTolerance } from "@/lib/options";
 import { formatMoney, formatDate } from "@/lib/options";
+
+const RISK_LEVELS: { key: RiskTolerance; label: string; color: string }[] = [
+  { key: "high", label: "Hi", color: "var(--semantic-negative)" },
+  { key: "medium", label: "Md", color: "var(--semantic-warning)" },
+  { key: "low", label: "Lw", color: "var(--semantic-positive)" },
+];
 
 const TIME_RANGES = [
   { key: "1w", label: "1 Week", days: 7 },
@@ -176,6 +182,25 @@ export function CustomTickerForm({
           >
             {dateDisplay}
           </span>
+          {(() => {
+            const rl = RISK_LEVELS.find((r) => r.key === (draft.riskTolerance ?? "medium"))!;
+            return (
+              <span
+                style={{
+                  fontSize: 9,
+                  fontWeight: 600,
+                  letterSpacing: "0.06em",
+                  color: rl.color,
+                  background: `color-mix(in srgb, ${rl.color} 12%, transparent)`,
+                  padding: "3px 8px",
+                  borderRadius: 4,
+                  textTransform: "uppercase",
+                }}
+              >
+                {rl.label} Risk
+              </span>
+            );
+          })()}
           <span
             style={{
               fontSize: 9,
