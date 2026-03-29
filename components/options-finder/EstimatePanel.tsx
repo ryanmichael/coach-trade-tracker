@@ -36,7 +36,7 @@ function formatDate(dateStr: string): string {
 }
 
 export function EstimatePanel({ contract, trade, onClose }: EstimatePanelProps) {
-  const [purchaseAmount, setPurchaseAmount] = useState(500);
+  const [purchaseAmount, setPurchaseAmount] = useState(1500);
   const [distances, setDistances] = useState<number[]>(DEFAULT_DISTANCES);
   const [customDist, setCustomDist] = useState("");
 

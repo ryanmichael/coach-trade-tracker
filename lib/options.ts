@@ -721,6 +721,39 @@ export function formatDate(dateStr: string): string {
   return months[parseInt(parts[1], 10) - 1] + " " + parseInt(parts[2], 10);
 }
 
+// ── Pipeline: single entry point for the full options chain ───────────────────
+// Accepts trade + risk once; threads risk through fetch → filter → enrich.
+// This prevents risk tolerance from being accidentally dropped at any stage.
+
+export interface PipelineResult {
+  contracts: EnrichedContract[];
+  totalRaw: number;
+  totalFiltered: number;
+}
+
+export async function runOptionsPipeline(
+  trade: TradeInput,
+  riskTolerance: RiskTolerance = "medium"
+): Promise<PipelineResult> {
+  const raw = await fetchOptionsChain(
+    trade.ticker,
+    trade.direction,
+    trade.currentPrice,
+    trade.projectedDate,
+    trade.priceTargetHigh,
+    riskTolerance
+  );
+
+  const filtered = filterContracts(raw, trade, DEFAULT_FILTERS, riskTolerance);
+  const enriched = enrichContracts(filtered, trade, riskTolerance);
+
+  return {
+    contracts: enriched,
+    totalRaw: raw.length,
+    totalFiltered: filtered.length,
+  };
+}
+
 // ── Polygon API fetch helpers (server-side) ────────────────────────────────────
 
 const POLYGON_BASE = "https://api.polygon.io";
@@ -777,7 +810,7 @@ export async function fetchOptionsChain(
   // If Polygon is unavailable, generate synthetic contracts from BS model
   if (refs.length === 0) {
     console.log(`[Options] Polygon unavailable, generating synthetic contracts for ${ticker}`);
-    return generateSyntheticContracts(ticker, contractType, currentPrice, strikeLow, strikeHigh, minExpiry, maxExpiry);
+    return generateSyntheticContracts(ticker, contractType, currentPrice, strikeLow, strikeHigh, minExpiry, maxExpiry, riskTolerance);
   }
 
   // Step 2: Narrow down to the most interesting contracts
@@ -989,7 +1022,8 @@ function generateSyntheticContracts(
   strikeLow: number,
   strikeHigh: number,
   minExpiry: string,
-  maxExpiry: string
+  maxExpiry: string,
+  riskTolerance: RiskTolerance = "medium"
 ): RawContract[] {
   // Generate strikes at standard intervals ($1 for <$50, $5 for <$200, $10 for >$200)
   const strikeInterval = currentPrice < 50 ? 1 : currentPrice < 200 ? 5 : 10;
@@ -1030,8 +1064,9 @@ function generateSyntheticContracts(
     }
   }
 
-  // Limit to 15 diverse picks
-  const selected = selectPricingCandidates(refs, currentPrice, 15);
+  // Limit to diverse picks based on risk tolerance
+  const rc = RISK_CONFIG[riskTolerance].fetch;
+  const selected = selectPricingCandidates(refs, currentPrice, rc.candidateCount, riskTolerance);
   return selected.map((ref) => buildBSContract(ref, currentPrice));
 }
 

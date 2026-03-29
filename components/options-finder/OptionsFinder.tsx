@@ -147,7 +147,10 @@ export function OptionsFinder() {
       currentTrade.priceTargetHigh > 0 &&
       currentTrade.projectedDate;
 
-    if (!ready) return;
+    if (!ready) {
+      setContracts([], 0, 0);
+      return;
+    }
 
     const direction: "LONG" | "SHORT" =
       currentTrade.priceTargetHigh >= currentTrade.currentPrice

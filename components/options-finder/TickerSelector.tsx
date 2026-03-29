@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RefreshCwIcon } from "lucide-react";
 import type { TradeInput, CustomTradeInput, RiskTolerance } from "@/lib/options";
 import { formatMoney, formatDate, daysUntil } from "@/lib/options";
@@ -115,13 +115,6 @@ export function TickerSelector({
         >
           Select Ticker
         </span>
-        <div
-          style={{
-            flex: 1,
-            height: 1,
-            background: "var(--border-default)",
-          }}
-        />
       </div>
 
       {/* Ticker pills row */}
@@ -353,7 +346,7 @@ export function TickerSelector({
               border: "none",
               outline: "none",
               padding: "7px 10px 7px 6px",
-              width: 80,
+              width: 100,
               textTransform: "uppercase",
             }}
           />
@@ -363,6 +356,7 @@ export function TickerSelector({
       {/* Expanded trade context — shown when a ticker is selected */}
       {currentTrade && selected && (
         <TradeContext
+          key={selected}
           trade={currentTrade}
           editable={!isCoachRec}
           onUpdate={onUpdateDraft}
@@ -392,26 +386,55 @@ function TradeContext({
     trade.projectedDate.length > 0;
 
   const [editing, setEditing] = useState(editable && !isReady);
+
+  // Force edit mode open when custom ticker isn't ready (e.g. newly added)
+  const shouldForceEdit = editable && !isReady && !editing;
+  useEffect(() => {
+    if (shouldForceEdit) setEditing(true);
+  }, [shouldForceEdit]);
+
+  // Buffer edits locally so the options chain doesn't re-fetch on every keystroke.
+  // Only flush to the store when the user clicks "Done".
+  const [draft, setDraft] = useState<CustomTradeInput>(trade as CustomTradeInput);
+  useEffect(() => {
+    if (!editing) setDraft(trade as CustomTradeInput);
+  }, [editing, trade]);
+
+  // Sync store price into draft when it arrives from async fetch (e.g. newly added ticker)
+  useEffect(() => {
+    if (editing && trade.currentPrice > 0 && draft.currentPrice === 0) {
+      setDraft((d) => ({ ...d, currentPrice: trade.currentPrice }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trade.currentPrice]);
+
   const [selectedRange, setSelectedRange] = useState<RangeKey | null>(null);
   const [fetchingPrice, setFetchingPrice] = useState(false);
 
+  // Use draft values when editing, store values when in read mode
+  const display = editing ? draft : trade;
+
   const dirColor =
-    trade.direction === "LONG"
+    display.direction === "LONG"
       ? "var(--semantic-positive)"
       : "var(--semantic-negative)";
   const dirBg =
-    trade.direction === "LONG"
+    display.direction === "LONG"
       ? "var(--semantic-positive-muted)"
       : "var(--semantic-negative-muted)";
 
   function handleChange(field: keyof CustomTradeInput, value: string | number) {
-    if (!onUpdate) return;
-    const updated = { ...(trade as CustomTradeInput), [field]: value };
+    const updated = { ...draft, [field]: value };
     if (updated.currentPrice > 0 && updated.priceTargetHigh > 0) {
       updated.direction =
         updated.priceTargetHigh >= updated.currentPrice ? "LONG" : "SHORT";
     }
-    onUpdate(updated);
+    setDraft(updated);
+  }
+
+  function handleDone() {
+    if (onUpdate) onUpdate(draft);
+    setEditing(false);
   }
 
   function handleRangeSelect(range: RangeKey) {
@@ -419,16 +442,16 @@ function TradeContext({
     if (range !== "exact") {
       const r = TIME_RANGES.find((t) => t.key === range)!;
       handleChange("projectedDate", addDays(r.days));
-    } else if (!trade.projectedDate) {
+    } else if (!draft.projectedDate) {
       handleChange("projectedDate", "");
     }
   }
 
   async function handleRefreshPrice() {
-    if (!trade.ticker || fetchingPrice) return;
+    if (!draft.ticker || fetchingPrice) return;
     setFetchingPrice(true);
     try {
-      const res = await fetch(`/api/prices/${encodeURIComponent(trade.ticker)}`);
+      const res = await fetch(`/api/prices/${encodeURIComponent(draft.ticker)}`);
       if (res.ok) {
         const data = await res.json();
         if (data.price) handleChange("currentPrice", data.price);
@@ -440,9 +463,14 @@ function TradeContext({
     }
   }
 
-  const daysLeft = trade.projectedDate ? daysUntil(trade.projectedDate) : 0;
+  const daysLeft = display.projectedDate ? daysUntil(display.projectedDate) : 0;
   const dateLabel =
-    rangeLabelFromDate(trade.projectedDate) ?? formatDate(trade.projectedDate);
+    rangeLabelFromDate(display.projectedDate) ?? formatDate(display.projectedDate);
+
+  const draftReady =
+    draft.currentPrice > 0 &&
+    draft.priceTargetHigh > 0 &&
+    draft.projectedDate.length > 0;
 
   const labelStyle: React.CSSProperties = {
     fontSize: 10,
@@ -489,9 +517,9 @@ function TradeContext({
               color: "var(--text-primary)",
             }}
           >
-            {trade.ticker}
+            {draft.ticker}
           </span>
-          {trade.currentPrice > 0 && trade.priceTargetHigh > 0 && (
+          {draft.currentPrice > 0 && draft.priceTargetHigh > 0 && (
             <span
               style={{
                 fontSize: 10,
@@ -504,7 +532,7 @@ function TradeContext({
                 letterSpacing: "0.06em",
               }}
             >
-              {trade.direction === "LONG" ? "▲ Long" : "▼ Short"}
+              {draft.direction === "LONG" ? "▲ Long" : "▼ Short"}
             </span>
           )}
         </div>
@@ -538,7 +566,7 @@ function TradeContext({
               type="number"
               step="0.01"
               placeholder="0.00"
-              value={trade.currentPrice > 0 ? trade.currentPrice : ""}
+              value={draft.currentPrice > 0 ? draft.currentPrice : ""}
               onChange={(e) =>
                 handleChange("currentPrice", parseFloat(e.target.value) || 0)
               }
@@ -552,7 +580,7 @@ function TradeContext({
               type="number"
               step="0.01"
               placeholder="0.00"
-              value={trade.priceTargetHigh > 0 ? trade.priceTargetHigh : ""}
+              value={draft.priceTargetHigh > 0 ? draft.priceTargetHigh : ""}
               onChange={(e) =>
                 handleChange("priceTargetHigh", parseFloat(e.target.value) || 0)
               }
@@ -594,16 +622,16 @@ function TradeContext({
               <label style={labelStyle}>Date</label>
               <input
                 type="date"
-                value={trade.projectedDate}
+                value={draft.projectedDate}
                 onChange={(e) => handleChange("projectedDate", e.target.value)}
                 style={{ ...inputStyle, width: 140, colorScheme: "dark" }}
               />
             </div>
           )}
 
-          {isReady && (
+          {draftReady && (
             <button
-              onClick={() => setEditing(false)}
+              onClick={handleDone}
               style={{
                 fontSize: 11,
                 fontWeight: 600,
@@ -618,7 +646,7 @@ function TradeContext({
               Done
             </button>
           )}
-          {!isReady && (
+          {!draftReady && (
             <div style={{ fontSize: 10, color: "var(--text-tertiary)", padding: "8px 0" }}>
               Fill fields to see contracts
             </div>
@@ -715,7 +743,8 @@ function TradeContext({
                     onClick={() => {
                       onRiskChange(trade.ticker, r.key);
                       if (onUpdate) {
-                        handleChange("riskTolerance", r.key);
+                        // Update store directly (read mode — no buffering)
+                        onUpdate({ ...(trade as CustomTradeInput), riskTolerance: r.key });
                       }
                     }}
                     style={{

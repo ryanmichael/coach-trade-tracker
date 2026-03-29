@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import {
-  fetchOptionsChain,
-  filterContracts,
-  enrichContracts,
-  DEFAULT_FILTERS,
+  runOptionsPipeline,
+  RISK_CONFIG,
   type TradeInput,
   type EnrichedContract,
   type RiskTolerance,
@@ -48,26 +46,14 @@ export async function GET(req: NextRequest) {
   };
 
   try {
-    // Fetch from Polygon (risk-aware: high risk widens strike/expiry window)
-    const rawContracts = await fetchOptionsChain(
-      ticker,
-      direction,
-      currentPrice,
-      projectedDate,
-      targetPrice,
-      riskTolerance
-    );
-
-    // Filter (risk-aware: high risk relaxes filters, low risk tightens them)
-    const filtered = filterContracts(rawContracts, trade, DEFAULT_FILTERS, riskTolerance);
-
-    // Enrich + rank
-    const enriched = enrichContracts(filtered, trade, riskTolerance);
+    // Single pipeline call — risk threads through fetch, filter, and scoring
+    const result = await runOptionsPipeline(trade, riskTolerance);
 
     // Return top 15
-    const top = enriched.slice(0, 15);
+    const top = result.contracts.slice(0, 15);
+    const rc = RISK_CONFIG[riskTolerance];
 
-    console.log(`[Options chain] ${ticker} ${direction}: refs→${rawContracts.length} filtered→${filtered.length} enriched→${enriched.length}`);
+    console.log(`[Options chain] ${ticker} ${direction} risk=${riskTolerance}: raw→${result.totalRaw} filtered→${result.totalFiltered} enriched→${result.contracts.length}`);
 
     // Snapshot top 3 for prediction tracking (fire-and-forget)
     if (top.length > 0) {
@@ -79,13 +65,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(
       {
         contracts: top,
-        totalRaw: rawContracts.length,
-        totalFiltered: filtered.length,
+        totalRaw: result.totalRaw,
+        totalFiltered: result.totalFiltered,
+        riskTolerance,
         filters: {
           contractType: direction === "LONG" ? "call" : "put",
-          minOI: DEFAULT_FILTERS.minOpenInterest,
-          maxSpread: DEFAULT_FILTERS.maxSpreadPct + "%",
-          minDtePastProjected: DEFAULT_FILTERS.minDtePastProjected + "d",
+          minOI: rc.filters.minOpenInterest,
+          maxSpread: rc.filters.maxSpreadPct + "%",
+          minDtePastProjected: rc.filters.minDtePastProjected + "d",
         },
         fetchedAt: new Date().toISOString(),
       },
