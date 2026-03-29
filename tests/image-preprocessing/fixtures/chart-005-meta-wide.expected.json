@@ -1,0 +1,9 @@
+{
+  "ticker": "META",
+  "timeframe": "D",
+  "levelCount": 2,
+  "prices": [
+    480,
+    510
+  ]
+}

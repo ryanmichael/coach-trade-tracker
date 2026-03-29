@@ -1,0 +1,275 @@
+// schema.prisma
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider     = "prisma-client-js"
+  output       = "../src/generated/prisma"
+  moduleFormat = "commonjs"
+}
+
+// ── Future multi-user support ──
+model User {
+  id           String          @id @default(cuid())
+  email        String          @unique
+  name         String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  watchlist             WatchlistItem[]
+  activeTrades          ActiveTrade[]
+  alerts                Alert[]
+  preferences           UserPreference?
+  delistMonitorTickers  DelistMonitorTicker[]
+}
+
+model UserPreference {
+  id                    String  @id @default(cuid())
+  userId                String  @unique
+  user                  User    @relation(fields: [userId], references: [id])
+  alertSound            Boolean @default(true)
+  alertBrowserPush      Boolean @default(false)
+  defaultView           String  @default("active")
+  priceCheckIntervalSec Int     @default(30)
+}
+
+// ── Coach Feed ──
+model CoachPost {
+  id                String          @id @default(cuid())
+  externalId        String?         @unique
+  content           String
+  mediaUrls         String[]
+  imageStoragePaths String[]
+  imageAnalysis     Json?
+  hasImages         Boolean         @default(false)
+  postedAt          DateTime
+  ingestedAt        DateTime        @default(now())
+  ingestionMethod   String          @default("manual")
+  chartData         Json?           // ChartData object for TradeSummaryChart rendering
+  chartConfidence   Float?          // Vision confidence for shape extraction (0-1)
+  parsedTrades      ParsedTrade[]
+  watchlistItems    WatchlistItem[]
+  feedTags          FeedTag[]
+  parseFeedback     ParseFeedback[]
+}
+
+// ── Parsed Trade Recommendations ──
+model ParsedTrade {
+  id                 String        @id @default(cuid())
+  coachPostId        String
+  coachPost          CoachPost     @relation(fields: [coachPostId], references: [id])
+  ticker             String
+  direction          String        @default("long")
+  priceTargetLow     Float?
+  priceTargetHigh    Float?
+  priceTargetPercent Float?
+  priceConfirmation  Float?
+  projectedDate      DateTime?
+  stopLoss           Float?
+  supportLevel       Float?
+  resistanceLevel    Float?
+  confidence         Float         @default(0.0)
+  sourceType         String        @default("text")
+  rawExtract         String
+  createdAt          DateTime      @default(now())
+  watchlistItems     WatchlistItem[]
+  activeTrades       ActiveTrade[]
+  parseFeedback      ParseFeedback[]
+}
+
+// ── Watchlist ──
+model WatchlistItem {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  ticker        String
+  parsedTradeId String?
+  parsedTrade   ParsedTrade? @relation(fields: [parsedTradeId], references: [id])
+  coachPostId   String?
+  coachPost     CoachPost?   @relation(fields: [coachPostId], references: [id])
+  notes         String?
+  addedAt       DateTime     @default(now())
+  status        String       @default("watching")
+
+  @@unique([userId, ticker])
+}
+
+// ── Active Trades ──
+model ActiveTrade {
+  id                    String       @id @default(cuid())
+  userId                String
+  user                  User         @relation(fields: [userId], references: [id])
+  ticker                String
+  parsedTradeId         String?
+  parsedTrade           ParsedTrade? @relation(fields: [parsedTradeId], references: [id])
+  entryPrice            Float?
+  entryDate             DateTime?
+  priceConfirmation     Float?
+  priceTargetHigh       Float?
+  priceTargetLow        Float?
+  projectedDate         DateTime?
+  stopLoss              Float?
+  supportLevel          Float?
+  resistanceLevel       Float?
+  status                String       @default("pending")
+  currentPrice          Float?
+  currentPriceUpdatedAt DateTime?
+  profitLoss            Float?
+  closedAt              DateTime?
+  closedPrice           Float?
+  notes                 String?
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  alerts                Alert[]
+}
+
+// ── Alerts ──
+model Alert {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  activeTradeId String?
+  activeTrade   ActiveTrade? @relation(fields: [activeTradeId], references: [id])
+  ticker        String
+  alertType     String
+  triggerPrice  Float?
+  triggeredAt   DateTime?
+  acknowledged  Boolean      @default(false)
+  message       String
+  createdAt     DateTime     @default(now())
+}
+
+// ── Coach Intelligence Layer ──
+model CoachProfile {
+  id               String   @id @default(cuid())
+  key              String   @unique
+  value            Json
+  source           String   @default("system_detected")
+  confidence       Float    @default(0.5)
+  lastUpdated      DateTime @updatedAt
+  observationCount Int      @default(1)
+}
+
+model KnowledgeEntry {
+  id        String   @id @default(cuid())
+  category  String
+  key       String   @unique
+  data      Json
+  source    String   @default("seed")
+  validated Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ParseFeedback {
+  id              String       @id @default(cuid())
+  coachPostId     String
+  coachPost       CoachPost    @relation(fields: [coachPostId], references: [id])
+  parsedTradeId   String?
+  parsedTrade     ParsedTrade? @relation(fields: [parsedTradeId], references: [id])
+  feedbackText    String
+  correctionType  String?
+  fieldsCorrected String[]
+  originalValues  Json?
+  correctedValues Json?
+  processed       Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+}
+
+// ── Coach Thesis — evolving documented worldview ──
+model ThesisEntry {
+  id            String    @id @default(cuid())
+  topic         String    // "macro_environment" | "current_bias" | "methodology" | "instruments" | "risk_rules" | "terminology" | "sector_analysis" | "other"
+  title         String?   // Reserved for internal use
+  rawText       String    // Original pasted text (date headers stripped)
+  summary       String    // Claude-generated one-line summary
+  extractedKeys Json      @default("[]") // Array of CoachProfile/KB keys updated by this entry
+  postDate      DateTime? // Original post date (from CSV tweet date or user-provided)
+  createdAt     DateTime  @default(now())
+}
+
+// ── Reference Documents — 4-pass extraction from methodology PDFs (books, guides) ──
+model ReferenceDocument {
+  id            String   @id @default(cuid())
+  title         String
+  filename      String
+  status        String   @default("processing") // "processing" | "complete" | "error"
+  extractedKeys Json     @default("[]")          // Array of "profile:key" | "kb:key" strings
+  createdAt     DateTime @default(now())
+}
+
+// ── Delist Monitor ──
+model DelistMonitorTicker {
+  id           String               @id @default(cuid())
+  userId       String
+  user         User                 @relation(fields: [userId], references: [id])
+  ticker       String
+  status       String               @default("green") // "green" | "yellow" | "red"
+  addedAt      DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  notes        String?
+  checkResults DelistCheckResult[]
+
+  @@unique([userId, ticker])
+}
+
+model DelistCheckResult {
+  id                    String              @id @default(cuid())
+  delistMonitorTickerId String
+  delistMonitorTicker   DelistMonitorTicker @relation(fields: [delistMonitorTickerId], references: [id], onDelete: Cascade)
+  ticker                String
+  checkDate             DateTime            @default(now())
+  source                String              // "sec_edgar" | "polygon_aum" | "polygon_volume" | "web_search"
+  signalLevel           String              // "green" | "yellow" | "red"
+  summary               String
+  rawData               Json?
+  url                   String?
+}
+
+// ── Options Finder — Prediction Tracking ──
+model OptionsSnapshot {
+  id             String    @id @default(cuid())
+  sessionId      String    // Groups contracts from the same request
+  ticker         String
+  direction      String    // "LONG" | "SHORT"
+  currentPrice   Float     // Stock price at time of recommendation
+  targetPrice    Float
+  projectedDate  DateTime
+  // Contract details
+  contractTicker String    // Polygon contract ID e.g. "O:QQQ260424P00571000"
+  strike         Float
+  expiry         String
+  contractType   String    // "call" | "put"
+  // Our estimates at time of recommendation
+  askAtRec       Float     // Ask price we showed the user
+  forwardROI     Float     // Our BS forward-priced ROI estimate
+  compositeScore Float
+  ivEstimate     Float     // IV we estimated via Newton-Raphson
+  rank           Int       // 1 = best match
+  isBestMatch    Boolean
+  createdAt      DateTime  @default(now())
+  // Filled in by validation job
+  actualOptionPrice   Float?    // Option price on or near projected date
+  stockPriceAtCheck   Float?    // Stock price when we checked
+  actualROI           Float?    // Real ROI: (actualOptionPrice - askAtRec) / askAtRec
+  predictionError     Float?    // |forwardROI - actualROI|
+  directionCorrect    Boolean?  // Did we correctly predict profitable vs unprofitable?
+  validatedAt         DateTime?
+
+  @@index([ticker, createdAt])
+  @@index([sessionId])
+  @@index([validatedAt])
+}
+
+// ── Feed Tagging ──
+model FeedTag {
+  id          String    @id @default(cuid())
+  coachPostId String
+  coachPost   CoachPost @relation(fields: [coachPostId], references: [id])
+  tagType     String
+  ticker      String?
+  createdAt   DateTime  @default(now())
+
+  @@unique([coachPostId, tagType, ticker])
+}

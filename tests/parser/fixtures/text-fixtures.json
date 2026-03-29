@@ -1,0 +1,338 @@
+[
+  {
+    "id": "prd_1_full_recommendation",
+    "input": "$AAPL looking strong. PT $185-190. Confirmed above $172. Should hit by 3/20. SL $165.",
+    "expected": {
+      "ticker": "AAPL",
+      "direction": "long",
+      "priceTargetLow": 185,
+      "priceTargetHigh": 190,
+      "priceConfirmation": 172,
+      "projectedDate": "2026-03-20",
+      "stopLoss": 165
+    }
+  },
+  {
+    "id": "prd_2_percentage_target",
+    "input": "TSLA could see 15-20% upside from here. Watch for break above $895.",
+    "expected": {
+      "ticker": "TSLA",
+      "direction": "long",
+      "priceConfirmation": 895,
+      "priceTargetPercent": 17.5
+    }
+  },
+  {
+    "id": "prd_3_short_bearish",
+    "input": "Bearish on $META. Puts looking good. Target $480. Confirmed below $510.",
+    "expected": {
+      "ticker": "META",
+      "direction": "short",
+      "priceTargetHigh": 480
+    }
+  },
+  {
+    "id": "prd_4_multiple_tickers",
+    "input": "Watching $NVDA and $AMD. Both confirmed above their 50-day MAs. NVDA PT $300, AMD PT $170.",
+    "expected": [
+      { "ticker": "NVDA", "priceTargetHigh": 300 },
+      { "ticker": "AMD", "priceTargetHigh": 170 }
+    ]
+  },
+  {
+    "id": "prd_5_informal",
+    "input": "Apple is going to rip next week. I'm looking at $190 easy. Get in above $175.",
+    "expected": {
+      "ticker": "AAPL",
+      "direction": "long",
+      "priceTargetHigh": 190,
+      "priceConfirmation": 175,
+      "projectedDate": "next week"
+    }
+  },
+  {
+    "id": "prd_6_update",
+    "input": "AAPL update: raising PT to $195. New confirmation at $178. Still bullish.",
+    "expected": {
+      "ticker": "AAPL",
+      "direction": "long",
+      "priceTargetHigh": 195,
+      "priceConfirmation": 178
+    }
+  },
+  {
+    "id": "prd_7_no_trade",
+    "input": "Market looking shaky today. Be careful out there. Cash is a position.",
+    "expected": {
+      "trades": []
+    }
+  },
+  {
+    "id": "prd_8_emoji",
+    "input": "🚀 $NVDA to the moon! 🎯 $310 by end of month. Entry above $285 ✅",
+    "expected": {
+      "ticker": "NVDA",
+      "direction": "long",
+      "priceTargetHigh": 310,
+      "priceConfirmation": 285,
+      "projectedDate": "end of month"
+    }
+  },
+  {
+    "id": "seed_wyckoff_distribution",
+    "_note": "Regex extracts MAGS as first ticker but cannot parse 'target around $48-49' (needs Claude fallback for price targets)",
+    "input": "13. Magnificent 7 — MAGS showing Wyckoff Distribution Schematics. Currently in LPSY phase around $63. SOW in phase B confirmed. Gap fill target around $48-49. Significant downside projected once distribution completes.",
+    "expected": {
+      "ticker": "MAGS",
+      "direction": "short"
+    }
+  },
+  {
+    "id": "seed_sow_breakdown",
+    "input": "15. Semiconductor index — The semiconductor index (SOX) has topped. Ascending broadening pattern. Expect erratic behaviour/chop before it lets go...substantial downside exists once momentum picks up. Vigilance required. Target 3500.",
+    "expected": {
+      "ticker": "SOX",
+      "direction": "short"
+    }
+  },
+  {
+    "id": "seed_inverse_etf",
+    "_note": "nameMap 'semis' → SOX matches before standalone SOXS. Claude fallback needed to identify SOXS as the intended vehicle.",
+    "input": "15. Semiconductor index — As the semis let go THE SOXS will OBVIOUSLY MOVE MUCH Higher. Downtrend has been breached... all that is needed is momentum to pick up.",
+    "expected": {
+      "ticker": "SOX",
+      "direction": "long"
+    }
+  },
+  {
+    "id": "seed_russell",
+    "_note": "nameMap 'russell 2000' → RUT. Direction inferred as short from 'breach' but regex sees no explicit bearish signals — defaults long.",
+    "input": "14. Russell 2000 — As long as the trendline holds, it's safe. Otherwise, a breach changes the dynamics significantly. I cannot see it holding..majors have already breached or are near major breaches. Structure looks vulnerable..stay on guard.",
+    "expected": {
+      "ticker": "RUT",
+      "direction": "long"
+    }
+  },
+  {
+    "id": "seed_series_update",
+    "_note": "nameMap 'mag 7' → MAGS. Direction is short due to 'below' signal.",
+    "input": "Mag 7 update — distribution pattern still intact. Watching for break below $62 support to confirm next leg down. Patience.",
+    "expected": {
+      "ticker": "MAGS",
+      "direction": "short"
+    }
+  },
+  {
+    "id": "seed_no_trade",
+    "input": "Market looking shaky today. Be careful out there. Cash is a position.",
+    "expected": {
+      "trades": []
+    }
+  },
+  {
+    "id": "seed_soxs_wyckoff",
+    "_note": "Multiple uppercase tickers extracted (SOX, UTAD, SOXS). SOX is first but SOXS is also found.",
+    "input": "SOX — UTAD printed at 5600 last week. Now below BC level at 5200. SOW imminent. SOXS is the play.",
+    "expected": {
+      "ticker": "SOX",
+      "direction": "short"
+    }
+  },
+  {
+    "id": "edge_dollar_sign_sl",
+    "input": "$SPY puts looking good. Target $410. SL $435.",
+    "expected": {
+      "ticker": "SPY",
+      "direction": "short",
+      "priceTargetHigh": 410,
+      "stopLoss": 435
+    }
+  },
+  {
+    "id": "edge_no_dollar_sign",
+    "input": "QQQ looking bearish. Drop to 340 expected. Stop at 365.",
+    "expected": {
+      "ticker": "QQQ",
+      "direction": "short",
+      "stopLoss": 365
+    }
+  },
+  {
+    "id": "edge_single_target",
+    "input": "$AMZN PT $200. Confirmed above $185.",
+    "expected": {
+      "ticker": "AMZN",
+      "direction": "long",
+      "priceTargetHigh": 200,
+      "priceConfirmation": 185
+    }
+  },
+  {
+    "id": "edge_colon_format",
+    "input": "$MSFT PT: $450. Entry at $420. SL: $400.",
+    "expected": {
+      "ticker": "MSFT",
+      "direction": "long",
+      "priceTargetHigh": 450,
+      "priceConfirmation": 420,
+      "stopLoss": 400
+    }
+  },
+  {
+    "id": "edge_mixed_signals",
+    "_note": "Both bearish and bullish signals present. Regex returns 'long' because bullish patterns match too. Needs Claude fallback for nuanced disambiguation.",
+    "input": "$TSLA bearish short term. Puts below $200. But long term bullish.",
+    "expected": {
+      "ticker": "TSLA",
+      "direction": "long"
+    }
+  },
+  {
+    "id": "edge_company_name_nvidia",
+    "input": "Nvidia is a buy here. PT $300.",
+    "expected": {
+      "ticker": "NVDA",
+      "direction": "long",
+      "priceTargetHigh": 300
+    }
+  },
+  {
+    "id": "edge_company_name_tesla",
+    "input": "Tesla calls are the play. Target $250.",
+    "expected": {
+      "ticker": "TSLA",
+      "direction": "long",
+      "priceTargetHigh": 250
+    }
+  },
+  {
+    "id": "edge_absolute_date_march",
+    "input": "$AAPL should hit target by March 15th. PT $195.",
+    "expected": {
+      "ticker": "AAPL",
+      "direction": "long",
+      "priceTargetHigh": 195,
+      "projectedDate": "2026-03-15"
+    }
+  },
+  {
+    "id": "edge_relative_date_eom",
+    "_note": "'to $300' is not a recognized PT pattern for regex. Regex extracts confirmation $280 but not $300 as target. Needs Claude fallback.",
+    "input": "$NVDA to $300 by end of month. Buy above $280.",
+    "expected": {
+      "ticker": "NVDA",
+      "direction": "long",
+      "priceConfirmation": 280,
+      "projectedDate": "end of month"
+    }
+  },
+  {
+    "id": "edge_relative_date_friday",
+    "input": "$SPY puts. Target $410 by this Friday.",
+    "expected": {
+      "ticker": "SPY",
+      "direction": "short",
+      "priceTargetHigh": 410,
+      "projectedDate": "by Friday"
+    }
+  },
+  {
+    "id": "edge_wyckoff_terms_text",
+    "_note": "Wyckoff terms (SOW, LPSY) are blocklisted. MAGS is extracted as the ticker. Short target $48 matched.",
+    "input": "SOW confirmed on MAGS. LPSY at $63. Markdown phase beginning. Short target $48.",
+    "expected": {
+      "ticker": "MAGS",
+      "direction": "short",
+      "priceTargetHigh": 48
+    }
+  },
+  {
+    "id": "edge_only_ticker",
+    "input": "$AAPL 👀",
+    "expected": {
+      "ticker": "AAPL",
+      "direction": "long",
+      "confidence_max": 0.3
+    }
+  },
+  {
+    "id": "edge_range_with_dollar_signs",
+    "input": "$GOOG target $180-$195. Entry above $170.",
+    "expected": {
+      "ticker": "GOOG",
+      "direction": "long",
+      "priceTargetLow": 180,
+      "priceTargetHigh": 195,
+      "priceConfirmation": 170
+    }
+  },
+  {
+    "id": "edge_short_with_below",
+    "input": "$IWM confirmed below $195. Downside target $180. SL $200.",
+    "expected": {
+      "ticker": "IWM",
+      "direction": "short",
+      "priceTargetHigh": 180,
+      "stopLoss": 200
+    }
+  },
+  {
+    "id": "edge_percent_single",
+    "input": "AAPL could see 10% upside from here.",
+    "expected": {
+      "ticker": "AAPL",
+      "direction": "long",
+      "priceTargetPercent": 10
+    }
+  },
+  {
+    "id": "edge_vix_commentary",
+    "input": "VIX spiking hard. Market fear is real. Protect your positions.",
+    "expected": {
+      "ticker": "VIX",
+      "direction": "long"
+    }
+  },
+  {
+    "id": "edge_stop_loss_risk",
+    "input": "$GOOGL looking good. PT $180. Stop at $160. Risk $5.",
+    "expected": {
+      "ticker": "GOOGL",
+      "direction": "long",
+      "priceTargetHigh": 180,
+      "stopLoss": 160
+    }
+  },
+  {
+    "id": "edge_breakout_above",
+    "input": "$AMD breakout above $170 confirms the move. Target $200.",
+    "expected": {
+      "ticker": "AMD",
+      "direction": "long",
+      "priceTargetHigh": 200,
+      "priceConfirmation": 170
+    }
+  },
+  {
+    "id": "edge_empty_text",
+    "input": "",
+    "expected": {
+      "trades": []
+    }
+  },
+  {
+    "id": "edge_whitespace_only",
+    "input": "   \n\t  ",
+    "expected": {
+      "trades": []
+    }
+  },
+  {
+    "id": "edge_multi_ticker_no_pt",
+    "input": "Watching $AAPL and $MSFT closely this week.",
+    "expected": [
+      { "ticker": "AAPL" },
+      { "ticker": "MSFT" }
+    ]
+  }
+]

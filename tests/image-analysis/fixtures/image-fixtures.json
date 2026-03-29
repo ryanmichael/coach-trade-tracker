@@ -1,0 +1,125 @@
+[
+  {
+    "_comment": "Add fixtures here. Drop matching PNG/JPG into images/ folder. Run: npx tsx tests/image-analysis/run.ts --live",
+    "_example_channel": {
+      "channel": {
+        "upperStart": 200, "upperEnd": 220,
+        "lowerStart": 170, "lowerEnd": 195,
+        "tolerance": 8
+      }
+    },
+    "_example_stepDown": {
+      "stepDown": {
+        "diagonal": { "start": 75, "end": 45, "tolerance": 5 },
+        "zones": [
+          { "upper": 65, "lower": 60, "tolerance": 3 },
+          { "upper": 52, "lower": 48, "tolerance": 3 }
+        ]
+      }
+    },
+    "_example_triangle": {
+      "triangle": {
+        "subtype": "symmetrical",
+        "upperTrendline": { "startPrice": 5600, "endPrice": 5200, "tolerance": 50 },
+        "lowerTrendline": { "startPrice": 4500, "endPrice": 5000, "tolerance": 50 },
+        "swingPoints": [
+          { "price": 5600, "type": "high", "tolerance": 50 },
+          { "price": 4500, "type": "low", "tolerance": 50 },
+          { "price": 5400, "type": "high", "tolerance": 50 },
+          { "price": 4800, "type": "low", "tolerance": 50 },
+          { "price": 5200, "type": "high", "tolerance": 50 }
+        ],
+        "apex": { "price": 5100, "tolerance": 100 }
+      }
+    }
+  },
+  {
+    "id": "aapl_basic_01",
+    "image": "images/chart-001-aapl-basic.png",
+    "expected": {
+      "ticker": "AAPL",
+      "direction": "bullish",
+      "priceLevels": [
+        { "value": 172, "type": "entry", "tolerance": 3 },
+        { "value": 190, "type": "target", "tolerance": 3 }
+      ],
+      "minConfidence": 0.5,
+      "notes": "Basic AAPL chart with entry at 172, target at 190"
+    }
+  },
+  {
+    "id": "bitcoin_step_down",
+    "image": "images/bitcoin-step-down.png",
+    "expected": {
+      "ticker": "BTCUSD",
+      "direction": "bearish",
+      "directionRequired": true,
+      "pattern": "step_down",
+      "stepDown": {
+        "diagonal": {
+          "start": 124000,
+          "end": 78000,
+          "tolerance": 6000
+        },
+        "zones": [
+          { "upper": 120000, "lower": 108000, "tolerance": 8000 },
+          { "upper": 96000, "lower": 84000, "tolerance": 8000 },
+          { "upper": 76000, "lower": 64000, "tolerance": 8000 }
+        ]
+      },
+      "notes": "Both step-down structures are still acting as they should. They are inherently bearish as long as the downtrend line caps prices ... we assume a bearish outcome."
+    }
+  },
+  {
+    "id": "amazon_ascending_channel",
+    "image": "images/amazon-asending-channel.png",
+    "expected": {
+      "ticker": "AMZN",
+      "direction": "bearish",
+      "directionRequired": true,
+      "pattern": "ascending_channel",
+      "priceLevels": [
+        { "value": 200, "type": "support", "tolerance": 8 }
+      ],
+      "channel": {
+        "lowerStart": 90,
+        "lowerEnd": 205,
+        "upperStart": 145,
+        "upperEnd": 275,
+        "tolerance": 10
+      },
+      "notes": "Testing major support once again. A breach and it's heading much lower. For now it's safe."
+    }
+  },
+  {
+    "id": "xauusd_symmetrical_triangle",
+    "image": "images/gold-symetrical-triangle.png",
+    "expected": {
+      "ticker": "GOLD",
+      "direction": "neutral",
+      "pattern": "triangle",
+      "triangle": {
+        "subtype": "symmetrical",
+        "upperTrendline": {
+          "startPrice": 5450,
+          "endPrice": 5200,
+          "tolerance": 100
+        },
+        "lowerTrendline": {
+          "startPrice": 4600,
+          "endPrice": 5050,
+          "tolerance": 100
+        },
+        "swingPoints": [
+          { "price": 5420, "type": "high", "tolerance": 100 },
+          { "price": 4620, "type": "low", "tolerance": 100 },
+          { "price": 5280, "type": "high", "tolerance": 100 },
+          { "price": 5000, "type": "low", "tolerance": 100 },
+          { "price": 5180, "type": "high", "tolerance": 100 }
+        ],
+        "apex": { "price": 5100, "tolerance": 150 }
+      },
+      "notes": "GOLD symmetrical triangle with 5 numbered swing points converging toward apex. Breakout direction ambiguous (arrows show both up and down)."
+    }
+  }
+]

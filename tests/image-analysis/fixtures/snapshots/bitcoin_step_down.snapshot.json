@@ -1,0 +1,232 @@
+{
+  "nlp": {
+    "raw": {
+      "image_type": "annotated_chart",
+      "ticker": "BTCUSD",
+      "y_axis_ticks": [
+        36000,
+        40000,
+        44000,
+        48000,
+        52000,
+        56000,
+        60000,
+        64000,
+        68000,
+        72000,
+        76000,
+        80000,
+        84000,
+        88000,
+        92000,
+        96000,
+        100000,
+        104000,
+        108000,
+        112000,
+        116000,
+        120000,
+        124000,
+        128000,
+        132000,
+        136000,
+        140000,
+        144000
+      ],
+      "price_levels": [
+        {
+          "value": 124000,
+          "type": "resistance",
+          "label": "Upper boundary of first consolidation box (Oct top)"
+        },
+        {
+          "value": 108000,
+          "type": "support",
+          "label": "Lower boundary of first consolidation box"
+        },
+        {
+          "value": 116000,
+          "type": "unknown",
+          "label": "Mid-range dashed line within first consolidation box"
+        },
+        {
+          "value": 124000,
+          "type": "resistance",
+          "label": "Diagonal resistance start (left, ~Oct)"
+        },
+        {
+          "value": 80000,
+          "type": "resistance",
+          "label": "Diagonal resistance end (right, ~Apr)"
+        },
+        {
+          "value": 97000,
+          "type": "resistance",
+          "label": "Upper boundary of second consolidation channel (Dec-Jan)"
+        },
+        {
+          "value": 84000,
+          "type": "support",
+          "label": "Lower boundary of second consolidation channel (Dec-Jan)"
+        },
+        {
+          "value": 90000,
+          "type": "unknown",
+          "label": "Mid dashed line within second consolidation channel"
+        },
+        {
+          "value": 76000,
+          "type": "resistance",
+          "label": "Upper boundary of third (current) consolidation channel"
+        },
+        {
+          "value": 60000,
+          "type": "support",
+          "label": "Lower boundary of third (current) consolidation channel"
+        },
+        {
+          "value": 68000,
+          "type": "unknown",
+          "label": "Mid dashed line within third consolidation channel"
+        }
+      ],
+      "annotations": [
+        "BTCUSD - Bitcoin / U.S. Dollar - 1D - Coinbase",
+        "First large consolidation rectangle (Jul–Oct 2025) with mid dashed line",
+        "Blue dashed descending resistance line from ~124,000 (Oct) down to ~80,000 (Apr 2026)",
+        "Second shaded ascending channel (Dec 2025 – Jan 2026) ranging roughly 84,000–97,000",
+        "Sharp drop from ~88,000 to ~60,000 in early February 2026",
+        "Third shaded ascending channel (Feb–Apr 2026) ranging roughly 60,000–76,000",
+        "Step-down pattern: price descends in stair-step fashion with intervening consolidation channels",
+        "Current price appears to be recovering within third channel around 74,000–76,000"
+      ],
+      "timeframe": "1D",
+      "direction": "bearish",
+      "projected_dates": [],
+      "confidence": 0.72,
+      "summary": "BTCUSD daily chart on Coinbase showing a classic step-down / descending stair-step pattern from October 2025 through April 2026. A blue dashed diagonal resistance line runs from approximately $124,000 down to ~$80,000. There are three main consolidation zones: (1) a large sideways box from Jul–Oct 2025 roughly $108k–$124k with a mid-line near $116k; (2) a tighter ascending channel Dec 2025–Jan 2026 between ~$84k–$97k; and (3) the current ascending channel Feb–Apr 2026 between ~$60k–$76k. After each consolidation, price has dropped sharply to the next lower zone. The overall structure is bearish with the diagonal resistance capping rallies and price making lower consolidation zones over time.",
+      "panels": null
+    },
+    "timestamp": "2026-03-19T01:46:42.016Z",
+    "model": "claude-sonnet-4-6",
+    "processingTimeMs": 16999
+  },
+  "geometry": {
+    "geometry": {
+      "priceShape": [
+        0.42,
+        0.45,
+        0.52,
+        0.48,
+        0.55,
+        0.52,
+        0.58,
+        0.62,
+        0.78,
+        0.88,
+        0.72,
+        0.65,
+        0.55,
+        0.48,
+        0.52,
+        0.58,
+        0.62,
+        0.68,
+        0.52,
+        0.42,
+        0.38,
+        0.32,
+        0.28,
+        0.35,
+        0.4
+      ],
+      "channelUpper": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.88,
+        0.82,
+        0.75,
+        0.68,
+        0.62,
+        0.6,
+        0.65,
+        0.7,
+        0.72,
+        0.58,
+        0.48,
+        0.42,
+        0.36,
+        0.32,
+        0.4,
+        0.46
+      ],
+      "channelLower": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.72,
+        0.65,
+        0.58,
+        0.5,
+        0.44,
+        0.44,
+        0.5,
+        0.55,
+        0.58,
+        0.42,
+        0.3,
+        0.24,
+        0.18,
+        0.22,
+        0.28,
+        0.34
+      ],
+      "yAxisMin": 36000,
+      "yAxisMax": 144000,
+      "pattern": "step_down",
+      "timeframe": "daily",
+      "dateRange": {
+        "start": "2025-07-01",
+        "end": "2026-05-01"
+      },
+      "projectedTimeframe": {
+        "earliest": "2026-04-01",
+        "latest": "2026-05-01",
+        "label": "Apr-May 2026 target zone"
+      },
+      "confidence": 0.72,
+      "stepDownData": {
+        "diagonalStart": 124000,
+        "diagonalEnd": 78000,
+        "zones": [
+          {
+            "upper": 116000,
+            "lower": 108000
+          },
+          {
+            "upper": 96000,
+            "lower": 88000
+          },
+          {
+            "upper": 76000,
+            "lower": 68000
+          }
+        ]
+      }
+    },
+    "timestamp": "2026-03-19T01:46:42.019Z"
+  }
+}

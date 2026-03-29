@@ -1,0 +1,399 @@
+/* Coachtrack Extension — Dark Mode (matches app design system) */
+
+:root {
+  --bg-base: #111113;
+  --bg-surface: #18181B;
+  --bg-surface-hover: #1F1F23;
+  --bg-elevated: #26262B;
+  --text-primary: #ECECEF;
+  --text-secondary: #A0A0AB;
+  --text-tertiary: #63636E;
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --accent-primary: #7C7CFF;
+  --accent-primary-hover: #9B9BFF;
+  --accent-muted: rgba(124, 124, 255, 0.12);
+  --semantic-positive: #3FCF8E;
+  --semantic-positive-muted: rgba(63, 207, 142, 0.12);
+  --semantic-negative: #F06E6E;
+  --semantic-warning: #F0B85F;
+  --semantic-warning-muted: rgba(240, 184, 95, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 360px;
+  min-height: 120px;
+  max-height: 540px;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border-default);
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0;
+}
+
+.handle {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
+  background: var(--bg-elevated);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+/* ── Toolbar ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border-default);
+  flex-shrink: 0;
+}
+
+.btn-ghost {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.btn-ghost:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tweet-count {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.tweet-count.has-tweets {
+  color: var(--accent-primary);
+}
+
+.btn-send-all {
+  padding: 4px 10px;
+  background: var(--accent-primary);
+  color: #111113;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease;
+  letter-spacing: 0.01em;
+}
+
+.btn-send-all:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+}
+
+.btn-send-all:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-send-all.all-sent {
+  background: var(--semantic-positive-muted);
+  color: var(--semantic-positive);
+  cursor: default;
+}
+
+.btn-send-all.hidden {
+  display: none;
+}
+
+/* ── States ── */
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 20px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  text-align: center;
+}
+
+.state.hidden {
+  display: none;
+}
+
+.empty-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.empty-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.empty-sub {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  max-width: 220px;
+  line-height: 1.5;
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Tweet List ── */
+.tweet-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.tweet-list.hidden {
+  display: none;
+}
+
+.tweet-item {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-default);
+  transition: background 120ms ease;
+}
+
+.tweet-item:last-child {
+  border-bottom: none;
+}
+
+.tweet-item:hover {
+  background: var(--bg-surface);
+}
+
+.tweet-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+
+.tweet-timestamp {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.tweet-images-badge {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: var(--bg-elevated);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.tweet-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 8px;
+  /* Clamp to 3 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+/* ── Tweet actions — two rows ── */
+.tweet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tweet-actions-row {
+  display: flex;
+  gap: 5px;
+}
+
+/* Quick Paste button */
+.btn-quick-paste {
+  flex: 1;
+  padding: 5px 10px;
+  background: var(--accent-primary);
+  color: #111113;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease;
+  letter-spacing: 0.01em;
+  text-align: left;
+}
+
+.btn-quick-paste:hover {
+  background: var(--accent-primary-hover);
+}
+
+.btn-quick-paste.sent {
+  background: var(--semantic-positive-muted);
+  color: var(--semantic-positive);
+  cursor: default;
+  font-weight: 500;
+}
+
+/* View on X link */
+.btn-view {
+  padding: 5px 8px;
+  background: none;
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: background 120ms ease, color 120ms ease;
+  flex-shrink: 0;
+}
+
+.btn-view:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+/* Thesis row */
+.thesis-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.thesis-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.btn-thesis {
+  flex: 1;
+  padding: 4px 8px;
+  background: none;
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  text-align: center;
+}
+
+.btn-thesis:hover:not(:disabled) {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+}
+
+.btn-thesis:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-thesis.sending {
+  color: var(--text-tertiary);
+  border-color: var(--border-default);
+}
+
+.btn-thesis.sent {
+  background: var(--semantic-positive-muted);
+  color: var(--semantic-positive);
+  border-color: transparent;
+  cursor: default;
+}
+
+.btn-thesis.error {
+  background: rgba(240, 110, 110, 0.12);
+  color: var(--semantic-negative);
+  border-color: transparent;
+}
+
+/* ── Footer ── */
+.footer {
+  padding: 5px 14px;
+  border-top: 1px solid var(--border-default);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-url {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-family: 'DM Mono', monospace;
+}
+
+.footer-hint {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  opacity: 0.6;
+}

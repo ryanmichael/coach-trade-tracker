@@ -1,0 +1,156 @@
+{
+  "nlp": {
+    "raw": {
+      "image_type": "annotated_chart",
+      "ticker": "AMZN",
+      "y_axis_ticks": [
+        80,
+        100,
+        120,
+        140,
+        160,
+        180,
+        200,
+        220,
+        240,
+        260,
+        280
+      ],
+      "price_levels": [
+        {
+          "value": 200,
+          "type": "support",
+          "label": "Critical support - lower boundary of ascending channel / midline area where price is currently testing"
+        },
+        {
+          "value": 185,
+          "type": "support",
+          "label": "Lower gray channel support trendline (current approximate value at right edge)"
+        },
+        {
+          "value": 225,
+          "type": "resistance",
+          "label": "Upper dashed black midline resistance (current approximate value at right edge)"
+        },
+        {
+          "value": 215,
+          "type": "resistance",
+          "label": "Upper gray channel resistance trendline (current approximate value at right edge)"
+        }
+      ],
+      "annotations": [
+        "Critical support — label with blue arrow pointing to the ~$200 price area",
+        "Multiple ascending parallel channel lines drawn (gray solid outer channel, black dashed midline, blue dashed inner lines)",
+        "Price is currently testing the 'Critical support' level near $200",
+        "Chart header: AMZN · Amazon.com, Inc. · 1W · NASDAQ",
+        "Watermark: AMZN / Amazon.com, Inc."
+      ],
+      "timeframe": "1W (Weekly)",
+      "direction": "bullish",
+      "projected_dates": [],
+      "confidence": 0.78,
+      "summary": "AMZN weekly chart showing a long-term ascending parallel channel from 2023 through mid-2026+. Price has recently pulled back sharply from highs near $240-$245 and is now testing a key 'Critical support' level around $200, which corresponds to the lower inner blue dashed channel line and the dashed black midline of the broader channel. The coach is highlighting this as a significant support zone to watch for a potential bounce. The broader gray channel's lower boundary is near $185. The overall structure remains bullish as long as the critical support holds.",
+      "panels": null
+    },
+    "timestamp": "2026-03-19T01:13:17.826Z",
+    "model": "claude-sonnet-4-6",
+    "processingTimeMs": 14378
+  },
+  "geometry": {
+    "geometry": {
+      "priceShape": [
+        0.28,
+        0.18,
+        0.22,
+        0.32,
+        0.42,
+        0.52,
+        0.58,
+        0.62,
+        0.55,
+        0.68,
+        0.72,
+        0.78,
+        0.82,
+        0.75,
+        0.68,
+        0.8,
+        0.82,
+        0.78,
+        0.82,
+        0.8,
+        0.72,
+        0.62,
+        0.6,
+        0.62,
+        0.63
+      ],
+      "channelUpper": [
+        0.62,
+        0.64,
+        0.66,
+        0.68,
+        0.72,
+        0.76,
+        0.8,
+        0.84,
+        0.86,
+        0.88,
+        0.9,
+        0.92,
+        0.94,
+        0.95,
+        0.96,
+        0.97,
+        0.98,
+        0.99,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "channelLower": [
+        0,
+        0.02,
+        0.04,
+        0.06,
+        0.1,
+        0.14,
+        0.18,
+        0.22,
+        0.24,
+        0.28,
+        0.32,
+        0.36,
+        0.4,
+        0.42,
+        0.44,
+        0.46,
+        0.48,
+        0.5,
+        0.52,
+        0.54,
+        0.56,
+        0.58,
+        0.6,
+        0.62,
+        0.64
+      ],
+      "yAxisMin": 80,
+      "yAxisMax": 280,
+      "pattern": "ascending_channel",
+      "timeframe": "weekly",
+      "dateRange": {
+        "start": "2023-01-01",
+        "end": "2026-07-01"
+      },
+      "projectedTimeframe": null,
+      "confidence": 0.82,
+      "stepDownData": null
+    },
+    "timestamp": "2026-03-19T01:13:17.829Z"
+  }
+}

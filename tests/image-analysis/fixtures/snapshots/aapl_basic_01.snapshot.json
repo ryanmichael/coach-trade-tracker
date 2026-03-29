@@ -1,0 +1,39 @@
+{
+  "nlp": {
+    "raw": {
+      "image_type": "annotated_chart",
+      "ticker": "AAPL",
+      "price_levels": [
+        { "value": 172, "type": "entry", "label": "Entry / confirmation" },
+        { "value": 190, "type": "target", "label": "Price target" },
+        { "value": 168, "type": "support", "label": "Support level" }
+      ],
+      "annotations": ["Entry at 172", "Target 190"],
+      "timeframe": "daily",
+      "direction": "bullish",
+      "projected_dates": [],
+      "confidence": 0.85,
+      "summary": "AAPL daily chart with bullish setup. Entry confirmation at $172 with target at $190. Support at $168.",
+      "y_axis_ticks": [160, 165, 170, 175, 180, 185, 190, 195, 200]
+    },
+    "timestamp": "2026-03-18T12:00:00Z",
+    "model": "claude-sonnet-4-6",
+    "processingTimeMs": 2850
+  },
+  "geometry": {
+    "geometry": {
+      "priceShape": [0.25, 0.22, 0.18, 0.15, 0.20, 0.28, 0.32, 0.35, 0.30, 0.38, 0.42, 0.45, 0.40, 0.48, 0.52, 0.55],
+      "channelUpper": null,
+      "channelLower": null,
+      "yAxisMin": 160,
+      "yAxisMax": 200,
+      "pattern": "ascending_channel",
+      "timeframe": "daily",
+      "dateRange": { "start": "2026-01-15", "end": "2026-03-18" },
+      "projectedTimeframe": null,
+      "confidence": 0.72,
+      "stepDownData": null
+    },
+    "timestamp": "2026-03-18T12:00:00Z"
+  }
+}

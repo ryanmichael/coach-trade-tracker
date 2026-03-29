@@ -1,0 +1,12 @@
+{
+  "ticker": "SOX",
+  "timeframe": "W",
+  "levelCount": 5,
+  "prices": [
+    4400,
+    4600,
+    4850,
+    5050,
+    5150
+  ]
+}

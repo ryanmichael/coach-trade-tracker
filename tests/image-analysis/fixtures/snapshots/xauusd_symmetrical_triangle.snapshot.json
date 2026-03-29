@@ -1,0 +1,235 @@
+{
+  "nlp": {
+    "raw": {
+      "image_type": "annotated_chart",
+      "ticker": "GOLD",
+      "y_axis_ticks": [
+        2500,
+        2600,
+        2700,
+        2800,
+        2900,
+        3000,
+        3100,
+        3200,
+        3300,
+        3400,
+        3500,
+        3600,
+        3700,
+        3800,
+        3900,
+        4000,
+        4100,
+        4200,
+        4300,
+        4400,
+        4500,
+        4600,
+        4700,
+        4800,
+        4900,
+        5000,
+        5100,
+        5200,
+        5300,
+        5400,
+        5500,
+        5600,
+        5700
+      ],
+      "price_levels": [
+        {
+          "value": 5050,
+          "type": "entry",
+          "label": "Point 5 / current price near apex — upper trendline at apex"
+        },
+        {
+          "value": 5200,
+          "type": "resistance",
+          "label": "Upper trendline at apex (point 1 side) — diagonal start ~5450, descending to ~5200 at dashed vertical"
+        },
+        {
+          "value": 5000,
+          "type": "support",
+          "label": "Lower trendline at apex — ascending from point 2 ~4600 to ~5000 at dashed vertical"
+        },
+        {
+          "value": 5600,
+          "type": "target",
+          "label": "Bullish breakout upward arrow endpoint — projected bullish target above apex"
+        },
+        {
+          "value": 4550,
+          "type": "target",
+          "label": "Bearish breakdown downward arrow endpoint — projected bearish target below apex"
+        }
+      ],
+      "annotations": [
+        "Symmetrical triangle.",
+        "Apex",
+        "1 — Point 1: high on upper trendline",
+        "2 — Point 2: low on lower trendline",
+        "3 — Point 3: lower high on upper trendline",
+        "4 — Point 4: higher low on lower trendline",
+        "5 — Point 5: current price near convergence",
+        "Dashed vertical line at approximately April 2026 indicating apex/resolution timing",
+        "Upward pink/tan arrow above apex — bullish breakout scenario",
+        "Downward pink/tan arrow below apex — bearish breakdown scenario",
+        "GOLD - CFDs on Gold (US$ / OZ) - 1D - TVC"
+      ],
+      "timeframe": "1D",
+      "direction": "neutral",
+      "projected_dates": [
+        "2026-04-01"
+      ],
+      "confidence": 0.82,
+      "summary": "Gold (GOLD) daily chart showing a symmetrical triangle pattern with five labeled swing points converging toward an apex projected around early April 2026. The setup is neutral/bidirectional — two arrows of equal prominence point both up (~5600 target) and down (~4550 target), indicating a pending breakout resolution from the triangle with direction yet to be confirmed.",
+      "panels": null
+    },
+    "timestamp": "2026-03-19T02:39:47.385Z",
+    "model": "claude-sonnet-4-6",
+    "processingTimeMs": 14017
+  },
+  "geometry": {
+    "geometry": {
+      "priceShape": [
+        0.12,
+        0.11,
+        0.13,
+        0.12,
+        0.14,
+        0.18,
+        0.22,
+        0.28,
+        0.35,
+        0.42,
+        0.48,
+        0.55,
+        0.62,
+        0.68,
+        0.72,
+        0.78,
+        0.85,
+        0.95,
+        0.88,
+        0.78,
+        0.85,
+        0.82,
+        0.75,
+        0.8,
+        0.78
+      ],
+      "channelUpper": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.97,
+        0.95,
+        0.93,
+        0.91,
+        0.89,
+        0.87,
+        0.85,
+        0.83,
+        0.81
+      ],
+      "channelLower": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        0.55,
+        0.58,
+        0.62,
+        0.65,
+        0.68,
+        0.71,
+        0.74,
+        0.77,
+        0.79
+      ],
+      "yAxisMin": 2500,
+      "yAxisMax": 5700,
+      "pattern": "triangle",
+      "timeframe": "daily",
+      "dateRange": {
+        "start": "2025-07-01",
+        "end": "2026-05-01"
+      },
+      "projectedTimeframe": {
+        "earliest": "2026-03-25",
+        "latest": "2026-04-10",
+        "label": "Apex / breakout resolution near early April 2026"
+      },
+      "confidence": 0.85,
+      "stepDownData": null,
+      "triangleData": {
+        "subtype": "symmetrical",
+        "upperTrendline": {
+          "startPrice": 5450,
+          "endPrice": 5200
+        },
+        "lowerTrendline": {
+          "startPrice": 4600,
+          "endPrice": 5050
+        },
+        "swingPoints": [
+          {
+            "xFraction": 0.57,
+            "price": 5450,
+            "type": "high"
+          },
+          {
+            "xFraction": 0.63,
+            "price": 4600,
+            "type": "low"
+          },
+          {
+            "xFraction": 0.72,
+            "price": 5300,
+            "type": "high"
+          },
+          {
+            "xFraction": 0.82,
+            "price": 5000,
+            "type": "low"
+          },
+          {
+            "xFraction": 0.88,
+            "price": 5200,
+            "type": "high"
+          }
+        ],
+        "apexPrice": 5125,
+        "apexXFraction": 0.95
+      }
+    },
+    "timestamp": "2026-03-19T02:39:47.388Z"
+  }
+}

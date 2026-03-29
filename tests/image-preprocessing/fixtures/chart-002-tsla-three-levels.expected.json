@@ -1,0 +1,10 @@
+{
+  "ticker": "TSLA",
+  "timeframe": "4H",
+  "levelCount": 3,
+  "prices": [
+    875,
+    895,
+    920
+  ]
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coachtrack Extractor</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo">
+        <svg viewBox="0 0 32 32" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="7" fill="#7C7CFF"/>
+          <path d="M 10 29 A 7 7 0 0 1 3 22" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M 17 29 A 14 14 0 0 1 3 15" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M 24 29 A 21 21 0 0 1 3 8" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="3" y1="29" x2="23" y2="9" stroke="rgba(255,255,255,0.65)" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="17" cy="15" r="2.5" fill="white"/>
+        </svg>
+        <span class="logo-text">Coachtrack</span>
+      </div>
+      <div class="handle">@great_martis</div>
+    </div>
+
+    <div class="toolbar">
+      <button id="btn-refresh" class="btn-ghost">
+        <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">
+          <path d="M13.65 2.35A8 8 0 1 0 15 8h-1.5a6.5 6.5 0 1 1-1.1-3.65L10.5 6H15V1.5l-1.35.85z"/>
+        </svg>
+        Scan page
+      </button>
+      <div class="toolbar-right">
+        <div id="tweet-count" class="tweet-count"></div>
+        <button id="btn-send-all" class="btn-send-all hidden">Send all</button>
+      </div>
+    </div>
+
+    <div id="state-loading" class="state hidden">
+      <div class="spinner"></div>
+      <span>Scanning for @great_martis posts…</span>
+    </div>
+
+    <div id="state-empty" class="state hidden">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">No posts found</div>
+      <div class="empty-sub">Navigate to @great_martis's feed or a tweet page, then scan again.</div>
+    </div>
+
+    <div id="state-error" class="state hidden">
+      <div class="empty-icon">⚠️</div>
+      <div class="empty-title" id="error-msg">Could not scan this page</div>
+      <div class="empty-sub">Make sure you're on x.com.</div>
+    </div>
+
+    <div id="tweet-list" class="tweet-list hidden"></div>
+
+    <div class="footer">
+      <span id="coachtrack-url" class="footer-url">localhost:3001</span>
+      <span class="footer-hint">Quick Paste opens the app · Thesis trains the AI</span>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

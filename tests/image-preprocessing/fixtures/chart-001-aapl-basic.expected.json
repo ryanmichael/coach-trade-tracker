@@ -1,0 +1,9 @@
+{
+  "ticker": "AAPL",
+  "timeframe": "D",
+  "levelCount": 2,
+  "prices": [
+    172,
+    190
+  ]
+}
