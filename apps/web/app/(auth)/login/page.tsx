@@ -8,6 +8,7 @@ type LoginState = "idle" | "submitting" | "sent" | "uninvited" | "error";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<LoginState>("idle");
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -15,6 +16,7 @@ export default function LoginPage() {
     if (!trimmed) return;
 
     setState("submitting");
+    setErrorDetail(null);
 
     try {
       // Check invite first
@@ -23,6 +25,13 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: trimmed }),
       });
+
+      if (!checkRes.ok) {
+        setErrorDetail(`Invite check failed: ${checkRes.status}`);
+        setState("error");
+        return;
+      }
+
       const checkData = await checkRes.json();
 
       if (!checkData.invited) {
@@ -41,12 +50,14 @@ export default function LoginPage() {
 
       if (error) {
         console.error("Magic link error:", error);
+        setErrorDetail(`Supabase: ${error.message}`);
         setState("error");
         return;
       }
 
       setState("sent");
-    } catch {
+    } catch (err) {
+      setErrorDetail(String(err));
       setState("error");
     }
   }
@@ -222,6 +233,18 @@ export default function LoginPage() {
                 }}
               >
                 Something went wrong. Try again.
+                {errorDetail && (
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: 11,
+                      color: "var(--text-tertiary)",
+                      marginTop: 4,
+                    }}
+                  >
+                    {errorDetail}
+                  </span>
+                )}
               </p>
             )}
 
