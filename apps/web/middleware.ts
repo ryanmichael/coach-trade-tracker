@@ -13,17 +13,27 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/api/auth/") ||
     pathname.startsWith("/api/admin/");
 
-  // Let auth callback and API routes through (they handle their own auth)
+  // Let auth callback and non-admin auth API routes through
   if (isAuthCallback || (isAuthApi && !pathname.startsWith("/api/admin/"))) {
     return NextResponse.next();
   }
 
-  // Create Supabase client for middleware
-  let response = NextResponse.next({ request: req });
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  // If Supabase env vars are missing, block protected routes
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("[Middleware] Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
+    if (isProtected) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+    return NextResponse.next();
+  }
+
+  try {
+    // Create Supabase client for middleware
+    let response = NextResponse.next({ request: req });
+    const supabase = createServerClient(supabaseUrl, supabaseKey, {
       cookies: {
         getAll() {
           return req.cookies.getAll();
@@ -38,24 +48,31 @@ export async function middleware(req: NextRequest) {
           );
         },
       },
+    });
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    // If logged in and hitting /login, redirect to options-finder
+    if (isLogin && user) {
+      return NextResponse.redirect(new URL("/options-finder", req.url));
     }
-  );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    // If not logged in and hitting a protected route, redirect to login
+    if (isProtected && !user) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
 
-  // If logged in and hitting /login, redirect to options-finder
-  if (isLogin && user) {
-    return NextResponse.redirect(new URL("/options-finder", req.url));
+    return response;
+  } catch (err) {
+    console.error("[Middleware] Auth check failed:", err);
+    // Fail closed — redirect to login if we can't verify auth
+    if (isProtected) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+    return NextResponse.next();
   }
-
-  // If not logged in and hitting a protected route, redirect to login
-  if (isProtected && !user) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
-
-  return response;
 }
 
 export const config = {
