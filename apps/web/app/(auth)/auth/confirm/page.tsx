@@ -1,17 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-/**
- * /auth/confirm
- * Handles PKCE magic link verification.
- * Supabase emails link here with token_hash + type params.
- * We verify the OTP client-side (using the stored PKCE code_verifier),
- * then call on-login and redirect to /options-finder.
- */
-export default function AuthConfirmPage() {
+function ConfirmFlow() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
@@ -51,6 +44,30 @@ export default function AuthConfirmPage() {
     confirm();
   }, [searchParams, router]);
 
+  if (error) {
+    return (
+      <div style={{ textAlign: "center" }}>
+        <p style={{ fontSize: 14, color: "var(--semantic-negative)", marginBottom: 12 }}>
+          {error}
+        </p>
+        <a
+          href="/login"
+          style={{ fontSize: 13, color: "var(--accent-primary)" }}
+        >
+          Back to login
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
+      Verifying your login...
+    </p>
+  );
+}
+
+export default function AuthConfirmPage() {
   return (
     <div
       style={{
@@ -63,23 +80,15 @@ export default function AuthConfirmPage() {
         color: "var(--text-primary)",
       }}
     >
-      {error ? (
-        <div style={{ textAlign: "center" }}>
-          <p style={{ fontSize: 14, color: "var(--semantic-negative)", marginBottom: 12 }}>
-            {error}
+      <Suspense
+        fallback={
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
+            Loading...
           </p>
-          <a
-            href="/login"
-            style={{ fontSize: 13, color: "var(--accent-primary)" }}
-          >
-            Back to login
-          </a>
-        </div>
-      ) : (
-        <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
-          Verifying your login...
-        </p>
-      )}
+        }
+      >
+        <ConfirmFlow />
+      </Suspense>
     </div>
   );
 }
