@@ -575,9 +575,13 @@ export function enrichContracts(
     const dte = daysUntil(c.details.expiration_date);
     const T = Math.max(dte / 365, 0.001); // time to expiry in years
 
-    // Phase 2: Estimate IV from market price, then compute Greeks
-    const iv = estimateIV(mid, trade.currentPrice, strike, T, type);
-    const greeks = computeGreeks(trade.currentPrice, strike, T, iv, type);
+    // Phase 2: Use real IV/greeks from Polygon when available, else estimate
+    const iv = (c.implied_volatility && c.implied_volatility > 0)
+      ? c.implied_volatility
+      : estimateIV(mid, trade.currentPrice, strike, T, type);
+    const greeks = (c.greeks && c.greeks.delta !== undefined)
+      ? c.greeks
+      : computeGreeks(trade.currentPrice, strike, T, iv, type);
 
     const roi = calcROI(strike, ask, trade.priceTargetHigh, type);
 
@@ -942,7 +946,7 @@ function selectPricingCandidates(
 
 /** In-memory cache for Polygon API responses (TTL-based) */
 const polygonCache = new Map<string, { data: unknown; expiry: number }>();
-const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes — Polygon free plan rate limits aggressively
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes — balance freshness vs rate limits
 
 async function fetchPolygonCached(url: string): Promise<{ ok: boolean; data: unknown }> {
   const cached = polygonCache.get(url);
@@ -1078,7 +1082,6 @@ async function fetchContractPrices(
 ): Promise<RawContract[]> {
   const results: RawContract[] = [];
 
-  // Fetch sequentially to avoid Polygon rate limits on free plan
   for (const ref of refs) {
     const result = await fetchSingleContractPrice(ref, apiKey, currentPrice);
     if (result) results.push(result);
@@ -1087,7 +1090,78 @@ async function fetchContractPrices(
   return results;
 }
 
+/** Try snapshot endpoint (live quotes + greeks), fall back to prev-day aggs + BS */
 async function fetchSingleContractPrice(
+  ref: ContractRef,
+  apiKey: string,
+  currentPrice: number
+): Promise<RawContract | null> {
+  // Try snapshot first — returns real bid/ask, greeks, IV, open interest
+  const snapshot = await fetchSnapshotPrice(ref, apiKey);
+  if (snapshot) return snapshot;
+
+  // Fall back to prev-day aggs with synthetic spread
+  return fetchPrevDayPrice(ref, apiKey, currentPrice);
+}
+
+/** Fetch live options data from Polygon snapshot endpoint (paid plan) */
+async function fetchSnapshotPrice(
+  ref: ContractRef,
+  apiKey: string
+): Promise<RawContract | null> {
+  try {
+    const { ok, data } = await fetchPolygonCached(
+      `${POLYGON_BASE}/v3/snapshot/options/${ref.underlying_ticker}/${ref.ticker}?apiKey=${apiKey}`
+    );
+    if (!ok) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = (data as any).results;
+    if (!result) return null;
+
+    const day = result.day ?? {
+      change: 0, change_percent: 0, close: 0,
+      high: 0, low: 0, open: 0, previous_close: 0, volume: 0, vwap: 0,
+    };
+
+    // Use real last_quote if available (market hours), otherwise derive from day data
+    let lastQuote = result.last_quote;
+    if (!lastQuote && day.close > 0) {
+      const close = day.close;
+      const volume = day.volume ?? 0;
+      const spread = close * (volume > 100 ? 0.03 : 0.08);
+      lastQuote = {
+        ask: Math.round((close + spread / 2) * 100) / 100,
+        ask_size: 0,
+        bid: Math.round(Math.max(0, close - spread / 2) * 100) / 100,
+        bid_size: 0,
+        midpoint: close,
+      };
+    }
+
+    return {
+      details: {
+        contract_type: ref.contract_type,
+        exercise_style: ref.exercise_style,
+        expiration_date: ref.expiration_date,
+        shares_per_contract: ref.shares_per_contract,
+        strike_price: ref.strike_price,
+        ticker: ref.ticker,
+      },
+      day,
+      greeks: result.greeks ?? null,
+      implied_volatility: result.implied_volatility ?? null,
+      last_quote: lastQuote ?? null,
+      open_interest: result.open_interest ?? 0,
+      break_even_price: result.break_even_price,
+      underlying_asset: result.underlying_asset ?? null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Fallback: prev-day aggregates with synthetic bid/ask spread */
+async function fetchPrevDayPrice(
   ref: ContractRef,
   apiKey: string,
   currentPrice: number
