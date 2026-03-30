@@ -8,13 +8,14 @@ export async function middleware(req: NextRequest) {
   const isProtected =
     pathname.startsWith("/options-finder") || pathname.startsWith("/admin");
   const isLogin = pathname === "/login";
+  const isAuthConfirm = pathname === "/auth/confirm";
   const isAuthCallback = pathname.startsWith("/api/auth/callback");
   const isAuthApi =
     pathname.startsWith("/api/auth/") ||
     pathname.startsWith("/api/admin/");
 
   // Let auth callback and non-admin auth API routes through
-  if (isAuthCallback || (isAuthApi && !pathname.startsWith("/api/admin/"))) {
+  if (isAuthConfirm || isAuthCallback || (isAuthApi && !pathname.startsWith("/api/admin/"))) {
     return NextResponse.next();
   }
 
@@ -78,6 +79,7 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/login",
+    "/auth/confirm",
     "/options-finder/:path*",
     "/admin/:path*",
     "/api/admin/:path*",
