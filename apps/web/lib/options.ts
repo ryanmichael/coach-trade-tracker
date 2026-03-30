@@ -1055,6 +1055,7 @@ function generateSyntheticContracts(
       const typeChar = contractType === "call" ? "C" : "P";
       refs.push({
         ticker: `O:${ticker}${expStr}${typeChar}${pad}`,
+        underlying_ticker: ticker,
         contract_type: contractType as "call" | "put",
         exercise_style: "american",
         expiration_date: expiry,
