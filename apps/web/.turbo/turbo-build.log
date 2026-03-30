@@ -1,0 +1,60 @@
+
+> web@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1920.4ms
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/29) ...
+  Generating static pages using 7 workers (7/29) 
+  Generating static pages using 7 workers (14/29) 
+  Generating static pages using 7 workers (21/29) 
+✓ Generating static pages using 7 workers (29/29) in 141.3ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/alerts
+├ ƒ /api/alerts/[id]/acknowledge
+├ ƒ /api/alerts/acknowledge-all
+├ ƒ /api/alerts/unread-count
+├ ƒ /api/coach/profile
+├ ƒ /api/coach/profile/[key]
+├ ƒ /api/feed
+├ ƒ /api/feed/[postId]
+├ ƒ /api/feed/ingest
+├ ƒ /api/feed/ingest/bulk
+├ ƒ /api/feed/latest/[ticker]
+├ ƒ /api/feedback
+├ ƒ /api/feedback/stats
+├ ƒ /api/health
+├ ƒ /api/knowledge
+├ ƒ /api/knowledge/search
+├ ƒ /api/market/status
+├ ƒ /api/orchestrator/run
+├ ƒ /api/parse/image
+├ ƒ /api/parse/merge
+├ ƒ /api/parse/preview
+├ ƒ /api/parse/refine
+├ ƒ /api/prices/[ticker]
+├ ƒ /api/prices/batch
+├ ƒ /api/trades
+├ ƒ /api/trades/[id]
+├ ƒ /api/trades/[id]/status
+├ ƒ /api/trades/history
+├ ƒ /api/watchlist
+├ ƒ /api/watchlist/[id]
+├ ƒ /api/watchlist/[id]/promote
+├ ○ /login
+├ ○ /settings
+└ ○ /test
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -10,11 +10,13 @@ generator client {
   moduleFormat = "commonjs"
 }
 
-// ── Future multi-user support ──
+// ── Users ──
 model User {
   id                   String                @id @default(cuid())
+  supabaseAuthId       String?               @unique // Links to Supabase Auth user UUID
   email                String                @unique
   name                 String?
+  isAdmin              Boolean               @default(false)
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt
   watchlist            WatchlistItem[]
@@ -22,6 +24,35 @@ model User {
   alerts               Alert[]
   preferences          UserPreference?
   delistMonitorTickers DelistMonitorTicker[]
+  customTickers        CustomTicker[]
+  optionsSnapshots     OptionsSnapshot[]
+}
+
+// ── Invites (admin-managed) ──
+model Invite {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  invitedBy  String // User ID of admin who invited
+  invitedAt  DateTime  @default(now())
+  acceptedAt DateTime?
+}
+
+// ── Custom Tickers (per-user, Options Finder) ──
+model CustomTicker {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  ticker        String
+  direction     String? // "LONG" | "SHORT"
+  currentPrice  Float?
+  targetPrice   Float?
+  projectedDate DateTime?
+  stopLoss      Float?
+  riskTolerance String    @default("medium") // "high" | "medium" | "low"
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([userId, ticker])
 }
 
 model UserPreference {
@@ -231,6 +262,8 @@ model DelistCheckResult {
 model OptionsSnapshot {
   id                String    @id @default(cuid())
   sessionId         String // Groups contracts from the same request
+  userId            String? // Nullable for backward compat with pre-auth rows
+  user              User?     @relation(fields: [userId], references: [id])
   ticker            String
   direction         String // "LONG" | "SHORT"
   currentPrice      Float // Stock price at time of recommendation

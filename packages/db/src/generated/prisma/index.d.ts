@@ -19,6 +19,16 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model Invite
+ * 
+ */
+export type Invite = $Result.DefaultSelection<Prisma.$InvitePayload>
+/**
+ * Model CustomTicker
+ * 
+ */
+export type CustomTicker = $Result.DefaultSelection<Prisma.$CustomTickerPayload>
+/**
  * Model UserPreference
  * 
  */
@@ -224,6 +234,26 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.invite`: Exposes CRUD operations for the **Invite** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Invites
+    * const invites = await prisma.invite.findMany()
+    * ```
+    */
+  get invite(): Prisma.InviteDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.customTicker`: Exposes CRUD operations for the **CustomTicker** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CustomTickers
+    * const customTickers = await prisma.customTicker.findMany()
+    * ```
+    */
+  get customTicker(): Prisma.CustomTickerDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.userPreference`: Exposes CRUD operations for the **UserPreference** model.
@@ -809,6 +839,8 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    Invite: 'Invite',
+    CustomTicker: 'CustomTicker',
     UserPreference: 'UserPreference',
     CoachPost: 'CoachPost',
     ParsedTrade: 'ParsedTrade',
@@ -839,7 +871,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userPreference" | "coachPost" | "parsedTrade" | "watchlistItem" | "activeTrade" | "alert" | "coachProfile" | "knowledgeEntry" | "parseFeedback" | "thesisEntry" | "referenceDocument" | "delistMonitorTicker" | "delistCheckResult" | "optionsSnapshot" | "feedTag"
+      modelProps: "user" | "invite" | "customTicker" | "userPreference" | "coachPost" | "parsedTrade" | "watchlistItem" | "activeTrade" | "alert" | "coachProfile" | "knowledgeEntry" | "parseFeedback" | "thesisEntry" | "referenceDocument" | "delistMonitorTicker" | "delistCheckResult" | "optionsSnapshot" | "feedTag"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -914,6 +946,154 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      Invite: {
+        payload: Prisma.$InvitePayload<ExtArgs>
+        fields: Prisma.InviteFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.InviteFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.InviteFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload>
+          }
+          findFirst: {
+            args: Prisma.InviteFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.InviteFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload>
+          }
+          findMany: {
+            args: Prisma.InviteFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload>[]
+          }
+          create: {
+            args: Prisma.InviteCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload>
+          }
+          createMany: {
+            args: Prisma.InviteCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.InviteCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload>[]
+          }
+          delete: {
+            args: Prisma.InviteDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload>
+          }
+          update: {
+            args: Prisma.InviteUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload>
+          }
+          deleteMany: {
+            args: Prisma.InviteDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.InviteUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.InviteUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload>[]
+          }
+          upsert: {
+            args: Prisma.InviteUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$InvitePayload>
+          }
+          aggregate: {
+            args: Prisma.InviteAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateInvite>
+          }
+          groupBy: {
+            args: Prisma.InviteGroupByArgs<ExtArgs>
+            result: $Utils.Optional<InviteGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.InviteCountArgs<ExtArgs>
+            result: $Utils.Optional<InviteCountAggregateOutputType> | number
+          }
+        }
+      }
+      CustomTicker: {
+        payload: Prisma.$CustomTickerPayload<ExtArgs>
+        fields: Prisma.CustomTickerFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CustomTickerFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CustomTickerFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload>
+          }
+          findFirst: {
+            args: Prisma.CustomTickerFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CustomTickerFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload>
+          }
+          findMany: {
+            args: Prisma.CustomTickerFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload>[]
+          }
+          create: {
+            args: Prisma.CustomTickerCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload>
+          }
+          createMany: {
+            args: Prisma.CustomTickerCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CustomTickerCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload>[]
+          }
+          delete: {
+            args: Prisma.CustomTickerDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload>
+          }
+          update: {
+            args: Prisma.CustomTickerUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload>
+          }
+          deleteMany: {
+            args: Prisma.CustomTickerDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CustomTickerUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CustomTickerUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload>[]
+          }
+          upsert: {
+            args: Prisma.CustomTickerUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomTickerPayload>
+          }
+          aggregate: {
+            args: Prisma.CustomTickerAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCustomTicker>
+          }
+          groupBy: {
+            args: Prisma.CustomTickerGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CustomTickerGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CustomTickerCountArgs<ExtArgs>
+            result: $Utils.Optional<CustomTickerCountAggregateOutputType> | number
           }
         }
       }
@@ -2136,6 +2316,8 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    invite?: InviteOmit
+    customTicker?: CustomTickerOmit
     userPreference?: UserPreferenceOmit
     coachPost?: CoachPostOmit
     parsedTrade?: ParsedTradeOmit
@@ -2235,6 +2417,8 @@ export namespace Prisma {
     activeTrades: number
     alerts: number
     delistMonitorTickers: number
+    customTickers: number
+    optionsSnapshots: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2242,6 +2426,8 @@ export namespace Prisma {
     activeTrades?: boolean | UserCountOutputTypeCountActiveTradesArgs
     alerts?: boolean | UserCountOutputTypeCountAlertsArgs
     delistMonitorTickers?: boolean | UserCountOutputTypeCountDelistMonitorTickersArgs
+    customTickers?: boolean | UserCountOutputTypeCountCustomTickersArgs
+    optionsSnapshots?: boolean | UserCountOutputTypeCountOptionsSnapshotsArgs
   }
 
   // Custom InputTypes
@@ -2281,6 +2467,20 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountDelistMonitorTickersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DelistMonitorTickerWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCustomTickersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CustomTickerWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountOptionsSnapshotsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OptionsSnapshotWhereInput
   }
 
 
@@ -2469,24 +2669,30 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: string | null
+    supabaseAuthId: string | null
     email: string | null
     name: string | null
+    isAdmin: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
+    supabaseAuthId: string | null
     email: string | null
     name: string | null
+    isAdmin: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
+    supabaseAuthId: number
     email: number
     name: number
+    isAdmin: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2495,24 +2701,30 @@ export namespace Prisma {
 
   export type UserMinAggregateInputType = {
     id?: true
+    supabaseAuthId?: true
     email?: true
     name?: true
+    isAdmin?: true
     createdAt?: true
     updatedAt?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
+    supabaseAuthId?: true
     email?: true
     name?: true
+    isAdmin?: true
     createdAt?: true
     updatedAt?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
+    supabaseAuthId?: true
     email?: true
     name?: true
+    isAdmin?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2592,8 +2804,10 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
+    supabaseAuthId: string | null
     email: string
     name: string | null
+    isAdmin: boolean
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2617,8 +2831,10 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    supabaseAuthId?: boolean
     email?: boolean
     name?: boolean
+    isAdmin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     watchlist?: boolean | User$watchlistArgs<ExtArgs>
@@ -2626,40 +2842,50 @@ export namespace Prisma {
     alerts?: boolean | User$alertsArgs<ExtArgs>
     preferences?: boolean | User$preferencesArgs<ExtArgs>
     delistMonitorTickers?: boolean | User$delistMonitorTickersArgs<ExtArgs>
+    customTickers?: boolean | User$customTickersArgs<ExtArgs>
+    optionsSnapshots?: boolean | User$optionsSnapshotsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    supabaseAuthId?: boolean
     email?: boolean
     name?: boolean
+    isAdmin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    supabaseAuthId?: boolean
     email?: boolean
     name?: boolean
+    isAdmin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
+    supabaseAuthId?: boolean
     email?: boolean
     name?: boolean
+    isAdmin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "supabaseAuthId" | "email" | "name" | "isAdmin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     watchlist?: boolean | User$watchlistArgs<ExtArgs>
     activeTrades?: boolean | User$activeTradesArgs<ExtArgs>
     alerts?: boolean | User$alertsArgs<ExtArgs>
     preferences?: boolean | User$preferencesArgs<ExtArgs>
     delistMonitorTickers?: boolean | User$delistMonitorTickersArgs<ExtArgs>
+    customTickers?: boolean | User$customTickersArgs<ExtArgs>
+    optionsSnapshots?: boolean | User$optionsSnapshotsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2673,11 +2899,15 @@ export namespace Prisma {
       alerts: Prisma.$AlertPayload<ExtArgs>[]
       preferences: Prisma.$UserPreferencePayload<ExtArgs> | null
       delistMonitorTickers: Prisma.$DelistMonitorTickerPayload<ExtArgs>[]
+      customTickers: Prisma.$CustomTickerPayload<ExtArgs>[]
+      optionsSnapshots: Prisma.$OptionsSnapshotPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      supabaseAuthId: string | null
       email: string
       name: string | null
+      isAdmin: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -3079,6 +3309,8 @@ export namespace Prisma {
     alerts<T extends User$alertsArgs<ExtArgs> = {}>(args?: Subset<T, User$alertsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AlertPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     preferences<T extends User$preferencesArgs<ExtArgs> = {}>(args?: Subset<T, User$preferencesArgs<ExtArgs>>): Prisma__UserPreferenceClient<$Result.GetResult<Prisma.$UserPreferencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     delistMonitorTickers<T extends User$delistMonitorTickersArgs<ExtArgs> = {}>(args?: Subset<T, User$delistMonitorTickersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DelistMonitorTickerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    customTickers<T extends User$customTickersArgs<ExtArgs> = {}>(args?: Subset<T, User$customTickersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    optionsSnapshots<T extends User$optionsSnapshotsArgs<ExtArgs> = {}>(args?: Subset<T, User$optionsSnapshotsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OptionsSnapshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3109,8 +3341,10 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
+    readonly supabaseAuthId: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
+    readonly isAdmin: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -3621,6 +3855,54 @@ export namespace Prisma {
   }
 
   /**
+   * User.customTickers
+   */
+  export type User$customTickersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
+    where?: CustomTickerWhereInput
+    orderBy?: CustomTickerOrderByWithRelationInput | CustomTickerOrderByWithRelationInput[]
+    cursor?: CustomTickerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CustomTickerScalarFieldEnum | CustomTickerScalarFieldEnum[]
+  }
+
+  /**
+   * User.optionsSnapshots
+   */
+  export type User$optionsSnapshotsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OptionsSnapshot
+     */
+    select?: OptionsSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OptionsSnapshot
+     */
+    omit?: OptionsSnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
+    where?: OptionsSnapshotWhereInput
+    orderBy?: OptionsSnapshotOrderByWithRelationInput | OptionsSnapshotOrderByWithRelationInput[]
+    cursor?: OptionsSnapshotWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OptionsSnapshotScalarFieldEnum | OptionsSnapshotScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3636,6 +3918,2189 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Invite
+   */
+
+  export type AggregateInvite = {
+    _count: InviteCountAggregateOutputType | null
+    _min: InviteMinAggregateOutputType | null
+    _max: InviteMaxAggregateOutputType | null
+  }
+
+  export type InviteMinAggregateOutputType = {
+    id: string | null
+    email: string | null
+    invitedBy: string | null
+    invitedAt: Date | null
+    acceptedAt: Date | null
+  }
+
+  export type InviteMaxAggregateOutputType = {
+    id: string | null
+    email: string | null
+    invitedBy: string | null
+    invitedAt: Date | null
+    acceptedAt: Date | null
+  }
+
+  export type InviteCountAggregateOutputType = {
+    id: number
+    email: number
+    invitedBy: number
+    invitedAt: number
+    acceptedAt: number
+    _all: number
+  }
+
+
+  export type InviteMinAggregateInputType = {
+    id?: true
+    email?: true
+    invitedBy?: true
+    invitedAt?: true
+    acceptedAt?: true
+  }
+
+  export type InviteMaxAggregateInputType = {
+    id?: true
+    email?: true
+    invitedBy?: true
+    invitedAt?: true
+    acceptedAt?: true
+  }
+
+  export type InviteCountAggregateInputType = {
+    id?: true
+    email?: true
+    invitedBy?: true
+    invitedAt?: true
+    acceptedAt?: true
+    _all?: true
+  }
+
+  export type InviteAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Invite to aggregate.
+     */
+    where?: InviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Invites to fetch.
+     */
+    orderBy?: InviteOrderByWithRelationInput | InviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: InviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Invites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Invites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Invites
+    **/
+    _count?: true | InviteCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: InviteMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: InviteMaxAggregateInputType
+  }
+
+  export type GetInviteAggregateType<T extends InviteAggregateArgs> = {
+        [P in keyof T & keyof AggregateInvite]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateInvite[P]>
+      : GetScalarType<T[P], AggregateInvite[P]>
+  }
+
+
+
+
+  export type InviteGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: InviteWhereInput
+    orderBy?: InviteOrderByWithAggregationInput | InviteOrderByWithAggregationInput[]
+    by: InviteScalarFieldEnum[] | InviteScalarFieldEnum
+    having?: InviteScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: InviteCountAggregateInputType | true
+    _min?: InviteMinAggregateInputType
+    _max?: InviteMaxAggregateInputType
+  }
+
+  export type InviteGroupByOutputType = {
+    id: string
+    email: string
+    invitedBy: string
+    invitedAt: Date
+    acceptedAt: Date | null
+    _count: InviteCountAggregateOutputType | null
+    _min: InviteMinAggregateOutputType | null
+    _max: InviteMaxAggregateOutputType | null
+  }
+
+  type GetInviteGroupByPayload<T extends InviteGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<InviteGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof InviteGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], InviteGroupByOutputType[P]>
+            : GetScalarType<T[P], InviteGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type InviteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    invitedBy?: boolean
+    invitedAt?: boolean
+    acceptedAt?: boolean
+  }, ExtArgs["result"]["invite"]>
+
+  export type InviteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    invitedBy?: boolean
+    invitedAt?: boolean
+    acceptedAt?: boolean
+  }, ExtArgs["result"]["invite"]>
+
+  export type InviteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    invitedBy?: boolean
+    invitedAt?: boolean
+    acceptedAt?: boolean
+  }, ExtArgs["result"]["invite"]>
+
+  export type InviteSelectScalar = {
+    id?: boolean
+    email?: boolean
+    invitedBy?: boolean
+    invitedAt?: boolean
+    acceptedAt?: boolean
+  }
+
+  export type InviteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "invitedBy" | "invitedAt" | "acceptedAt", ExtArgs["result"]["invite"]>
+
+  export type $InvitePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Invite"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      email: string
+      invitedBy: string
+      invitedAt: Date
+      acceptedAt: Date | null
+    }, ExtArgs["result"]["invite"]>
+    composites: {}
+  }
+
+  type InviteGetPayload<S extends boolean | null | undefined | InviteDefaultArgs> = $Result.GetResult<Prisma.$InvitePayload, S>
+
+  type InviteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<InviteFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: InviteCountAggregateInputType | true
+    }
+
+  export interface InviteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Invite'], meta: { name: 'Invite' } }
+    /**
+     * Find zero or one Invite that matches the filter.
+     * @param {InviteFindUniqueArgs} args - Arguments to find a Invite
+     * @example
+     * // Get one Invite
+     * const invite = await prisma.invite.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends InviteFindUniqueArgs>(args: SelectSubset<T, InviteFindUniqueArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Invite that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {InviteFindUniqueOrThrowArgs} args - Arguments to find a Invite
+     * @example
+     * // Get one Invite
+     * const invite = await prisma.invite.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends InviteFindUniqueOrThrowArgs>(args: SelectSubset<T, InviteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Invite that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {InviteFindFirstArgs} args - Arguments to find a Invite
+     * @example
+     * // Get one Invite
+     * const invite = await prisma.invite.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends InviteFindFirstArgs>(args?: SelectSubset<T, InviteFindFirstArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Invite that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {InviteFindFirstOrThrowArgs} args - Arguments to find a Invite
+     * @example
+     * // Get one Invite
+     * const invite = await prisma.invite.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends InviteFindFirstOrThrowArgs>(args?: SelectSubset<T, InviteFindFirstOrThrowArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Invites that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {InviteFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Invites
+     * const invites = await prisma.invite.findMany()
+     * 
+     * // Get first 10 Invites
+     * const invites = await prisma.invite.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const inviteWithIdOnly = await prisma.invite.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends InviteFindManyArgs>(args?: SelectSubset<T, InviteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Invite.
+     * @param {InviteCreateArgs} args - Arguments to create a Invite.
+     * @example
+     * // Create one Invite
+     * const Invite = await prisma.invite.create({
+     *   data: {
+     *     // ... data to create a Invite
+     *   }
+     * })
+     * 
+     */
+    create<T extends InviteCreateArgs>(args: SelectSubset<T, InviteCreateArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Invites.
+     * @param {InviteCreateManyArgs} args - Arguments to create many Invites.
+     * @example
+     * // Create many Invites
+     * const invite = await prisma.invite.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends InviteCreateManyArgs>(args?: SelectSubset<T, InviteCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Invites and returns the data saved in the database.
+     * @param {InviteCreateManyAndReturnArgs} args - Arguments to create many Invites.
+     * @example
+     * // Create many Invites
+     * const invite = await prisma.invite.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Invites and only return the `id`
+     * const inviteWithIdOnly = await prisma.invite.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends InviteCreateManyAndReturnArgs>(args?: SelectSubset<T, InviteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Invite.
+     * @param {InviteDeleteArgs} args - Arguments to delete one Invite.
+     * @example
+     * // Delete one Invite
+     * const Invite = await prisma.invite.delete({
+     *   where: {
+     *     // ... filter to delete one Invite
+     *   }
+     * })
+     * 
+     */
+    delete<T extends InviteDeleteArgs>(args: SelectSubset<T, InviteDeleteArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Invite.
+     * @param {InviteUpdateArgs} args - Arguments to update one Invite.
+     * @example
+     * // Update one Invite
+     * const invite = await prisma.invite.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends InviteUpdateArgs>(args: SelectSubset<T, InviteUpdateArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Invites.
+     * @param {InviteDeleteManyArgs} args - Arguments to filter Invites to delete.
+     * @example
+     * // Delete a few Invites
+     * const { count } = await prisma.invite.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends InviteDeleteManyArgs>(args?: SelectSubset<T, InviteDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Invites.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {InviteUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Invites
+     * const invite = await prisma.invite.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends InviteUpdateManyArgs>(args: SelectSubset<T, InviteUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Invites and returns the data updated in the database.
+     * @param {InviteUpdateManyAndReturnArgs} args - Arguments to update many Invites.
+     * @example
+     * // Update many Invites
+     * const invite = await prisma.invite.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Invites and only return the `id`
+     * const inviteWithIdOnly = await prisma.invite.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends InviteUpdateManyAndReturnArgs>(args: SelectSubset<T, InviteUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Invite.
+     * @param {InviteUpsertArgs} args - Arguments to update or create a Invite.
+     * @example
+     * // Update or create a Invite
+     * const invite = await prisma.invite.upsert({
+     *   create: {
+     *     // ... data to create a Invite
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Invite we want to update
+     *   }
+     * })
+     */
+    upsert<T extends InviteUpsertArgs>(args: SelectSubset<T, InviteUpsertArgs<ExtArgs>>): Prisma__InviteClient<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Invites.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {InviteCountArgs} args - Arguments to filter Invites to count.
+     * @example
+     * // Count the number of Invites
+     * const count = await prisma.invite.count({
+     *   where: {
+     *     // ... the filter for the Invites we want to count
+     *   }
+     * })
+    **/
+    count<T extends InviteCountArgs>(
+      args?: Subset<T, InviteCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], InviteCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Invite.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {InviteAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends InviteAggregateArgs>(args: Subset<T, InviteAggregateArgs>): Prisma.PrismaPromise<GetInviteAggregateType<T>>
+
+    /**
+     * Group by Invite.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {InviteGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends InviteGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: InviteGroupByArgs['orderBy'] }
+        : { orderBy?: InviteGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, InviteGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetInviteGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Invite model
+   */
+  readonly fields: InviteFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Invite.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__InviteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Invite model
+   */
+  interface InviteFieldRefs {
+    readonly id: FieldRef<"Invite", 'String'>
+    readonly email: FieldRef<"Invite", 'String'>
+    readonly invitedBy: FieldRef<"Invite", 'String'>
+    readonly invitedAt: FieldRef<"Invite", 'DateTime'>
+    readonly acceptedAt: FieldRef<"Invite", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Invite findUnique
+   */
+  export type InviteFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * Filter, which Invite to fetch.
+     */
+    where: InviteWhereUniqueInput
+  }
+
+  /**
+   * Invite findUniqueOrThrow
+   */
+  export type InviteFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * Filter, which Invite to fetch.
+     */
+    where: InviteWhereUniqueInput
+  }
+
+  /**
+   * Invite findFirst
+   */
+  export type InviteFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * Filter, which Invite to fetch.
+     */
+    where?: InviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Invites to fetch.
+     */
+    orderBy?: InviteOrderByWithRelationInput | InviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Invites.
+     */
+    cursor?: InviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Invites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Invites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Invites.
+     */
+    distinct?: InviteScalarFieldEnum | InviteScalarFieldEnum[]
+  }
+
+  /**
+   * Invite findFirstOrThrow
+   */
+  export type InviteFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * Filter, which Invite to fetch.
+     */
+    where?: InviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Invites to fetch.
+     */
+    orderBy?: InviteOrderByWithRelationInput | InviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Invites.
+     */
+    cursor?: InviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Invites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Invites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Invites.
+     */
+    distinct?: InviteScalarFieldEnum | InviteScalarFieldEnum[]
+  }
+
+  /**
+   * Invite findMany
+   */
+  export type InviteFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * Filter, which Invites to fetch.
+     */
+    where?: InviteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Invites to fetch.
+     */
+    orderBy?: InviteOrderByWithRelationInput | InviteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Invites.
+     */
+    cursor?: InviteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Invites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Invites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Invites.
+     */
+    distinct?: InviteScalarFieldEnum | InviteScalarFieldEnum[]
+  }
+
+  /**
+   * Invite create
+   */
+  export type InviteCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * The data needed to create a Invite.
+     */
+    data: XOR<InviteCreateInput, InviteUncheckedCreateInput>
+  }
+
+  /**
+   * Invite createMany
+   */
+  export type InviteCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Invites.
+     */
+    data: InviteCreateManyInput | InviteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Invite createManyAndReturn
+   */
+  export type InviteCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * The data used to create many Invites.
+     */
+    data: InviteCreateManyInput | InviteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Invite update
+   */
+  export type InviteUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * The data needed to update a Invite.
+     */
+    data: XOR<InviteUpdateInput, InviteUncheckedUpdateInput>
+    /**
+     * Choose, which Invite to update.
+     */
+    where: InviteWhereUniqueInput
+  }
+
+  /**
+   * Invite updateMany
+   */
+  export type InviteUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Invites.
+     */
+    data: XOR<InviteUpdateManyMutationInput, InviteUncheckedUpdateManyInput>
+    /**
+     * Filter which Invites to update
+     */
+    where?: InviteWhereInput
+    /**
+     * Limit how many Invites to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Invite updateManyAndReturn
+   */
+  export type InviteUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * The data used to update Invites.
+     */
+    data: XOR<InviteUpdateManyMutationInput, InviteUncheckedUpdateManyInput>
+    /**
+     * Filter which Invites to update
+     */
+    where?: InviteWhereInput
+    /**
+     * Limit how many Invites to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Invite upsert
+   */
+  export type InviteUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * The filter to search for the Invite to update in case it exists.
+     */
+    where: InviteWhereUniqueInput
+    /**
+     * In case the Invite found by the `where` argument doesn't exist, create a new Invite with this data.
+     */
+    create: XOR<InviteCreateInput, InviteUncheckedCreateInput>
+    /**
+     * In case the Invite was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<InviteUpdateInput, InviteUncheckedUpdateInput>
+  }
+
+  /**
+   * Invite delete
+   */
+  export type InviteDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+    /**
+     * Filter which Invite to delete.
+     */
+    where: InviteWhereUniqueInput
+  }
+
+  /**
+   * Invite deleteMany
+   */
+  export type InviteDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Invites to delete
+     */
+    where?: InviteWhereInput
+    /**
+     * Limit how many Invites to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Invite without action
+   */
+  export type InviteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Invite
+     */
+    select?: InviteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Invite
+     */
+    omit?: InviteOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CustomTicker
+   */
+
+  export type AggregateCustomTicker = {
+    _count: CustomTickerCountAggregateOutputType | null
+    _avg: CustomTickerAvgAggregateOutputType | null
+    _sum: CustomTickerSumAggregateOutputType | null
+    _min: CustomTickerMinAggregateOutputType | null
+    _max: CustomTickerMaxAggregateOutputType | null
+  }
+
+  export type CustomTickerAvgAggregateOutputType = {
+    currentPrice: number | null
+    targetPrice: number | null
+    stopLoss: number | null
+  }
+
+  export type CustomTickerSumAggregateOutputType = {
+    currentPrice: number | null
+    targetPrice: number | null
+    stopLoss: number | null
+  }
+
+  export type CustomTickerMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    ticker: string | null
+    direction: string | null
+    currentPrice: number | null
+    targetPrice: number | null
+    projectedDate: Date | null
+    stopLoss: number | null
+    riskTolerance: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CustomTickerMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    ticker: string | null
+    direction: string | null
+    currentPrice: number | null
+    targetPrice: number | null
+    projectedDate: Date | null
+    stopLoss: number | null
+    riskTolerance: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CustomTickerCountAggregateOutputType = {
+    id: number
+    userId: number
+    ticker: number
+    direction: number
+    currentPrice: number
+    targetPrice: number
+    projectedDate: number
+    stopLoss: number
+    riskTolerance: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CustomTickerAvgAggregateInputType = {
+    currentPrice?: true
+    targetPrice?: true
+    stopLoss?: true
+  }
+
+  export type CustomTickerSumAggregateInputType = {
+    currentPrice?: true
+    targetPrice?: true
+    stopLoss?: true
+  }
+
+  export type CustomTickerMinAggregateInputType = {
+    id?: true
+    userId?: true
+    ticker?: true
+    direction?: true
+    currentPrice?: true
+    targetPrice?: true
+    projectedDate?: true
+    stopLoss?: true
+    riskTolerance?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CustomTickerMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    ticker?: true
+    direction?: true
+    currentPrice?: true
+    targetPrice?: true
+    projectedDate?: true
+    stopLoss?: true
+    riskTolerance?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CustomTickerCountAggregateInputType = {
+    id?: true
+    userId?: true
+    ticker?: true
+    direction?: true
+    currentPrice?: true
+    targetPrice?: true
+    projectedDate?: true
+    stopLoss?: true
+    riskTolerance?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CustomTickerAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CustomTicker to aggregate.
+     */
+    where?: CustomTickerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomTickers to fetch.
+     */
+    orderBy?: CustomTickerOrderByWithRelationInput | CustomTickerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CustomTickerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomTickers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomTickers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CustomTickers
+    **/
+    _count?: true | CustomTickerCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CustomTickerAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CustomTickerSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CustomTickerMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CustomTickerMaxAggregateInputType
+  }
+
+  export type GetCustomTickerAggregateType<T extends CustomTickerAggregateArgs> = {
+        [P in keyof T & keyof AggregateCustomTicker]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCustomTicker[P]>
+      : GetScalarType<T[P], AggregateCustomTicker[P]>
+  }
+
+
+
+
+  export type CustomTickerGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CustomTickerWhereInput
+    orderBy?: CustomTickerOrderByWithAggregationInput | CustomTickerOrderByWithAggregationInput[]
+    by: CustomTickerScalarFieldEnum[] | CustomTickerScalarFieldEnum
+    having?: CustomTickerScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CustomTickerCountAggregateInputType | true
+    _avg?: CustomTickerAvgAggregateInputType
+    _sum?: CustomTickerSumAggregateInputType
+    _min?: CustomTickerMinAggregateInputType
+    _max?: CustomTickerMaxAggregateInputType
+  }
+
+  export type CustomTickerGroupByOutputType = {
+    id: string
+    userId: string
+    ticker: string
+    direction: string | null
+    currentPrice: number | null
+    targetPrice: number | null
+    projectedDate: Date | null
+    stopLoss: number | null
+    riskTolerance: string
+    createdAt: Date
+    updatedAt: Date
+    _count: CustomTickerCountAggregateOutputType | null
+    _avg: CustomTickerAvgAggregateOutputType | null
+    _sum: CustomTickerSumAggregateOutputType | null
+    _min: CustomTickerMinAggregateOutputType | null
+    _max: CustomTickerMaxAggregateOutputType | null
+  }
+
+  type GetCustomTickerGroupByPayload<T extends CustomTickerGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CustomTickerGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CustomTickerGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CustomTickerGroupByOutputType[P]>
+            : GetScalarType<T[P], CustomTickerGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CustomTickerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    ticker?: boolean
+    direction?: boolean
+    currentPrice?: boolean
+    targetPrice?: boolean
+    projectedDate?: boolean
+    stopLoss?: boolean
+    riskTolerance?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["customTicker"]>
+
+  export type CustomTickerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    ticker?: boolean
+    direction?: boolean
+    currentPrice?: boolean
+    targetPrice?: boolean
+    projectedDate?: boolean
+    stopLoss?: boolean
+    riskTolerance?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["customTicker"]>
+
+  export type CustomTickerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    ticker?: boolean
+    direction?: boolean
+    currentPrice?: boolean
+    targetPrice?: boolean
+    projectedDate?: boolean
+    stopLoss?: boolean
+    riskTolerance?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["customTicker"]>
+
+  export type CustomTickerSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    ticker?: boolean
+    direction?: boolean
+    currentPrice?: boolean
+    targetPrice?: boolean
+    projectedDate?: boolean
+    stopLoss?: boolean
+    riskTolerance?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CustomTickerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "ticker" | "direction" | "currentPrice" | "targetPrice" | "projectedDate" | "stopLoss" | "riskTolerance" | "createdAt" | "updatedAt", ExtArgs["result"]["customTicker"]>
+  export type CustomTickerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CustomTickerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CustomTickerIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $CustomTickerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CustomTicker"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      ticker: string
+      direction: string | null
+      currentPrice: number | null
+      targetPrice: number | null
+      projectedDate: Date | null
+      stopLoss: number | null
+      riskTolerance: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["customTicker"]>
+    composites: {}
+  }
+
+  type CustomTickerGetPayload<S extends boolean | null | undefined | CustomTickerDefaultArgs> = $Result.GetResult<Prisma.$CustomTickerPayload, S>
+
+  type CustomTickerCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CustomTickerFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CustomTickerCountAggregateInputType | true
+    }
+
+  export interface CustomTickerDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CustomTicker'], meta: { name: 'CustomTicker' } }
+    /**
+     * Find zero or one CustomTicker that matches the filter.
+     * @param {CustomTickerFindUniqueArgs} args - Arguments to find a CustomTicker
+     * @example
+     * // Get one CustomTicker
+     * const customTicker = await prisma.customTicker.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CustomTickerFindUniqueArgs>(args: SelectSubset<T, CustomTickerFindUniqueArgs<ExtArgs>>): Prisma__CustomTickerClient<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CustomTicker that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CustomTickerFindUniqueOrThrowArgs} args - Arguments to find a CustomTicker
+     * @example
+     * // Get one CustomTicker
+     * const customTicker = await prisma.customTicker.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CustomTickerFindUniqueOrThrowArgs>(args: SelectSubset<T, CustomTickerFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CustomTickerClient<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CustomTicker that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomTickerFindFirstArgs} args - Arguments to find a CustomTicker
+     * @example
+     * // Get one CustomTicker
+     * const customTicker = await prisma.customTicker.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CustomTickerFindFirstArgs>(args?: SelectSubset<T, CustomTickerFindFirstArgs<ExtArgs>>): Prisma__CustomTickerClient<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CustomTicker that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomTickerFindFirstOrThrowArgs} args - Arguments to find a CustomTicker
+     * @example
+     * // Get one CustomTicker
+     * const customTicker = await prisma.customTicker.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CustomTickerFindFirstOrThrowArgs>(args?: SelectSubset<T, CustomTickerFindFirstOrThrowArgs<ExtArgs>>): Prisma__CustomTickerClient<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CustomTickers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomTickerFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CustomTickers
+     * const customTickers = await prisma.customTicker.findMany()
+     * 
+     * // Get first 10 CustomTickers
+     * const customTickers = await prisma.customTicker.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const customTickerWithIdOnly = await prisma.customTicker.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CustomTickerFindManyArgs>(args?: SelectSubset<T, CustomTickerFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CustomTicker.
+     * @param {CustomTickerCreateArgs} args - Arguments to create a CustomTicker.
+     * @example
+     * // Create one CustomTicker
+     * const CustomTicker = await prisma.customTicker.create({
+     *   data: {
+     *     // ... data to create a CustomTicker
+     *   }
+     * })
+     * 
+     */
+    create<T extends CustomTickerCreateArgs>(args: SelectSubset<T, CustomTickerCreateArgs<ExtArgs>>): Prisma__CustomTickerClient<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CustomTickers.
+     * @param {CustomTickerCreateManyArgs} args - Arguments to create many CustomTickers.
+     * @example
+     * // Create many CustomTickers
+     * const customTicker = await prisma.customTicker.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CustomTickerCreateManyArgs>(args?: SelectSubset<T, CustomTickerCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CustomTickers and returns the data saved in the database.
+     * @param {CustomTickerCreateManyAndReturnArgs} args - Arguments to create many CustomTickers.
+     * @example
+     * // Create many CustomTickers
+     * const customTicker = await prisma.customTicker.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CustomTickers and only return the `id`
+     * const customTickerWithIdOnly = await prisma.customTicker.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CustomTickerCreateManyAndReturnArgs>(args?: SelectSubset<T, CustomTickerCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CustomTicker.
+     * @param {CustomTickerDeleteArgs} args - Arguments to delete one CustomTicker.
+     * @example
+     * // Delete one CustomTicker
+     * const CustomTicker = await prisma.customTicker.delete({
+     *   where: {
+     *     // ... filter to delete one CustomTicker
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CustomTickerDeleteArgs>(args: SelectSubset<T, CustomTickerDeleteArgs<ExtArgs>>): Prisma__CustomTickerClient<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CustomTicker.
+     * @param {CustomTickerUpdateArgs} args - Arguments to update one CustomTicker.
+     * @example
+     * // Update one CustomTicker
+     * const customTicker = await prisma.customTicker.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CustomTickerUpdateArgs>(args: SelectSubset<T, CustomTickerUpdateArgs<ExtArgs>>): Prisma__CustomTickerClient<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CustomTickers.
+     * @param {CustomTickerDeleteManyArgs} args - Arguments to filter CustomTickers to delete.
+     * @example
+     * // Delete a few CustomTickers
+     * const { count } = await prisma.customTicker.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CustomTickerDeleteManyArgs>(args?: SelectSubset<T, CustomTickerDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CustomTickers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomTickerUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CustomTickers
+     * const customTicker = await prisma.customTicker.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CustomTickerUpdateManyArgs>(args: SelectSubset<T, CustomTickerUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CustomTickers and returns the data updated in the database.
+     * @param {CustomTickerUpdateManyAndReturnArgs} args - Arguments to update many CustomTickers.
+     * @example
+     * // Update many CustomTickers
+     * const customTicker = await prisma.customTicker.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CustomTickers and only return the `id`
+     * const customTickerWithIdOnly = await prisma.customTicker.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CustomTickerUpdateManyAndReturnArgs>(args: SelectSubset<T, CustomTickerUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CustomTicker.
+     * @param {CustomTickerUpsertArgs} args - Arguments to update or create a CustomTicker.
+     * @example
+     * // Update or create a CustomTicker
+     * const customTicker = await prisma.customTicker.upsert({
+     *   create: {
+     *     // ... data to create a CustomTicker
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CustomTicker we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CustomTickerUpsertArgs>(args: SelectSubset<T, CustomTickerUpsertArgs<ExtArgs>>): Prisma__CustomTickerClient<$Result.GetResult<Prisma.$CustomTickerPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CustomTickers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomTickerCountArgs} args - Arguments to filter CustomTickers to count.
+     * @example
+     * // Count the number of CustomTickers
+     * const count = await prisma.customTicker.count({
+     *   where: {
+     *     // ... the filter for the CustomTickers we want to count
+     *   }
+     * })
+    **/
+    count<T extends CustomTickerCountArgs>(
+      args?: Subset<T, CustomTickerCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CustomTickerCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CustomTicker.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomTickerAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CustomTickerAggregateArgs>(args: Subset<T, CustomTickerAggregateArgs>): Prisma.PrismaPromise<GetCustomTickerAggregateType<T>>
+
+    /**
+     * Group by CustomTicker.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomTickerGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CustomTickerGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CustomTickerGroupByArgs['orderBy'] }
+        : { orderBy?: CustomTickerGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CustomTickerGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCustomTickerGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CustomTicker model
+   */
+  readonly fields: CustomTickerFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CustomTicker.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CustomTickerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CustomTicker model
+   */
+  interface CustomTickerFieldRefs {
+    readonly id: FieldRef<"CustomTicker", 'String'>
+    readonly userId: FieldRef<"CustomTicker", 'String'>
+    readonly ticker: FieldRef<"CustomTicker", 'String'>
+    readonly direction: FieldRef<"CustomTicker", 'String'>
+    readonly currentPrice: FieldRef<"CustomTicker", 'Float'>
+    readonly targetPrice: FieldRef<"CustomTicker", 'Float'>
+    readonly projectedDate: FieldRef<"CustomTicker", 'DateTime'>
+    readonly stopLoss: FieldRef<"CustomTicker", 'Float'>
+    readonly riskTolerance: FieldRef<"CustomTicker", 'String'>
+    readonly createdAt: FieldRef<"CustomTicker", 'DateTime'>
+    readonly updatedAt: FieldRef<"CustomTicker", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CustomTicker findUnique
+   */
+  export type CustomTickerFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
+    /**
+     * Filter, which CustomTicker to fetch.
+     */
+    where: CustomTickerWhereUniqueInput
+  }
+
+  /**
+   * CustomTicker findUniqueOrThrow
+   */
+  export type CustomTickerFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
+    /**
+     * Filter, which CustomTicker to fetch.
+     */
+    where: CustomTickerWhereUniqueInput
+  }
+
+  /**
+   * CustomTicker findFirst
+   */
+  export type CustomTickerFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
+    /**
+     * Filter, which CustomTicker to fetch.
+     */
+    where?: CustomTickerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomTickers to fetch.
+     */
+    orderBy?: CustomTickerOrderByWithRelationInput | CustomTickerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CustomTickers.
+     */
+    cursor?: CustomTickerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomTickers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomTickers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CustomTickers.
+     */
+    distinct?: CustomTickerScalarFieldEnum | CustomTickerScalarFieldEnum[]
+  }
+
+  /**
+   * CustomTicker findFirstOrThrow
+   */
+  export type CustomTickerFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
+    /**
+     * Filter, which CustomTicker to fetch.
+     */
+    where?: CustomTickerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomTickers to fetch.
+     */
+    orderBy?: CustomTickerOrderByWithRelationInput | CustomTickerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CustomTickers.
+     */
+    cursor?: CustomTickerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomTickers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomTickers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CustomTickers.
+     */
+    distinct?: CustomTickerScalarFieldEnum | CustomTickerScalarFieldEnum[]
+  }
+
+  /**
+   * CustomTicker findMany
+   */
+  export type CustomTickerFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
+    /**
+     * Filter, which CustomTickers to fetch.
+     */
+    where?: CustomTickerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomTickers to fetch.
+     */
+    orderBy?: CustomTickerOrderByWithRelationInput | CustomTickerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CustomTickers.
+     */
+    cursor?: CustomTickerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomTickers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomTickers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CustomTickers.
+     */
+    distinct?: CustomTickerScalarFieldEnum | CustomTickerScalarFieldEnum[]
+  }
+
+  /**
+   * CustomTicker create
+   */
+  export type CustomTickerCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CustomTicker.
+     */
+    data: XOR<CustomTickerCreateInput, CustomTickerUncheckedCreateInput>
+  }
+
+  /**
+   * CustomTicker createMany
+   */
+  export type CustomTickerCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CustomTickers.
+     */
+    data: CustomTickerCreateManyInput | CustomTickerCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CustomTicker createManyAndReturn
+   */
+  export type CustomTickerCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * The data used to create many CustomTickers.
+     */
+    data: CustomTickerCreateManyInput | CustomTickerCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CustomTicker update
+   */
+  export type CustomTickerUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CustomTicker.
+     */
+    data: XOR<CustomTickerUpdateInput, CustomTickerUncheckedUpdateInput>
+    /**
+     * Choose, which CustomTicker to update.
+     */
+    where: CustomTickerWhereUniqueInput
+  }
+
+  /**
+   * CustomTicker updateMany
+   */
+  export type CustomTickerUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CustomTickers.
+     */
+    data: XOR<CustomTickerUpdateManyMutationInput, CustomTickerUncheckedUpdateManyInput>
+    /**
+     * Filter which CustomTickers to update
+     */
+    where?: CustomTickerWhereInput
+    /**
+     * Limit how many CustomTickers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomTicker updateManyAndReturn
+   */
+  export type CustomTickerUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * The data used to update CustomTickers.
+     */
+    data: XOR<CustomTickerUpdateManyMutationInput, CustomTickerUncheckedUpdateManyInput>
+    /**
+     * Filter which CustomTickers to update
+     */
+    where?: CustomTickerWhereInput
+    /**
+     * Limit how many CustomTickers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CustomTicker upsert
+   */
+  export type CustomTickerUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CustomTicker to update in case it exists.
+     */
+    where: CustomTickerWhereUniqueInput
+    /**
+     * In case the CustomTicker found by the `where` argument doesn't exist, create a new CustomTicker with this data.
+     */
+    create: XOR<CustomTickerCreateInput, CustomTickerUncheckedCreateInput>
+    /**
+     * In case the CustomTicker was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CustomTickerUpdateInput, CustomTickerUncheckedUpdateInput>
+  }
+
+  /**
+   * CustomTicker delete
+   */
+  export type CustomTickerDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
+    /**
+     * Filter which CustomTicker to delete.
+     */
+    where: CustomTickerWhereUniqueInput
+  }
+
+  /**
+   * CustomTicker deleteMany
+   */
+  export type CustomTickerDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CustomTickers to delete
+     */
+    where?: CustomTickerWhereInput
+    /**
+     * Limit how many CustomTickers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomTicker without action
+   */
+  export type CustomTickerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomTicker
+     */
+    select?: CustomTickerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomTicker
+     */
+    omit?: CustomTickerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomTickerInclude<ExtArgs> | null
   }
 
 
@@ -18684,6 +21149,7 @@ export namespace Prisma {
   export type OptionsSnapshotMinAggregateOutputType = {
     id: string | null
     sessionId: string | null
+    userId: string | null
     ticker: string | null
     direction: string | null
     currentPrice: number | null
@@ -18711,6 +21177,7 @@ export namespace Prisma {
   export type OptionsSnapshotMaxAggregateOutputType = {
     id: string | null
     sessionId: string | null
+    userId: string | null
     ticker: string | null
     direction: string | null
     currentPrice: number | null
@@ -18738,6 +21205,7 @@ export namespace Prisma {
   export type OptionsSnapshotCountAggregateOutputType = {
     id: number
     sessionId: number
+    userId: number
     ticker: number
     direction: number
     currentPrice: number
@@ -18797,6 +21265,7 @@ export namespace Prisma {
   export type OptionsSnapshotMinAggregateInputType = {
     id?: true
     sessionId?: true
+    userId?: true
     ticker?: true
     direction?: true
     currentPrice?: true
@@ -18824,6 +21293,7 @@ export namespace Prisma {
   export type OptionsSnapshotMaxAggregateInputType = {
     id?: true
     sessionId?: true
+    userId?: true
     ticker?: true
     direction?: true
     currentPrice?: true
@@ -18851,6 +21321,7 @@ export namespace Prisma {
   export type OptionsSnapshotCountAggregateInputType = {
     id?: true
     sessionId?: true
+    userId?: true
     ticker?: true
     direction?: true
     currentPrice?: true
@@ -18965,6 +21436,7 @@ export namespace Prisma {
   export type OptionsSnapshotGroupByOutputType = {
     id: string
     sessionId: string
+    userId: string | null
     ticker: string
     direction: string
     currentPrice: number
@@ -19011,6 +21483,7 @@ export namespace Prisma {
   export type OptionsSnapshotSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     sessionId?: boolean
+    userId?: boolean
     ticker?: boolean
     direction?: boolean
     currentPrice?: boolean
@@ -19033,11 +21506,13 @@ export namespace Prisma {
     predictionError?: boolean
     directionCorrect?: boolean
     validatedAt?: boolean
+    user?: boolean | OptionsSnapshot$userArgs<ExtArgs>
   }, ExtArgs["result"]["optionsSnapshot"]>
 
   export type OptionsSnapshotSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     sessionId?: boolean
+    userId?: boolean
     ticker?: boolean
     direction?: boolean
     currentPrice?: boolean
@@ -19060,11 +21535,13 @@ export namespace Prisma {
     predictionError?: boolean
     directionCorrect?: boolean
     validatedAt?: boolean
+    user?: boolean | OptionsSnapshot$userArgs<ExtArgs>
   }, ExtArgs["result"]["optionsSnapshot"]>
 
   export type OptionsSnapshotSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     sessionId?: boolean
+    userId?: boolean
     ticker?: boolean
     direction?: boolean
     currentPrice?: boolean
@@ -19087,11 +21564,13 @@ export namespace Prisma {
     predictionError?: boolean
     directionCorrect?: boolean
     validatedAt?: boolean
+    user?: boolean | OptionsSnapshot$userArgs<ExtArgs>
   }, ExtArgs["result"]["optionsSnapshot"]>
 
   export type OptionsSnapshotSelectScalar = {
     id?: boolean
     sessionId?: boolean
+    userId?: boolean
     ticker?: boolean
     direction?: boolean
     currentPrice?: boolean
@@ -19116,14 +21595,26 @@ export namespace Prisma {
     validatedAt?: boolean
   }
 
-  export type OptionsSnapshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sessionId" | "ticker" | "direction" | "currentPrice" | "targetPrice" | "projectedDate" | "contractTicker" | "strike" | "expiry" | "contractType" | "askAtRec" | "forwardROI" | "compositeScore" | "ivEstimate" | "rank" | "isBestMatch" | "createdAt" | "actualOptionPrice" | "stockPriceAtCheck" | "actualROI" | "predictionError" | "directionCorrect" | "validatedAt", ExtArgs["result"]["optionsSnapshot"]>
+  export type OptionsSnapshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sessionId" | "userId" | "ticker" | "direction" | "currentPrice" | "targetPrice" | "projectedDate" | "contractTicker" | "strike" | "expiry" | "contractType" | "askAtRec" | "forwardROI" | "compositeScore" | "ivEstimate" | "rank" | "isBestMatch" | "createdAt" | "actualOptionPrice" | "stockPriceAtCheck" | "actualROI" | "predictionError" | "directionCorrect" | "validatedAt", ExtArgs["result"]["optionsSnapshot"]>
+  export type OptionsSnapshotInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | OptionsSnapshot$userArgs<ExtArgs>
+  }
+  export type OptionsSnapshotIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | OptionsSnapshot$userArgs<ExtArgs>
+  }
+  export type OptionsSnapshotIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | OptionsSnapshot$userArgs<ExtArgs>
+  }
 
   export type $OptionsSnapshotPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "OptionsSnapshot"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs> | null
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       sessionId: string
+      userId: string | null
       ticker: string
       direction: string
       currentPrice: number
@@ -19540,6 +22031,7 @@ export namespace Prisma {
    */
   export interface Prisma__OptionsSnapshotClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends OptionsSnapshot$userArgs<ExtArgs> = {}>(args?: Subset<T, OptionsSnapshot$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19571,6 +22063,7 @@ export namespace Prisma {
   interface OptionsSnapshotFieldRefs {
     readonly id: FieldRef<"OptionsSnapshot", 'String'>
     readonly sessionId: FieldRef<"OptionsSnapshot", 'String'>
+    readonly userId: FieldRef<"OptionsSnapshot", 'String'>
     readonly ticker: FieldRef<"OptionsSnapshot", 'String'>
     readonly direction: FieldRef<"OptionsSnapshot", 'String'>
     readonly currentPrice: FieldRef<"OptionsSnapshot", 'Float'>
@@ -19610,6 +22103,10 @@ export namespace Prisma {
      */
     omit?: OptionsSnapshotOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
+    /**
      * Filter, which OptionsSnapshot to fetch.
      */
     where: OptionsSnapshotWhereUniqueInput
@@ -19628,6 +22125,10 @@ export namespace Prisma {
      */
     omit?: OptionsSnapshotOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
+    /**
      * Filter, which OptionsSnapshot to fetch.
      */
     where: OptionsSnapshotWhereUniqueInput
@@ -19645,6 +22146,10 @@ export namespace Prisma {
      * Omit specific fields from the OptionsSnapshot
      */
     omit?: OptionsSnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
     /**
      * Filter, which OptionsSnapshot to fetch.
      */
@@ -19694,6 +22199,10 @@ export namespace Prisma {
      */
     omit?: OptionsSnapshotOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
+    /**
      * Filter, which OptionsSnapshot to fetch.
      */
     where?: OptionsSnapshotWhereInput
@@ -19741,6 +22250,10 @@ export namespace Prisma {
      * Omit specific fields from the OptionsSnapshot
      */
     omit?: OptionsSnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
     /**
      * Filter, which OptionsSnapshots to fetch.
      */
@@ -19790,6 +22303,10 @@ export namespace Prisma {
      */
     omit?: OptionsSnapshotOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
+    /**
      * The data needed to create a OptionsSnapshot.
      */
     data: XOR<OptionsSnapshotCreateInput, OptionsSnapshotUncheckedCreateInput>
@@ -19823,6 +22340,10 @@ export namespace Prisma {
      */
     data: OptionsSnapshotCreateManyInput | OptionsSnapshotCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -19837,6 +22358,10 @@ export namespace Prisma {
      * Omit specific fields from the OptionsSnapshot
      */
     omit?: OptionsSnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
     /**
      * The data needed to update a OptionsSnapshot.
      */
@@ -19889,6 +22414,10 @@ export namespace Prisma {
      * Limit how many OptionsSnapshots to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -19903,6 +22432,10 @@ export namespace Prisma {
      * Omit specific fields from the OptionsSnapshot
      */
     omit?: OptionsSnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
     /**
      * The filter to search for the OptionsSnapshot to update in case it exists.
      */
@@ -19930,6 +22463,10 @@ export namespace Prisma {
      */
     omit?: OptionsSnapshotOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
+    /**
      * Filter which OptionsSnapshot to delete.
      */
     where: OptionsSnapshotWhereUniqueInput
@@ -19950,6 +22487,25 @@ export namespace Prisma {
   }
 
   /**
+   * OptionsSnapshot.user
+   */
+  export type OptionsSnapshot$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * OptionsSnapshot without action
    */
   export type OptionsSnapshotDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -19961,6 +22517,10 @@ export namespace Prisma {
      * Omit specific fields from the OptionsSnapshot
      */
     omit?: OptionsSnapshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OptionsSnapshotInclude<ExtArgs> | null
   }
 
 
@@ -21043,13 +23603,43 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
+    supabaseAuthId: 'supabaseAuthId',
     email: 'email',
     name: 'name',
+    isAdmin: 'isAdmin',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const InviteScalarFieldEnum: {
+    id: 'id',
+    email: 'email',
+    invitedBy: 'invitedBy',
+    invitedAt: 'invitedAt',
+    acceptedAt: 'acceptedAt'
+  };
+
+  export type InviteScalarFieldEnum = (typeof InviteScalarFieldEnum)[keyof typeof InviteScalarFieldEnum]
+
+
+  export const CustomTickerScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    ticker: 'ticker',
+    direction: 'direction',
+    currentPrice: 'currentPrice',
+    targetPrice: 'targetPrice',
+    projectedDate: 'projectedDate',
+    stopLoss: 'stopLoss',
+    riskTolerance: 'riskTolerance',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CustomTickerScalarFieldEnum = (typeof CustomTickerScalarFieldEnum)[keyof typeof CustomTickerScalarFieldEnum]
 
 
   export const UserPreferenceScalarFieldEnum: {
@@ -21262,6 +23852,7 @@ export namespace Prisma {
   export const OptionsSnapshotScalarFieldEnum: {
     id: 'id',
     sessionId: 'sessionId',
+    userId: 'userId',
     ticker: 'ticker',
     direction: 'direction',
     currentPrice: 'currentPrice',
@@ -21368,6 +23959,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -21382,9 +23980,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
+   * Reference to a field of type 'Float'
    */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -21414,20 +24019,6 @@ export namespace Prisma {
    */
   export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
   /**
    * Deep Input Types
    */
@@ -21438,8 +24029,10 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
+    supabaseAuthId?: StringNullableFilter<"User"> | string | null
     email?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
+    isAdmin?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     watchlist?: WatchlistItemListRelationFilter
@@ -21447,12 +24040,16 @@ export namespace Prisma {
     alerts?: AlertListRelationFilter
     preferences?: XOR<UserPreferenceNullableScalarRelationFilter, UserPreferenceWhereInput> | null
     delistMonitorTickers?: DelistMonitorTickerListRelationFilter
+    customTickers?: CustomTickerListRelationFilter
+    optionsSnapshots?: OptionsSnapshotListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
+    supabaseAuthId?: SortOrderInput | SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
+    isAdmin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     watchlist?: WatchlistItemOrderByRelationAggregateInput
@@ -21460,15 +24057,19 @@ export namespace Prisma {
     alerts?: AlertOrderByRelationAggregateInput
     preferences?: UserPreferenceOrderByWithRelationInput
     delistMonitorTickers?: DelistMonitorTickerOrderByRelationAggregateInput
+    customTickers?: CustomTickerOrderByRelationAggregateInput
+    optionsSnapshots?: OptionsSnapshotOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    supabaseAuthId?: string
     email?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     name?: StringNullableFilter<"User"> | string | null
+    isAdmin?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     watchlist?: WatchlistItemListRelationFilter
@@ -21476,12 +24077,16 @@ export namespace Prisma {
     alerts?: AlertListRelationFilter
     preferences?: XOR<UserPreferenceNullableScalarRelationFilter, UserPreferenceWhereInput> | null
     delistMonitorTickers?: DelistMonitorTickerListRelationFilter
-  }, "id" | "email">
+    customTickers?: CustomTickerListRelationFilter
+    optionsSnapshots?: OptionsSnapshotListRelationFilter
+  }, "id" | "supabaseAuthId" | "email">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
+    supabaseAuthId?: SortOrderInput | SortOrder
     email?: SortOrder
     name?: SortOrderInput | SortOrder
+    isAdmin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -21494,10 +24099,152 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"User"> | string
+    supabaseAuthId?: StringNullableWithAggregatesFilter<"User"> | string | null
     email?: StringWithAggregatesFilter<"User"> | string
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    isAdmin?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+  }
+
+  export type InviteWhereInput = {
+    AND?: InviteWhereInput | InviteWhereInput[]
+    OR?: InviteWhereInput[]
+    NOT?: InviteWhereInput | InviteWhereInput[]
+    id?: StringFilter<"Invite"> | string
+    email?: StringFilter<"Invite"> | string
+    invitedBy?: StringFilter<"Invite"> | string
+    invitedAt?: DateTimeFilter<"Invite"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"Invite"> | Date | string | null
+  }
+
+  export type InviteOrderByWithRelationInput = {
+    id?: SortOrder
+    email?: SortOrder
+    invitedBy?: SortOrder
+    invitedAt?: SortOrder
+    acceptedAt?: SortOrderInput | SortOrder
+  }
+
+  export type InviteWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    email?: string
+    AND?: InviteWhereInput | InviteWhereInput[]
+    OR?: InviteWhereInput[]
+    NOT?: InviteWhereInput | InviteWhereInput[]
+    invitedBy?: StringFilter<"Invite"> | string
+    invitedAt?: DateTimeFilter<"Invite"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"Invite"> | Date | string | null
+  }, "id" | "email">
+
+  export type InviteOrderByWithAggregationInput = {
+    id?: SortOrder
+    email?: SortOrder
+    invitedBy?: SortOrder
+    invitedAt?: SortOrder
+    acceptedAt?: SortOrderInput | SortOrder
+    _count?: InviteCountOrderByAggregateInput
+    _max?: InviteMaxOrderByAggregateInput
+    _min?: InviteMinOrderByAggregateInput
+  }
+
+  export type InviteScalarWhereWithAggregatesInput = {
+    AND?: InviteScalarWhereWithAggregatesInput | InviteScalarWhereWithAggregatesInput[]
+    OR?: InviteScalarWhereWithAggregatesInput[]
+    NOT?: InviteScalarWhereWithAggregatesInput | InviteScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Invite"> | string
+    email?: StringWithAggregatesFilter<"Invite"> | string
+    invitedBy?: StringWithAggregatesFilter<"Invite"> | string
+    invitedAt?: DateTimeWithAggregatesFilter<"Invite"> | Date | string
+    acceptedAt?: DateTimeNullableWithAggregatesFilter<"Invite"> | Date | string | null
+  }
+
+  export type CustomTickerWhereInput = {
+    AND?: CustomTickerWhereInput | CustomTickerWhereInput[]
+    OR?: CustomTickerWhereInput[]
+    NOT?: CustomTickerWhereInput | CustomTickerWhereInput[]
+    id?: StringFilter<"CustomTicker"> | string
+    userId?: StringFilter<"CustomTicker"> | string
+    ticker?: StringFilter<"CustomTicker"> | string
+    direction?: StringNullableFilter<"CustomTicker"> | string | null
+    currentPrice?: FloatNullableFilter<"CustomTicker"> | number | null
+    targetPrice?: FloatNullableFilter<"CustomTicker"> | number | null
+    projectedDate?: DateTimeNullableFilter<"CustomTicker"> | Date | string | null
+    stopLoss?: FloatNullableFilter<"CustomTicker"> | number | null
+    riskTolerance?: StringFilter<"CustomTicker"> | string
+    createdAt?: DateTimeFilter<"CustomTicker"> | Date | string
+    updatedAt?: DateTimeFilter<"CustomTicker"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type CustomTickerOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    ticker?: SortOrder
+    direction?: SortOrderInput | SortOrder
+    currentPrice?: SortOrderInput | SortOrder
+    targetPrice?: SortOrderInput | SortOrder
+    projectedDate?: SortOrderInput | SortOrder
+    stopLoss?: SortOrderInput | SortOrder
+    riskTolerance?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type CustomTickerWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_ticker?: CustomTickerUserIdTickerCompoundUniqueInput
+    AND?: CustomTickerWhereInput | CustomTickerWhereInput[]
+    OR?: CustomTickerWhereInput[]
+    NOT?: CustomTickerWhereInput | CustomTickerWhereInput[]
+    userId?: StringFilter<"CustomTicker"> | string
+    ticker?: StringFilter<"CustomTicker"> | string
+    direction?: StringNullableFilter<"CustomTicker"> | string | null
+    currentPrice?: FloatNullableFilter<"CustomTicker"> | number | null
+    targetPrice?: FloatNullableFilter<"CustomTicker"> | number | null
+    projectedDate?: DateTimeNullableFilter<"CustomTicker"> | Date | string | null
+    stopLoss?: FloatNullableFilter<"CustomTicker"> | number | null
+    riskTolerance?: StringFilter<"CustomTicker"> | string
+    createdAt?: DateTimeFilter<"CustomTicker"> | Date | string
+    updatedAt?: DateTimeFilter<"CustomTicker"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId_ticker">
+
+  export type CustomTickerOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    ticker?: SortOrder
+    direction?: SortOrderInput | SortOrder
+    currentPrice?: SortOrderInput | SortOrder
+    targetPrice?: SortOrderInput | SortOrder
+    projectedDate?: SortOrderInput | SortOrder
+    stopLoss?: SortOrderInput | SortOrder
+    riskTolerance?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CustomTickerCountOrderByAggregateInput
+    _avg?: CustomTickerAvgOrderByAggregateInput
+    _max?: CustomTickerMaxOrderByAggregateInput
+    _min?: CustomTickerMinOrderByAggregateInput
+    _sum?: CustomTickerSumOrderByAggregateInput
+  }
+
+  export type CustomTickerScalarWhereWithAggregatesInput = {
+    AND?: CustomTickerScalarWhereWithAggregatesInput | CustomTickerScalarWhereWithAggregatesInput[]
+    OR?: CustomTickerScalarWhereWithAggregatesInput[]
+    NOT?: CustomTickerScalarWhereWithAggregatesInput | CustomTickerScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CustomTicker"> | string
+    userId?: StringWithAggregatesFilter<"CustomTicker"> | string
+    ticker?: StringWithAggregatesFilter<"CustomTicker"> | string
+    direction?: StringNullableWithAggregatesFilter<"CustomTicker"> | string | null
+    currentPrice?: FloatNullableWithAggregatesFilter<"CustomTicker"> | number | null
+    targetPrice?: FloatNullableWithAggregatesFilter<"CustomTicker"> | number | null
+    projectedDate?: DateTimeNullableWithAggregatesFilter<"CustomTicker"> | Date | string | null
+    stopLoss?: FloatNullableWithAggregatesFilter<"CustomTicker"> | number | null
+    riskTolerance?: StringWithAggregatesFilter<"CustomTicker"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"CustomTicker"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CustomTicker"> | Date | string
   }
 
   export type UserPreferenceWhereInput = {
@@ -22582,6 +25329,7 @@ export namespace Prisma {
     NOT?: OptionsSnapshotWhereInput | OptionsSnapshotWhereInput[]
     id?: StringFilter<"OptionsSnapshot"> | string
     sessionId?: StringFilter<"OptionsSnapshot"> | string
+    userId?: StringNullableFilter<"OptionsSnapshot"> | string | null
     ticker?: StringFilter<"OptionsSnapshot"> | string
     direction?: StringFilter<"OptionsSnapshot"> | string
     currentPrice?: FloatFilter<"OptionsSnapshot"> | number
@@ -22604,11 +25352,13 @@ export namespace Prisma {
     predictionError?: FloatNullableFilter<"OptionsSnapshot"> | number | null
     directionCorrect?: BoolNullableFilter<"OptionsSnapshot"> | boolean | null
     validatedAt?: DateTimeNullableFilter<"OptionsSnapshot"> | Date | string | null
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type OptionsSnapshotOrderByWithRelationInput = {
     id?: SortOrder
     sessionId?: SortOrder
+    userId?: SortOrderInput | SortOrder
     ticker?: SortOrder
     direction?: SortOrder
     currentPrice?: SortOrder
@@ -22631,6 +25381,7 @@ export namespace Prisma {
     predictionError?: SortOrderInput | SortOrder
     directionCorrect?: SortOrderInput | SortOrder
     validatedAt?: SortOrderInput | SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type OptionsSnapshotWhereUniqueInput = Prisma.AtLeast<{
@@ -22639,6 +25390,7 @@ export namespace Prisma {
     OR?: OptionsSnapshotWhereInput[]
     NOT?: OptionsSnapshotWhereInput | OptionsSnapshotWhereInput[]
     sessionId?: StringFilter<"OptionsSnapshot"> | string
+    userId?: StringNullableFilter<"OptionsSnapshot"> | string | null
     ticker?: StringFilter<"OptionsSnapshot"> | string
     direction?: StringFilter<"OptionsSnapshot"> | string
     currentPrice?: FloatFilter<"OptionsSnapshot"> | number
@@ -22661,11 +25413,13 @@ export namespace Prisma {
     predictionError?: FloatNullableFilter<"OptionsSnapshot"> | number | null
     directionCorrect?: BoolNullableFilter<"OptionsSnapshot"> | boolean | null
     validatedAt?: DateTimeNullableFilter<"OptionsSnapshot"> | Date | string | null
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type OptionsSnapshotOrderByWithAggregationInput = {
     id?: SortOrder
     sessionId?: SortOrder
+    userId?: SortOrderInput | SortOrder
     ticker?: SortOrder
     direction?: SortOrder
     currentPrice?: SortOrder
@@ -22701,6 +25455,7 @@ export namespace Prisma {
     NOT?: OptionsSnapshotScalarWhereWithAggregatesInput | OptionsSnapshotScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"OptionsSnapshot"> | string
     sessionId?: StringWithAggregatesFilter<"OptionsSnapshot"> | string
+    userId?: StringNullableWithAggregatesFilter<"OptionsSnapshot"> | string | null
     ticker?: StringWithAggregatesFilter<"OptionsSnapshot"> | string
     direction?: StringWithAggregatesFilter<"OptionsSnapshot"> | string
     currentPrice?: FloatWithAggregatesFilter<"OptionsSnapshot"> | number
@@ -22783,8 +25538,10 @@ export namespace Prisma {
 
   export type UserCreateInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     watchlist?: WatchlistItemCreateNestedManyWithoutUserInput
@@ -22792,12 +25549,16 @@ export namespace Prisma {
     alerts?: AlertCreateNestedManyWithoutUserInput
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     delistMonitorTickers?: DelistMonitorTickerCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     watchlist?: WatchlistItemUncheckedCreateNestedManyWithoutUserInput
@@ -22805,12 +25566,16 @@ export namespace Prisma {
     alerts?: AlertUncheckedCreateNestedManyWithoutUserInput
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     delistMonitorTickers?: DelistMonitorTickerUncheckedCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerUncheckedCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     watchlist?: WatchlistItemUpdateManyWithoutUserNestedInput
@@ -22818,12 +25583,16 @@ export namespace Prisma {
     alerts?: AlertUpdateManyWithoutUserNestedInput
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     delistMonitorTickers?: DelistMonitorTickerUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     watchlist?: WatchlistItemUncheckedUpdateManyWithoutUserNestedInput
@@ -22831,28 +25600,189 @@ export namespace Prisma {
     alerts?: AlertUncheckedUpdateManyWithoutUserNestedInput
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     delistMonitorTickers?: DelistMonitorTickerUncheckedUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUncheckedUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type InviteCreateInput = {
+    id?: string
+    email: string
+    invitedBy: string
+    invitedAt?: Date | string
+    acceptedAt?: Date | string | null
+  }
+
+  export type InviteUncheckedCreateInput = {
+    id?: string
+    email: string
+    invitedBy: string
+    invitedAt?: Date | string
+    acceptedAt?: Date | string | null
+  }
+
+  export type InviteUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    invitedBy?: StringFieldUpdateOperationsInput | string
+    invitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type InviteUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    invitedBy?: StringFieldUpdateOperationsInput | string
+    invitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type InviteCreateManyInput = {
+    id?: string
+    email: string
+    invitedBy: string
+    invitedAt?: Date | string
+    acceptedAt?: Date | string | null
+  }
+
+  export type InviteUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    invitedBy?: StringFieldUpdateOperationsInput | string
+    invitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type InviteUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    invitedBy?: StringFieldUpdateOperationsInput | string
+    invitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CustomTickerCreateInput = {
+    id?: string
+    ticker: string
+    direction?: string | null
+    currentPrice?: number | null
+    targetPrice?: number | null
+    projectedDate?: Date | string | null
+    stopLoss?: number | null
+    riskTolerance?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutCustomTickersInput
+  }
+
+  export type CustomTickerUncheckedCreateInput = {
+    id?: string
+    userId: string
+    ticker: string
+    direction?: string | null
+    currentPrice?: number | null
+    targetPrice?: number | null
+    projectedDate?: Date | string | null
+    stopLoss?: number | null
+    riskTolerance?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomTickerUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    direction?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    targetPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    projectedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stopLoss?: NullableFloatFieldUpdateOperationsInput | number | null
+    riskTolerance?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCustomTickersNestedInput
+  }
+
+  export type CustomTickerUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    direction?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    targetPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    projectedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stopLoss?: NullableFloatFieldUpdateOperationsInput | number | null
+    riskTolerance?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomTickerCreateManyInput = {
+    id?: string
+    userId: string
+    ticker: string
+    direction?: string | null
+    currentPrice?: number | null
+    targetPrice?: number | null
+    projectedDate?: Date | string | null
+    stopLoss?: number | null
+    riskTolerance?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomTickerUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    direction?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    targetPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    projectedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stopLoss?: NullableFloatFieldUpdateOperationsInput | number | null
+    riskTolerance?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomTickerUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    direction?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    targetPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    projectedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stopLoss?: NullableFloatFieldUpdateOperationsInput | number | null
+    riskTolerance?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24081,11 +27011,13 @@ export namespace Prisma {
     predictionError?: number | null
     directionCorrect?: boolean | null
     validatedAt?: Date | string | null
+    user?: UserCreateNestedOneWithoutOptionsSnapshotsInput
   }
 
   export type OptionsSnapshotUncheckedCreateInput = {
     id?: string
     sessionId: string
+    userId?: string | null
     ticker: string
     direction: string
     currentPrice: number
@@ -24135,11 +27067,13 @@ export namespace Prisma {
     predictionError?: NullableFloatFieldUpdateOperationsInput | number | null
     directionCorrect?: NullableBoolFieldUpdateOperationsInput | boolean | null
     validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    user?: UserUpdateOneWithoutOptionsSnapshotsNestedInput
   }
 
   export type OptionsSnapshotUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     ticker?: StringFieldUpdateOperationsInput | string
     direction?: StringFieldUpdateOperationsInput | string
     currentPrice?: FloatFieldUpdateOperationsInput | number
@@ -24167,6 +27101,7 @@ export namespace Prisma {
   export type OptionsSnapshotCreateManyInput = {
     id?: string
     sessionId: string
+    userId?: string | null
     ticker: string
     direction: string
     currentPrice: number
@@ -24221,6 +27156,7 @@ export namespace Prisma {
   export type OptionsSnapshotUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     ticker?: StringFieldUpdateOperationsInput | string
     direction?: StringFieldUpdateOperationsInput | string
     currentPrice?: FloatFieldUpdateOperationsInput | number
@@ -24330,6 +27266,11 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -24370,6 +27311,18 @@ export namespace Prisma {
     none?: DelistMonitorTickerWhereInput
   }
 
+  export type CustomTickerListRelationFilter = {
+    every?: CustomTickerWhereInput
+    some?: CustomTickerWhereInput
+    none?: CustomTickerWhereInput
+  }
+
+  export type OptionsSnapshotListRelationFilter = {
+    every?: OptionsSnapshotWhereInput
+    some?: OptionsSnapshotWhereInput
+    none?: OptionsSnapshotWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -24391,26 +27344,40 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type CustomTickerOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type OptionsSnapshotOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
+    supabaseAuthId?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    isAdmin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
+    supabaseAuthId?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    isAdmin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
+    supabaseAuthId?: SortOrder
     email?: SortOrder
     name?: SortOrder
+    isAdmin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -24451,6 +27418,14 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -24465,9 +27440,144 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type InviteCountOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    invitedBy?: SortOrder
+    invitedAt?: SortOrder
+    acceptedAt?: SortOrder
+  }
+
+  export type InviteMaxOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    invitedBy?: SortOrder
+    invitedAt?: SortOrder
+    acceptedAt?: SortOrder
+  }
+
+  export type InviteMinOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    invitedBy?: SortOrder
+    invitedAt?: SortOrder
+    acceptedAt?: SortOrder
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type CustomTickerUserIdTickerCompoundUniqueInput = {
+    userId: string
+    ticker: string
+  }
+
+  export type CustomTickerCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    ticker?: SortOrder
+    direction?: SortOrder
+    currentPrice?: SortOrder
+    targetPrice?: SortOrder
+    projectedDate?: SortOrder
+    stopLoss?: SortOrder
+    riskTolerance?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomTickerAvgOrderByAggregateInput = {
+    currentPrice?: SortOrder
+    targetPrice?: SortOrder
+    stopLoss?: SortOrder
+  }
+
+  export type CustomTickerMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    ticker?: SortOrder
+    direction?: SortOrder
+    currentPrice?: SortOrder
+    targetPrice?: SortOrder
+    projectedDate?: SortOrder
+    stopLoss?: SortOrder
+    riskTolerance?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomTickerMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    ticker?: SortOrder
+    direction?: SortOrder
+    currentPrice?: SortOrder
+    targetPrice?: SortOrder
+    projectedDate?: SortOrder
+    stopLoss?: SortOrder
+    riskTolerance?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomTickerSumOrderByAggregateInput = {
+    currentPrice?: SortOrder
+    targetPrice?: SortOrder
+    stopLoss?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -24479,11 +27589,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
-  }
-
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
   }
 
   export type UserPreferenceCountOrderByAggregateInput = {
@@ -24519,14 +27624,6 @@ export namespace Prisma {
 
   export type UserPreferenceSumOrderByAggregateInput = {
     priceCheckIntervalSec?: SortOrder
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -24574,17 +27671,6 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
-
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type ParsedTradeListRelationFilter = {
@@ -24688,33 +27774,6 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type FloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -24808,20 +27867,6 @@ export namespace Prisma {
     supportLevel?: SortOrder
     resistanceLevel?: SortOrder
     confidence?: SortOrder
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -25337,9 +28382,15 @@ export namespace Prisma {
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
   export type OptionsSnapshotCountOrderByAggregateInput = {
     id?: SortOrder
     sessionId?: SortOrder
+    userId?: SortOrder
     ticker?: SortOrder
     direction?: SortOrder
     currentPrice?: SortOrder
@@ -25382,6 +28433,7 @@ export namespace Prisma {
   export type OptionsSnapshotMaxOrderByAggregateInput = {
     id?: SortOrder
     sessionId?: SortOrder
+    userId?: SortOrder
     ticker?: SortOrder
     direction?: SortOrder
     currentPrice?: SortOrder
@@ -25409,6 +28461,7 @@ export namespace Prisma {
   export type OptionsSnapshotMinOrderByAggregateInput = {
     id?: SortOrder
     sessionId?: SortOrder
+    userId?: SortOrder
     ticker?: SortOrder
     direction?: SortOrder
     currentPrice?: SortOrder
@@ -25520,6 +28573,20 @@ export namespace Prisma {
     connect?: DelistMonitorTickerWhereUniqueInput | DelistMonitorTickerWhereUniqueInput[]
   }
 
+  export type CustomTickerCreateNestedManyWithoutUserInput = {
+    create?: XOR<CustomTickerCreateWithoutUserInput, CustomTickerUncheckedCreateWithoutUserInput> | CustomTickerCreateWithoutUserInput[] | CustomTickerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CustomTickerCreateOrConnectWithoutUserInput | CustomTickerCreateOrConnectWithoutUserInput[]
+    createMany?: CustomTickerCreateManyUserInputEnvelope
+    connect?: CustomTickerWhereUniqueInput | CustomTickerWhereUniqueInput[]
+  }
+
+  export type OptionsSnapshotCreateNestedManyWithoutUserInput = {
+    create?: XOR<OptionsSnapshotCreateWithoutUserInput, OptionsSnapshotUncheckedCreateWithoutUserInput> | OptionsSnapshotCreateWithoutUserInput[] | OptionsSnapshotUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: OptionsSnapshotCreateOrConnectWithoutUserInput | OptionsSnapshotCreateOrConnectWithoutUserInput[]
+    createMany?: OptionsSnapshotCreateManyUserInputEnvelope
+    connect?: OptionsSnapshotWhereUniqueInput | OptionsSnapshotWhereUniqueInput[]
+  }
+
   export type WatchlistItemUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<WatchlistItemCreateWithoutUserInput, WatchlistItemUncheckedCreateWithoutUserInput> | WatchlistItemCreateWithoutUserInput[] | WatchlistItemUncheckedCreateWithoutUserInput[]
     connectOrCreate?: WatchlistItemCreateOrConnectWithoutUserInput | WatchlistItemCreateOrConnectWithoutUserInput[]
@@ -25554,12 +28621,30 @@ export namespace Prisma {
     connect?: DelistMonitorTickerWhereUniqueInput | DelistMonitorTickerWhereUniqueInput[]
   }
 
+  export type CustomTickerUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CustomTickerCreateWithoutUserInput, CustomTickerUncheckedCreateWithoutUserInput> | CustomTickerCreateWithoutUserInput[] | CustomTickerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CustomTickerCreateOrConnectWithoutUserInput | CustomTickerCreateOrConnectWithoutUserInput[]
+    createMany?: CustomTickerCreateManyUserInputEnvelope
+    connect?: CustomTickerWhereUniqueInput | CustomTickerWhereUniqueInput[]
+  }
+
+  export type OptionsSnapshotUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<OptionsSnapshotCreateWithoutUserInput, OptionsSnapshotUncheckedCreateWithoutUserInput> | OptionsSnapshotCreateWithoutUserInput[] | OptionsSnapshotUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: OptionsSnapshotCreateOrConnectWithoutUserInput | OptionsSnapshotCreateOrConnectWithoutUserInput[]
+    createMany?: OptionsSnapshotCreateManyUserInputEnvelope
+    connect?: OptionsSnapshotWhereUniqueInput | OptionsSnapshotWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -25632,6 +28717,34 @@ export namespace Prisma {
     deleteMany?: DelistMonitorTickerScalarWhereInput | DelistMonitorTickerScalarWhereInput[]
   }
 
+  export type CustomTickerUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CustomTickerCreateWithoutUserInput, CustomTickerUncheckedCreateWithoutUserInput> | CustomTickerCreateWithoutUserInput[] | CustomTickerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CustomTickerCreateOrConnectWithoutUserInput | CustomTickerCreateOrConnectWithoutUserInput[]
+    upsert?: CustomTickerUpsertWithWhereUniqueWithoutUserInput | CustomTickerUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CustomTickerCreateManyUserInputEnvelope
+    set?: CustomTickerWhereUniqueInput | CustomTickerWhereUniqueInput[]
+    disconnect?: CustomTickerWhereUniqueInput | CustomTickerWhereUniqueInput[]
+    delete?: CustomTickerWhereUniqueInput | CustomTickerWhereUniqueInput[]
+    connect?: CustomTickerWhereUniqueInput | CustomTickerWhereUniqueInput[]
+    update?: CustomTickerUpdateWithWhereUniqueWithoutUserInput | CustomTickerUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CustomTickerUpdateManyWithWhereWithoutUserInput | CustomTickerUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CustomTickerScalarWhereInput | CustomTickerScalarWhereInput[]
+  }
+
+  export type OptionsSnapshotUpdateManyWithoutUserNestedInput = {
+    create?: XOR<OptionsSnapshotCreateWithoutUserInput, OptionsSnapshotUncheckedCreateWithoutUserInput> | OptionsSnapshotCreateWithoutUserInput[] | OptionsSnapshotUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: OptionsSnapshotCreateOrConnectWithoutUserInput | OptionsSnapshotCreateOrConnectWithoutUserInput[]
+    upsert?: OptionsSnapshotUpsertWithWhereUniqueWithoutUserInput | OptionsSnapshotUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: OptionsSnapshotCreateManyUserInputEnvelope
+    set?: OptionsSnapshotWhereUniqueInput | OptionsSnapshotWhereUniqueInput[]
+    disconnect?: OptionsSnapshotWhereUniqueInput | OptionsSnapshotWhereUniqueInput[]
+    delete?: OptionsSnapshotWhereUniqueInput | OptionsSnapshotWhereUniqueInput[]
+    connect?: OptionsSnapshotWhereUniqueInput | OptionsSnapshotWhereUniqueInput[]
+    update?: OptionsSnapshotUpdateWithWhereUniqueWithoutUserInput | OptionsSnapshotUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: OptionsSnapshotUpdateManyWithWhereWithoutUserInput | OptionsSnapshotUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: OptionsSnapshotScalarWhereInput | OptionsSnapshotScalarWhereInput[]
+  }
+
   export type WatchlistItemUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<WatchlistItemCreateWithoutUserInput, WatchlistItemUncheckedCreateWithoutUserInput> | WatchlistItemCreateWithoutUserInput[] | WatchlistItemUncheckedCreateWithoutUserInput[]
     connectOrCreate?: WatchlistItemCreateOrConnectWithoutUserInput | WatchlistItemCreateOrConnectWithoutUserInput[]
@@ -25698,14 +28811,64 @@ export namespace Prisma {
     deleteMany?: DelistMonitorTickerScalarWhereInput | DelistMonitorTickerScalarWhereInput[]
   }
 
+  export type CustomTickerUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CustomTickerCreateWithoutUserInput, CustomTickerUncheckedCreateWithoutUserInput> | CustomTickerCreateWithoutUserInput[] | CustomTickerUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CustomTickerCreateOrConnectWithoutUserInput | CustomTickerCreateOrConnectWithoutUserInput[]
+    upsert?: CustomTickerUpsertWithWhereUniqueWithoutUserInput | CustomTickerUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CustomTickerCreateManyUserInputEnvelope
+    set?: CustomTickerWhereUniqueInput | CustomTickerWhereUniqueInput[]
+    disconnect?: CustomTickerWhereUniqueInput | CustomTickerWhereUniqueInput[]
+    delete?: CustomTickerWhereUniqueInput | CustomTickerWhereUniqueInput[]
+    connect?: CustomTickerWhereUniqueInput | CustomTickerWhereUniqueInput[]
+    update?: CustomTickerUpdateWithWhereUniqueWithoutUserInput | CustomTickerUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CustomTickerUpdateManyWithWhereWithoutUserInput | CustomTickerUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CustomTickerScalarWhereInput | CustomTickerScalarWhereInput[]
+  }
+
+  export type OptionsSnapshotUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<OptionsSnapshotCreateWithoutUserInput, OptionsSnapshotUncheckedCreateWithoutUserInput> | OptionsSnapshotCreateWithoutUserInput[] | OptionsSnapshotUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: OptionsSnapshotCreateOrConnectWithoutUserInput | OptionsSnapshotCreateOrConnectWithoutUserInput[]
+    upsert?: OptionsSnapshotUpsertWithWhereUniqueWithoutUserInput | OptionsSnapshotUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: OptionsSnapshotCreateManyUserInputEnvelope
+    set?: OptionsSnapshotWhereUniqueInput | OptionsSnapshotWhereUniqueInput[]
+    disconnect?: OptionsSnapshotWhereUniqueInput | OptionsSnapshotWhereUniqueInput[]
+    delete?: OptionsSnapshotWhereUniqueInput | OptionsSnapshotWhereUniqueInput[]
+    connect?: OptionsSnapshotWhereUniqueInput | OptionsSnapshotWhereUniqueInput[]
+    update?: OptionsSnapshotUpdateWithWhereUniqueWithoutUserInput | OptionsSnapshotUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: OptionsSnapshotUpdateManyWithWhereWithoutUserInput | OptionsSnapshotUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: OptionsSnapshotScalarWhereInput | OptionsSnapshotScalarWhereInput[]
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type UserCreateNestedOneWithoutCustomTickersInput = {
+    create?: XOR<UserCreateWithoutCustomTickersInput, UserUncheckedCreateWithoutCustomTickersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCustomTickersInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutCustomTickersNestedInput = {
+    create?: XOR<UserCreateWithoutCustomTickersInput, UserUncheckedCreateWithoutCustomTickersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCustomTickersInput
+    upsert?: UserUpsertWithoutCustomTickersInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCustomTickersInput, UserUpdateWithoutCustomTickersInput>, UserUncheckedUpdateWithoutCustomTickersInput>
+  }
+
   export type UserCreateNestedOneWithoutPreferencesInput = {
     create?: XOR<UserCreateWithoutPreferencesInput, UserUncheckedCreateWithoutPreferencesInput>
     connectOrCreate?: UserCreateOrConnectWithoutPreferencesInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -25796,14 +28959,6 @@ export namespace Prisma {
   export type CoachPostUpdateimageStoragePathsInput = {
     set?: string[]
     push?: string | string[]
-  }
-
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ParsedTradeUpdateManyWithoutCoachPostNestedInput = {
@@ -25964,10 +29119,6 @@ export namespace Prisma {
     connectOrCreate?: ParseFeedbackCreateOrConnectWithoutParsedTradeInput | ParseFeedbackCreateOrConnectWithoutParsedTradeInput[]
     createMany?: ParseFeedbackCreateManyParsedTradeInputEnvelope
     connect?: ParseFeedbackWhereUniqueInput | ParseFeedbackWhereUniqueInput[]
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type FloatFieldUpdateOperationsInput = {
@@ -26327,8 +29478,24 @@ export namespace Prisma {
     update?: XOR<XOR<DelistMonitorTickerUpdateToOneWithWhereWithoutCheckResultsInput, DelistMonitorTickerUpdateWithoutCheckResultsInput>, DelistMonitorTickerUncheckedUpdateWithoutCheckResultsInput>
   }
 
+  export type UserCreateNestedOneWithoutOptionsSnapshotsInput = {
+    create?: XOR<UserCreateWithoutOptionsSnapshotsInput, UserUncheckedCreateWithoutOptionsSnapshotsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOptionsSnapshotsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type NullableBoolFieldUpdateOperationsInput = {
     set?: boolean | null
+  }
+
+  export type UserUpdateOneWithoutOptionsSnapshotsNestedInput = {
+    create?: XOR<UserCreateWithoutOptionsSnapshotsInput, UserUncheckedCreateWithoutOptionsSnapshotsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOptionsSnapshotsInput
+    upsert?: UserUpsertWithoutOptionsSnapshotsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOptionsSnapshotsInput, UserUpdateWithoutOptionsSnapshotsInput>, UserUncheckedUpdateWithoutOptionsSnapshotsInput>
   }
 
   export type CoachPostCreateNestedOneWithoutFeedTagsInput = {
@@ -26371,6 +29538,11 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -26440,6 +29612,14 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -26454,17 +29634,56 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -26493,17 +29712,6 @@ export namespace Prisma {
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
   }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -26526,47 +29734,6 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
-
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -26796,6 +29963,106 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CustomTickerCreateWithoutUserInput = {
+    id?: string
+    ticker: string
+    direction?: string | null
+    currentPrice?: number | null
+    targetPrice?: number | null
+    projectedDate?: Date | string | null
+    stopLoss?: number | null
+    riskTolerance?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomTickerUncheckedCreateWithoutUserInput = {
+    id?: string
+    ticker: string
+    direction?: string | null
+    currentPrice?: number | null
+    targetPrice?: number | null
+    projectedDate?: Date | string | null
+    stopLoss?: number | null
+    riskTolerance?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomTickerCreateOrConnectWithoutUserInput = {
+    where: CustomTickerWhereUniqueInput
+    create: XOR<CustomTickerCreateWithoutUserInput, CustomTickerUncheckedCreateWithoutUserInput>
+  }
+
+  export type CustomTickerCreateManyUserInputEnvelope = {
+    data: CustomTickerCreateManyUserInput | CustomTickerCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OptionsSnapshotCreateWithoutUserInput = {
+    id?: string
+    sessionId: string
+    ticker: string
+    direction: string
+    currentPrice: number
+    targetPrice: number
+    projectedDate: Date | string
+    contractTicker: string
+    strike: number
+    expiry: string
+    contractType: string
+    askAtRec: number
+    forwardROI: number
+    compositeScore: number
+    ivEstimate: number
+    rank: number
+    isBestMatch: boolean
+    createdAt?: Date | string
+    actualOptionPrice?: number | null
+    stockPriceAtCheck?: number | null
+    actualROI?: number | null
+    predictionError?: number | null
+    directionCorrect?: boolean | null
+    validatedAt?: Date | string | null
+  }
+
+  export type OptionsSnapshotUncheckedCreateWithoutUserInput = {
+    id?: string
+    sessionId: string
+    ticker: string
+    direction: string
+    currentPrice: number
+    targetPrice: number
+    projectedDate: Date | string
+    contractTicker: string
+    strike: number
+    expiry: string
+    contractType: string
+    askAtRec: number
+    forwardROI: number
+    compositeScore: number
+    ivEstimate: number
+    rank: number
+    isBestMatch: boolean
+    createdAt?: Date | string
+    actualOptionPrice?: number | null
+    stockPriceAtCheck?: number | null
+    actualROI?: number | null
+    predictionError?: number | null
+    directionCorrect?: boolean | null
+    validatedAt?: Date | string | null
+  }
+
+  export type OptionsSnapshotCreateOrConnectWithoutUserInput = {
+    where: OptionsSnapshotWhereUniqueInput
+    create: XOR<OptionsSnapshotCreateWithoutUserInput, OptionsSnapshotUncheckedCreateWithoutUserInput>
+  }
+
+  export type OptionsSnapshotCreateManyUserInputEnvelope = {
+    data: OptionsSnapshotCreateManyUserInput | OptionsSnapshotCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type WatchlistItemUpsertWithWhereUniqueWithoutUserInput = {
     where: WatchlistItemWhereUniqueInput
     update: XOR<WatchlistItemUpdateWithoutUserInput, WatchlistItemUncheckedUpdateWithoutUserInput>
@@ -26958,28 +30225,196 @@ export namespace Prisma {
     notes?: StringNullableFilter<"DelistMonitorTicker"> | string | null
   }
 
-  export type UserCreateWithoutPreferencesInput = {
+  export type CustomTickerUpsertWithWhereUniqueWithoutUserInput = {
+    where: CustomTickerWhereUniqueInput
+    update: XOR<CustomTickerUpdateWithoutUserInput, CustomTickerUncheckedUpdateWithoutUserInput>
+    create: XOR<CustomTickerCreateWithoutUserInput, CustomTickerUncheckedCreateWithoutUserInput>
+  }
+
+  export type CustomTickerUpdateWithWhereUniqueWithoutUserInput = {
+    where: CustomTickerWhereUniqueInput
+    data: XOR<CustomTickerUpdateWithoutUserInput, CustomTickerUncheckedUpdateWithoutUserInput>
+  }
+
+  export type CustomTickerUpdateManyWithWhereWithoutUserInput = {
+    where: CustomTickerScalarWhereInput
+    data: XOR<CustomTickerUpdateManyMutationInput, CustomTickerUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type CustomTickerScalarWhereInput = {
+    AND?: CustomTickerScalarWhereInput | CustomTickerScalarWhereInput[]
+    OR?: CustomTickerScalarWhereInput[]
+    NOT?: CustomTickerScalarWhereInput | CustomTickerScalarWhereInput[]
+    id?: StringFilter<"CustomTicker"> | string
+    userId?: StringFilter<"CustomTicker"> | string
+    ticker?: StringFilter<"CustomTicker"> | string
+    direction?: StringNullableFilter<"CustomTicker"> | string | null
+    currentPrice?: FloatNullableFilter<"CustomTicker"> | number | null
+    targetPrice?: FloatNullableFilter<"CustomTicker"> | number | null
+    projectedDate?: DateTimeNullableFilter<"CustomTicker"> | Date | string | null
+    stopLoss?: FloatNullableFilter<"CustomTicker"> | number | null
+    riskTolerance?: StringFilter<"CustomTicker"> | string
+    createdAt?: DateTimeFilter<"CustomTicker"> | Date | string
+    updatedAt?: DateTimeFilter<"CustomTicker"> | Date | string
+  }
+
+  export type OptionsSnapshotUpsertWithWhereUniqueWithoutUserInput = {
+    where: OptionsSnapshotWhereUniqueInput
+    update: XOR<OptionsSnapshotUpdateWithoutUserInput, OptionsSnapshotUncheckedUpdateWithoutUserInput>
+    create: XOR<OptionsSnapshotCreateWithoutUserInput, OptionsSnapshotUncheckedCreateWithoutUserInput>
+  }
+
+  export type OptionsSnapshotUpdateWithWhereUniqueWithoutUserInput = {
+    where: OptionsSnapshotWhereUniqueInput
+    data: XOR<OptionsSnapshotUpdateWithoutUserInput, OptionsSnapshotUncheckedUpdateWithoutUserInput>
+  }
+
+  export type OptionsSnapshotUpdateManyWithWhereWithoutUserInput = {
+    where: OptionsSnapshotScalarWhereInput
+    data: XOR<OptionsSnapshotUpdateManyMutationInput, OptionsSnapshotUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type OptionsSnapshotScalarWhereInput = {
+    AND?: OptionsSnapshotScalarWhereInput | OptionsSnapshotScalarWhereInput[]
+    OR?: OptionsSnapshotScalarWhereInput[]
+    NOT?: OptionsSnapshotScalarWhereInput | OptionsSnapshotScalarWhereInput[]
+    id?: StringFilter<"OptionsSnapshot"> | string
+    sessionId?: StringFilter<"OptionsSnapshot"> | string
+    userId?: StringNullableFilter<"OptionsSnapshot"> | string | null
+    ticker?: StringFilter<"OptionsSnapshot"> | string
+    direction?: StringFilter<"OptionsSnapshot"> | string
+    currentPrice?: FloatFilter<"OptionsSnapshot"> | number
+    targetPrice?: FloatFilter<"OptionsSnapshot"> | number
+    projectedDate?: DateTimeFilter<"OptionsSnapshot"> | Date | string
+    contractTicker?: StringFilter<"OptionsSnapshot"> | string
+    strike?: FloatFilter<"OptionsSnapshot"> | number
+    expiry?: StringFilter<"OptionsSnapshot"> | string
+    contractType?: StringFilter<"OptionsSnapshot"> | string
+    askAtRec?: FloatFilter<"OptionsSnapshot"> | number
+    forwardROI?: FloatFilter<"OptionsSnapshot"> | number
+    compositeScore?: FloatFilter<"OptionsSnapshot"> | number
+    ivEstimate?: FloatFilter<"OptionsSnapshot"> | number
+    rank?: IntFilter<"OptionsSnapshot"> | number
+    isBestMatch?: BoolFilter<"OptionsSnapshot"> | boolean
+    createdAt?: DateTimeFilter<"OptionsSnapshot"> | Date | string
+    actualOptionPrice?: FloatNullableFilter<"OptionsSnapshot"> | number | null
+    stockPriceAtCheck?: FloatNullableFilter<"OptionsSnapshot"> | number | null
+    actualROI?: FloatNullableFilter<"OptionsSnapshot"> | number | null
+    predictionError?: FloatNullableFilter<"OptionsSnapshot"> | number | null
+    directionCorrect?: BoolNullableFilter<"OptionsSnapshot"> | boolean | null
+    validatedAt?: DateTimeNullableFilter<"OptionsSnapshot"> | Date | string | null
+  }
+
+  export type UserCreateWithoutCustomTickersInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    watchlist?: WatchlistItemCreateNestedManyWithoutUserInput
+    activeTrades?: ActiveTradeCreateNestedManyWithoutUserInput
+    alerts?: AlertCreateNestedManyWithoutUserInput
+    preferences?: UserPreferenceCreateNestedOneWithoutUserInput
+    delistMonitorTickers?: DelistMonitorTickerCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCustomTickersInput = {
+    id?: string
+    supabaseAuthId?: string | null
+    email: string
+    name?: string | null
+    isAdmin?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    watchlist?: WatchlistItemUncheckedCreateNestedManyWithoutUserInput
+    activeTrades?: ActiveTradeUncheckedCreateNestedManyWithoutUserInput
+    alerts?: AlertUncheckedCreateNestedManyWithoutUserInput
+    preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
+    delistMonitorTickers?: DelistMonitorTickerUncheckedCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCustomTickersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCustomTickersInput, UserUncheckedCreateWithoutCustomTickersInput>
+  }
+
+  export type UserUpsertWithoutCustomTickersInput = {
+    update: XOR<UserUpdateWithoutCustomTickersInput, UserUncheckedUpdateWithoutCustomTickersInput>
+    create: XOR<UserCreateWithoutCustomTickersInput, UserUncheckedCreateWithoutCustomTickersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCustomTickersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCustomTickersInput, UserUncheckedUpdateWithoutCustomTickersInput>
+  }
+
+  export type UserUpdateWithoutCustomTickersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    watchlist?: WatchlistItemUpdateManyWithoutUserNestedInput
+    activeTrades?: ActiveTradeUpdateManyWithoutUserNestedInput
+    alerts?: AlertUpdateManyWithoutUserNestedInput
+    preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
+    delistMonitorTickers?: DelistMonitorTickerUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCustomTickersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    watchlist?: WatchlistItemUncheckedUpdateManyWithoutUserNestedInput
+    activeTrades?: ActiveTradeUncheckedUpdateManyWithoutUserNestedInput
+    alerts?: AlertUncheckedUpdateManyWithoutUserNestedInput
+    preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
+    delistMonitorTickers?: DelistMonitorTickerUncheckedUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutPreferencesInput = {
+    id?: string
+    supabaseAuthId?: string | null
+    email: string
+    name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     watchlist?: WatchlistItemCreateNestedManyWithoutUserInput
     activeTrades?: ActiveTradeCreateNestedManyWithoutUserInput
     alerts?: AlertCreateNestedManyWithoutUserInput
     delistMonitorTickers?: DelistMonitorTickerCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPreferencesInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     watchlist?: WatchlistItemUncheckedCreateNestedManyWithoutUserInput
     activeTrades?: ActiveTradeUncheckedCreateNestedManyWithoutUserInput
     alerts?: AlertUncheckedCreateNestedManyWithoutUserInput
     delistMonitorTickers?: DelistMonitorTickerUncheckedCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerUncheckedCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPreferencesInput = {
@@ -27000,26 +30435,34 @@ export namespace Prisma {
 
   export type UserUpdateWithoutPreferencesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     watchlist?: WatchlistItemUpdateManyWithoutUserNestedInput
     activeTrades?: ActiveTradeUpdateManyWithoutUserNestedInput
     alerts?: AlertUpdateManyWithoutUserNestedInput
     delistMonitorTickers?: DelistMonitorTickerUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPreferencesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     watchlist?: WatchlistItemUncheckedUpdateManyWithoutUserNestedInput
     activeTrades?: ActiveTradeUncheckedUpdateManyWithoutUserNestedInput
     alerts?: AlertUncheckedUpdateManyWithoutUserNestedInput
     delistMonitorTickers?: DelistMonitorTickerUncheckedUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUncheckedUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ParsedTradeCreateWithoutCoachPostInput = {
@@ -27537,26 +30980,34 @@ export namespace Prisma {
 
   export type UserCreateWithoutWatchlistInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     activeTrades?: ActiveTradeCreateNestedManyWithoutUserInput
     alerts?: AlertCreateNestedManyWithoutUserInput
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     delistMonitorTickers?: DelistMonitorTickerCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutWatchlistInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     activeTrades?: ActiveTradeUncheckedCreateNestedManyWithoutUserInput
     alerts?: AlertUncheckedCreateNestedManyWithoutUserInput
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     delistMonitorTickers?: DelistMonitorTickerUncheckedCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerUncheckedCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutWatchlistInput = {
@@ -27665,26 +31116,34 @@ export namespace Prisma {
 
   export type UserUpdateWithoutWatchlistInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activeTrades?: ActiveTradeUpdateManyWithoutUserNestedInput
     alerts?: AlertUpdateManyWithoutUserNestedInput
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     delistMonitorTickers?: DelistMonitorTickerUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWatchlistInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     activeTrades?: ActiveTradeUncheckedUpdateManyWithoutUserNestedInput
     alerts?: AlertUncheckedUpdateManyWithoutUserNestedInput
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     delistMonitorTickers?: DelistMonitorTickerUncheckedUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUncheckedUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ParsedTradeUpsertWithoutWatchlistItemsInput = {
@@ -27789,26 +31248,34 @@ export namespace Prisma {
 
   export type UserCreateWithoutActiveTradesInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     watchlist?: WatchlistItemCreateNestedManyWithoutUserInput
     alerts?: AlertCreateNestedManyWithoutUserInput
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     delistMonitorTickers?: DelistMonitorTickerCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutActiveTradesInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     watchlist?: WatchlistItemUncheckedCreateNestedManyWithoutUserInput
     alerts?: AlertUncheckedCreateNestedManyWithoutUserInput
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     delistMonitorTickers?: DelistMonitorTickerUncheckedCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerUncheckedCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutActiveTradesInput = {
@@ -27910,26 +31377,34 @@ export namespace Prisma {
 
   export type UserUpdateWithoutActiveTradesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     watchlist?: WatchlistItemUpdateManyWithoutUserNestedInput
     alerts?: AlertUpdateManyWithoutUserNestedInput
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     delistMonitorTickers?: DelistMonitorTickerUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActiveTradesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     watchlist?: WatchlistItemUncheckedUpdateManyWithoutUserNestedInput
     alerts?: AlertUncheckedUpdateManyWithoutUserNestedInput
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     delistMonitorTickers?: DelistMonitorTickerUncheckedUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUncheckedUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ParsedTradeUpsertWithoutActiveTradesInput = {
@@ -28003,26 +31478,34 @@ export namespace Prisma {
 
   export type UserCreateWithoutAlertsInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     watchlist?: WatchlistItemCreateNestedManyWithoutUserInput
     activeTrades?: ActiveTradeCreateNestedManyWithoutUserInput
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     delistMonitorTickers?: DelistMonitorTickerCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAlertsInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     watchlist?: WatchlistItemUncheckedCreateNestedManyWithoutUserInput
     activeTrades?: ActiveTradeUncheckedCreateNestedManyWithoutUserInput
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     delistMonitorTickers?: DelistMonitorTickerUncheckedCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerUncheckedCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAlertsInput = {
@@ -28098,26 +31581,34 @@ export namespace Prisma {
 
   export type UserUpdateWithoutAlertsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     watchlist?: WatchlistItemUpdateManyWithoutUserNestedInput
     activeTrades?: ActiveTradeUpdateManyWithoutUserNestedInput
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     delistMonitorTickers?: DelistMonitorTickerUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAlertsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     watchlist?: WatchlistItemUncheckedUpdateManyWithoutUserNestedInput
     activeTrades?: ActiveTradeUncheckedUpdateManyWithoutUserNestedInput
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     delistMonitorTickers?: DelistMonitorTickerUncheckedUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUncheckedUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ActiveTradeUpsertWithoutAlertsInput = {
@@ -28371,26 +31862,34 @@ export namespace Prisma {
 
   export type UserCreateWithoutDelistMonitorTickersInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     watchlist?: WatchlistItemCreateNestedManyWithoutUserInput
     activeTrades?: ActiveTradeCreateNestedManyWithoutUserInput
     alerts?: AlertCreateNestedManyWithoutUserInput
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
+    customTickers?: CustomTickerCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDelistMonitorTickersInput = {
     id?: string
+    supabaseAuthId?: string | null
     email: string
     name?: string | null
+    isAdmin?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     watchlist?: WatchlistItemUncheckedCreateNestedManyWithoutUserInput
     activeTrades?: ActiveTradeUncheckedCreateNestedManyWithoutUserInput
     alerts?: AlertUncheckedCreateNestedManyWithoutUserInput
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
+    customTickers?: CustomTickerUncheckedCreateNestedManyWithoutUserInput
+    optionsSnapshots?: OptionsSnapshotUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDelistMonitorTickersInput = {
@@ -28443,26 +31942,34 @@ export namespace Prisma {
 
   export type UserUpdateWithoutDelistMonitorTickersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     watchlist?: WatchlistItemUpdateManyWithoutUserNestedInput
     activeTrades?: ActiveTradeUpdateManyWithoutUserNestedInput
     alerts?: AlertUpdateManyWithoutUserNestedInput
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
+    customTickers?: CustomTickerUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDelistMonitorTickersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     watchlist?: WatchlistItemUncheckedUpdateManyWithoutUserNestedInput
     activeTrades?: ActiveTradeUncheckedUpdateManyWithoutUserNestedInput
     alerts?: AlertUncheckedUpdateManyWithoutUserNestedInput
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
+    customTickers?: CustomTickerUncheckedUpdateManyWithoutUserNestedInput
+    optionsSnapshots?: OptionsSnapshotUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type DelistCheckResultUpsertWithWhereUniqueWithoutDelistMonitorTickerInput = {
@@ -28550,6 +32057,86 @@ export namespace Prisma {
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type UserCreateWithoutOptionsSnapshotsInput = {
+    id?: string
+    supabaseAuthId?: string | null
+    email: string
+    name?: string | null
+    isAdmin?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    watchlist?: WatchlistItemCreateNestedManyWithoutUserInput
+    activeTrades?: ActiveTradeCreateNestedManyWithoutUserInput
+    alerts?: AlertCreateNestedManyWithoutUserInput
+    preferences?: UserPreferenceCreateNestedOneWithoutUserInput
+    delistMonitorTickers?: DelistMonitorTickerCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutOptionsSnapshotsInput = {
+    id?: string
+    supabaseAuthId?: string | null
+    email: string
+    name?: string | null
+    isAdmin?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    watchlist?: WatchlistItemUncheckedCreateNestedManyWithoutUserInput
+    activeTrades?: ActiveTradeUncheckedCreateNestedManyWithoutUserInput
+    alerts?: AlertUncheckedCreateNestedManyWithoutUserInput
+    preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
+    delistMonitorTickers?: DelistMonitorTickerUncheckedCreateNestedManyWithoutUserInput
+    customTickers?: CustomTickerUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutOptionsSnapshotsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOptionsSnapshotsInput, UserUncheckedCreateWithoutOptionsSnapshotsInput>
+  }
+
+  export type UserUpsertWithoutOptionsSnapshotsInput = {
+    update: XOR<UserUpdateWithoutOptionsSnapshotsInput, UserUncheckedUpdateWithoutOptionsSnapshotsInput>
+    create: XOR<UserCreateWithoutOptionsSnapshotsInput, UserUncheckedCreateWithoutOptionsSnapshotsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOptionsSnapshotsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOptionsSnapshotsInput, UserUncheckedUpdateWithoutOptionsSnapshotsInput>
+  }
+
+  export type UserUpdateWithoutOptionsSnapshotsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    watchlist?: WatchlistItemUpdateManyWithoutUserNestedInput
+    activeTrades?: ActiveTradeUpdateManyWithoutUserNestedInput
+    alerts?: AlertUpdateManyWithoutUserNestedInput
+    preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
+    delistMonitorTickers?: DelistMonitorTickerUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOptionsSnapshotsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    supabaseAuthId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    isAdmin?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    watchlist?: WatchlistItemUncheckedUpdateManyWithoutUserNestedInput
+    activeTrades?: ActiveTradeUncheckedUpdateManyWithoutUserNestedInput
+    alerts?: AlertUncheckedUpdateManyWithoutUserNestedInput
+    preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
+    delistMonitorTickers?: DelistMonitorTickerUncheckedUpdateManyWithoutUserNestedInput
+    customTickers?: CustomTickerUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CoachPostCreateWithoutFeedTagsInput = {
@@ -28693,6 +32280,46 @@ export namespace Prisma {
     addedAt?: Date | string
     updatedAt?: Date | string
     notes?: string | null
+  }
+
+  export type CustomTickerCreateManyUserInput = {
+    id?: string
+    ticker: string
+    direction?: string | null
+    currentPrice?: number | null
+    targetPrice?: number | null
+    projectedDate?: Date | string | null
+    stopLoss?: number | null
+    riskTolerance?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OptionsSnapshotCreateManyUserInput = {
+    id?: string
+    sessionId: string
+    ticker: string
+    direction: string
+    currentPrice: number
+    targetPrice: number
+    projectedDate: Date | string
+    contractTicker: string
+    strike: number
+    expiry: string
+    contractType: string
+    askAtRec: number
+    forwardROI: number
+    compositeScore: number
+    ivEstimate: number
+    rank: number
+    isBestMatch: boolean
+    createdAt?: Date | string
+    actualOptionPrice?: number | null
+    stockPriceAtCheck?: number | null
+    actualROI?: number | null
+    predictionError?: number | null
+    directionCorrect?: boolean | null
+    validatedAt?: Date | string | null
   }
 
   export type WatchlistItemUpdateWithoutUserInput = {
@@ -28862,6 +32489,126 @@ export namespace Prisma {
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CustomTickerUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    direction?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    targetPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    projectedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stopLoss?: NullableFloatFieldUpdateOperationsInput | number | null
+    riskTolerance?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomTickerUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    direction?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    targetPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    projectedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stopLoss?: NullableFloatFieldUpdateOperationsInput | number | null
+    riskTolerance?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomTickerUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    direction?: NullableStringFieldUpdateOperationsInput | string | null
+    currentPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    targetPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    projectedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    stopLoss?: NullableFloatFieldUpdateOperationsInput | number | null
+    riskTolerance?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OptionsSnapshotUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    direction?: StringFieldUpdateOperationsInput | string
+    currentPrice?: FloatFieldUpdateOperationsInput | number
+    targetPrice?: FloatFieldUpdateOperationsInput | number
+    projectedDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    contractTicker?: StringFieldUpdateOperationsInput | string
+    strike?: FloatFieldUpdateOperationsInput | number
+    expiry?: StringFieldUpdateOperationsInput | string
+    contractType?: StringFieldUpdateOperationsInput | string
+    askAtRec?: FloatFieldUpdateOperationsInput | number
+    forwardROI?: FloatFieldUpdateOperationsInput | number
+    compositeScore?: FloatFieldUpdateOperationsInput | number
+    ivEstimate?: FloatFieldUpdateOperationsInput | number
+    rank?: IntFieldUpdateOperationsInput | number
+    isBestMatch?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualOptionPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    stockPriceAtCheck?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualROI?: NullableFloatFieldUpdateOperationsInput | number | null
+    predictionError?: NullableFloatFieldUpdateOperationsInput | number | null
+    directionCorrect?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type OptionsSnapshotUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    direction?: StringFieldUpdateOperationsInput | string
+    currentPrice?: FloatFieldUpdateOperationsInput | number
+    targetPrice?: FloatFieldUpdateOperationsInput | number
+    projectedDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    contractTicker?: StringFieldUpdateOperationsInput | string
+    strike?: FloatFieldUpdateOperationsInput | number
+    expiry?: StringFieldUpdateOperationsInput | string
+    contractType?: StringFieldUpdateOperationsInput | string
+    askAtRec?: FloatFieldUpdateOperationsInput | number
+    forwardROI?: FloatFieldUpdateOperationsInput | number
+    compositeScore?: FloatFieldUpdateOperationsInput | number
+    ivEstimate?: FloatFieldUpdateOperationsInput | number
+    rank?: IntFieldUpdateOperationsInput | number
+    isBestMatch?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualOptionPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    stockPriceAtCheck?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualROI?: NullableFloatFieldUpdateOperationsInput | number | null
+    predictionError?: NullableFloatFieldUpdateOperationsInput | number | null
+    directionCorrect?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type OptionsSnapshotUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    direction?: StringFieldUpdateOperationsInput | string
+    currentPrice?: FloatFieldUpdateOperationsInput | number
+    targetPrice?: FloatFieldUpdateOperationsInput | number
+    projectedDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    contractTicker?: StringFieldUpdateOperationsInput | string
+    strike?: FloatFieldUpdateOperationsInput | number
+    expiry?: StringFieldUpdateOperationsInput | string
+    contractType?: StringFieldUpdateOperationsInput | string
+    askAtRec?: FloatFieldUpdateOperationsInput | number
+    forwardROI?: FloatFieldUpdateOperationsInput | number
+    compositeScore?: FloatFieldUpdateOperationsInput | number
+    ivEstimate?: FloatFieldUpdateOperationsInput | number
+    rank?: IntFieldUpdateOperationsInput | number
+    isBestMatch?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    actualOptionPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    stockPriceAtCheck?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualROI?: NullableFloatFieldUpdateOperationsInput | number | null
+    predictionError?: NullableFloatFieldUpdateOperationsInput | number | null
+    directionCorrect?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ParsedTradeCreateManyCoachPostInput = {

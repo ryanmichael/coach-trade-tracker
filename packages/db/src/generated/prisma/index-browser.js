@@ -122,8 +122,32 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
+  supabaseAuthId: 'supabaseAuthId',
   email: 'email',
   name: 'name',
+  isAdmin: 'isAdmin',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InviteScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  invitedBy: 'invitedBy',
+  invitedAt: 'invitedAt',
+  acceptedAt: 'acceptedAt'
+};
+
+exports.Prisma.CustomTickerScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  ticker: 'ticker',
+  direction: 'direction',
+  currentPrice: 'currentPrice',
+  targetPrice: 'targetPrice',
+  projectedDate: 'projectedDate',
+  stopLoss: 'stopLoss',
+  riskTolerance: 'riskTolerance',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -299,6 +323,7 @@ exports.Prisma.DelistCheckResultScalarFieldEnum = {
 exports.Prisma.OptionsSnapshotScalarFieldEnum = {
   id: 'id',
   sessionId: 'sessionId',
+  userId: 'userId',
   ticker: 'ticker',
   direction: 'direction',
   currentPrice: 'currentPrice',
@@ -364,6 +389,8 @@ exports.Prisma.JsonNullValueFilter = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  Invite: 'Invite',
+  CustomTicker: 'CustomTicker',
   UserPreference: 'UserPreference',
   CoachPost: 'CoachPost',
   ParsedTrade: 'ParsedTrade',
