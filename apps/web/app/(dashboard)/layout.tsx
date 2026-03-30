@@ -13,8 +13,7 @@ export default function DashboardLayout({
   return (
     <div
       style={{
-        height: "100dvh",
-        overflow: "hidden",
+        minHeight: "100dvh",
         backgroundColor: "var(--bg-base)",
       }}
     >
